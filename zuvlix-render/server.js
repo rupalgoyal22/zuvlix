@@ -74,7 +74,7 @@ app.post('/api/ai', async (req, res) => {
         problem: 'problem/solution — start with a pain point, reveal the product as the answer'
       };
       const words = Math.round((+duration || 30) * 2.5);
-      const text = await claude(`Write a ${duration}-second ${styleMap[style] || styleMap.testimonial} UGC script for ${platform}.\n\nProduct: ${product}\nDescription: ${description}\nTone: ${tone || 'casual'}\n\nRequirements:\n- Completely authentic and human sounding\n- Natural speech, contractions, casual language\n- Scroll-stopping hook in first 3 seconds (~${words} words)\n- Clear CTA at end\n\nFormat:\n[HOOK] - opening\n[MAIN] - content\n[CTA] - call to action\n\nNo hashtags.`, 700);
+      const text = await claude(`Write a ${duration}-second ${styleMap[style] || styleMap.testimonial} UGC script for ${platform}.\n\nProduct: ${product}\nDescription: ${description}\nTone: ${tone || 'casual'}\n\nRequirements:\n- Completely authentic and human sounding\n- Natural speech, contractions, casual language\n- Scroll-stopping hook in first 3 seconds (~${words} words)\n- Clear CTA at end\n\nFormat (use plain text labels only, NO markdown, NO asterisks, NO dashes):\n[HOOK] - opening line\n[MAIN] - main content\n[CTA] - call to action\n\nNo hashtags. No markdown formatting. No asterisks. No --- separators.`, 700);
       return res.json({ script: text });
     }
 
