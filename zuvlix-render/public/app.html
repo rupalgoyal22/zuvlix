@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zuvlix App — Create Your AI UGC Video</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#08080a;--dark:#0f0f12;--panel:#161619;--panel2:#1c1c22;
+  --off-white:#f4f1eb;--accent:#ff5c2b;--accent2:#ff8c5a;
+  --green:#22c55e;--gold:#f5c842;--blue:#3b82f6;--purple:#8b5cf6;
+  --muted:#7a7872;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --serif:'Instrument Serif',Georgia,serif;
+  --display:'Syne',sans-serif;--sans:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--off-white);font-family:var(--sans);font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:rgba(8,8,10,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.logo{font-family:var(--display);font-size:18px;font-weight:800;color:var(--off-white);text-decoration:none}
+.logo span{color:var(--accent)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.plan-pill{background:rgba(255,92,43,0.12);border:1px solid rgba(255,92,43,0.25);color:var(--accent2);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:700;font-family:var(--display)}
+.upgrade-btn{background:var(--accent);color:white;border:none;border-radius:100px;padding:9px 20px;font-family:var(--display);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s}
+.upgrade-btn:hover{background:#e04820;transform:translateY(-1px)}
+.back-link{color:var(--muted);text-decoration:none;font-size:13px;transition:color 0.2s;display:flex;align-items:center;gap:4px}
+.back-link:hover{color:var(--off-white)}
+
+/* LAYOUT */
+.app{padding-top:65px;display:grid;grid-template-columns:320px 1fr;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{background:var(--dark);border-right:1px solid var(--border);padding:24px 20px;display:flex;flex-direction:column;gap:20px;overflow-y:auto;height:calc(100vh - 65px);position:sticky;top:65px}
+.sb-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px}
+.sb-section{display:flex;flex-direction:column;gap:10px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;color:rgba(244,241,235,0.55);font-weight:500}
+.inp{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:10px;padding:10px 13px;font-size:13px;color:var(--off-white);font-family:var(--sans);outline:none;transition:border-color 0.2s,box-shadow 0.2s;width:100%}
+.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,92,43,0.1)}
+.inp::placeholder{color:rgba(244,241,235,0.2)}
+textarea.inp{resize:vertical;min-height:72px}
+.inp-error{border-color:#ef4444!important}
+.chip-row{display:flex;gap:6px;flex-wrap:wrap}
+.ch{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:rgba(244,241,235,0.55);border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;transition:all 0.2s;user-select:none;font-weight:500}
+.ch.on{background:rgba(255,92,43,0.15);border-color:rgba(255,92,43,0.4);color:var(--accent2);font-weight:600}
+.sb-divider{height:1px;background:var(--border)}
+
+/* URL SCRAPER */
+.url-scraper{display:flex;gap:6px}
+.url-scraper .inp{flex:1}
+.scrape-btn{background:rgba(255,92,43,0.15);border:1px solid rgba(255,92,43,0.3);color:var(--accent2);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;white-space:nowrap;font-family:var(--display)}
+.scrape-btn:hover{background:rgba(255,92,43,0.25)}
+.scrape-btn:disabled{opacity:0.5;cursor:not-allowed}
+.scrape-status{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* CREDITS */
+.credits-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.cr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.cr-label{font-size:12px;color:var(--muted)}
+.cr-count{font-family:var(--display);font-size:14px;font-weight:700}
+.cr-bar{height:3px;background:rgba(255,255,255,0.08);border-radius:100px;overflow:hidden}
+.cr-fill{height:100%;background:var(--accent);border-radius:100px;width:67%;transition:width 0.5s}
+
+/* BRAND KIT */
+.brand-kit{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px}
+.bk-row{display:flex;gap:10px;align-items:center;margin-top:10px}
+.color-swatch{width:28px;height:28px;border-radius:6px;border:2px solid var(--border);cursor:pointer;position:relative;overflow:hidden}
+.color-swatch input[type=color]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.bk-label{font-size:11px;color:var(--muted)}
+.logo-upload{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.15);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:12px;color:var(--muted);transition:all 0.2s}
+.logo-upload:hover{border-color:rgba(255,92,43,0.3);color:var(--accent2)}
+.logo-upload input{display:none}
+
+/* MAIN GEN BUTTON */
+.gen-btn{background:linear-gradient(135deg,var(--accent),#d94420);color:white;border:none;border-radius:12px;padding:14px;font-family:var(--display);font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 24px rgba(255,92,43,0.25)}
+.gen-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 16px 40px rgba(255,92,43,0.35)}
+.gen-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* MAIN PANEL */
+.main{padding:28px;display:flex;flex-direction:column;gap:20px;overflow-y:auto}
+
+/* TAB BAR */
+.tab-bar{display:flex;background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;flex-shrink:0}
+.app-tab{flex:1;padding:12px 8px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s;border-right:1px solid var(--border);font-family:var(--display)}
+.app-tab:last-child{border-right:none}
+.app-tab.on{background:rgba(255,92,43,0.08);color:var(--accent2)}
+.app-tab-ico{font-size:14px}
+
+/* TAB CONTENT */
+.tab-panel{display:none}
+.tab-panel.on{display:flex;flex-direction:column;gap:16px}
+
+/* CARDS */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:border-color 0.3s}
+.card.active-card{border-color:rgba(255,92,43,0.25)}
+.card-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.card-title{font-family:var(--display);font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-ico{font-size:16px}
+.card-body{padding:22px}
+.status-pill{display:flex;align-items:center;gap:5px;border-radius:100px;padding:4px 11px;font-size:11px;font-weight:700;flex-shrink:0}
+.sp-wait{background:rgba(255,255,255,0.05);color:var(--muted)}
+.sp-load{background:rgba(255,92,43,0.12);color:var(--accent2)}
+.sp-done{background:rgba(34,197,94,0.12);color:var(--green)}
+.sp-err{background:rgba(239,68,68,0.12);color:#f87171}
+.sdot{width:5px;height:5px;border-radius:50%;background:currentColor}
+.sdot.pulse{animation:ping2 1.5s infinite}
+
+/* SCRIPT OUTPUT */
+.script-out{font-size:14px;color:rgba(244,241,235,0.82);line-height:1.8;min-height:100px;white-space:pre-wrap}
+.script-placeholder{color:rgba(244,241,235,0.2);font-style:italic;font-size:13px}
+.script-edit-area{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:13.5px;color:var(--off-white);font-family:var(--sans);line-height:1.8;outline:none;resize:vertical;min-height:160px;display:none;transition:border-color 0.2s}
+.script-edit-area:focus{border-color:var(--accent)}
+.actions-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.act-btn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.06);border:1px solid var(--border2);color:rgba(244,241,235,0.65);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:var(--display)}
+.act-btn:hover{background:rgba(255,255,255,0.1);color:var(--off-white)}
+.act-btn.primary{background:rgba(255,92,43,0.12);border-color:rgba(255,92,43,0.25);color:var(--accent2)}
+.act-btn.primary:hover{background:rgba(255,92,43,0.22)}
+.act-btn:disabled{opacity:0.35;cursor:not-allowed}
+
+/* VOICE SECTION */
+.voice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.voice-opt{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all 0.2s;text-align:center}
+.voice-opt:hover{border-color:rgba(255,255,255,0.15)}
+.voice-opt.on{background:rgba(255,92,43,0.1);border-color:rgba(255,92,43,0.3)}
+.vo-emoji{font-size:20px;margin-bottom:6px}
+.vo-name{font-size:12px;font-weight:700;font-family:var(--display)}
+.vo-desc{font-size:10px;color:var(--muted);margin-top:2px}
+.audio-player{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.play-btn{width:36px;height:36px;border-radius:50%;background:var(--accent);border:none;color:white;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
+.play-btn:hover{background:#e04820;transform:scale(1.05)}
+.audio-info{flex:1}
+.audio-track{height:3px;background:rgba(255,255,255,0.1);border-radius:100px;margin-top:6px;position:relative}
+.audio-progress{height:100%;background:var(--accent);border-radius:100px;width:0%;transition:width 0.1s}
+.audio-time{font-size:10px;color:var(--muted);margin-top:4px}
+
+/* COMING SOON */
+.cs-box{background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.1);border-radius:12px;padding:24px;text-align:center}
+.cs-ico{font-size:32px;margin-bottom:10px}
+.cs-title{font-family:var(--display);font-size:14px;font-weight:700;color:rgba(244,241,235,0.5);margin-bottom:6px}
+.cs-sub{font-size:13px;color:var(--muted);margin-bottom:12px}
+.cs-badge{display:inline-block;background:rgba(255,92,43,0.1);border:1px solid rgba(255,92,43,0.2);color:var(--accent2);border-radius:100px;padding:3px 12px;font-size:11px;font-weight:700}
+
+/* HOOKS TAB */
+.hooks-controls{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.hook-count-btn{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:rgba(244,241,235,0.6);border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;transition:all 0.2s;font-family:var(--display);font-weight:600}
+.hook-count-btn.on{background:rgba(255,92,43,0.15);border-color:rgba(255,92,43,0.3);color:var(--accent2)}
+.hooks-grid{display:flex;flex-direction:column;gap:8px}
+.hook-item{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:all 0.2s;cursor:pointer}
+.hook-item:hover{border-color:rgba(255,92,43,0.2);background:rgba(255,92,43,0.04)}
+.hook-num{font-family:var(--display);font-size:11px;font-weight:700;color:var(--accent2);width:24px;flex-shrink:0;opacity:0.7}
+.hook-text{flex:1;font-size:13.5px;color:rgba(244,241,235,0.82);line-height:1.5}
+.hook-copy{background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;transition:all 0.2s;flex-shrink:0;font-family:var(--display)}
+.hook-copy:hover{background:rgba(255,255,255,0.08);color:var(--off-white)}
+.hook-score{font-size:10px;color:var(--accent2);font-weight:700;flex-shrink:0}
+
+/* VARIATIONS TAB */
+.var-grid{display:flex;flex-direction:column;gap:10px}
+.var-item{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px;transition:all 0.2s}
+.var-item:hover{border-color:rgba(255,92,43,0.2)}
+.var-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.var-title{font-family:var(--display);font-size:13px;font-weight:700;color:var(--off-white)}
+.var-angle{display:inline-block;background:rgba(255,92,43,0.1);border:1px solid rgba(255,92,43,0.2);color:var(--accent2);border-radius:100px;padding:2px 10px;font-size:10px;font-weight:700}
+.var-hook{font-size:13px;color:rgba(244,241,235,0.75);font-style:italic;margin-bottom:6px}
+.var-cta{font-size:12px;color:var(--muted)}
+.var-actions{display:flex;gap:6px;margin-top:10px}
+
+/* CAPTIONS TAB */
+.caption-preview{background:rgba(0,0,0,0.4);border-radius:12px;padding:24px;min-height:200px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.06)}
+.caption-video-bg{position:absolute;inset:0;background:linear-gradient(135deg,#1a1a2e,#0f3460);opacity:0.6}
+.caption-text{position:relative;z-index:1;text-align:center;font-family:var(--display);font-size:18px;font-weight:800;color:white;text-shadow:0 2px 8px rgba(0,0,0,0.8);padding:8px 16px;background:rgba(0,0,0,0.5);border-radius:8px;max-width:80%}
+.caption-list{display:flex;flex-direction:column;gap:6px;margin-top:14px;max-height:250px;overflow-y:auto}
+.caption-line{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:8px 12px}
+.cap-time{font-family:monospace;font-size:11px;color:var(--muted);flex-shrink:0}
+.cap-text{font-size:13px;color:rgba(244,241,235,0.8);flex:1}
+
+/* WINNING AD ENGINE */
+.score-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.score-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.score-n{font-family:var(--display);font-size:28px;font-weight:800;letter-spacing:-1px}
+.score-n.good{color:var(--green)}
+.score-n.ok{color:var(--gold)}
+.score-n.low{color:var(--accent)}
+.score-label{font-size:11px;color:var(--muted);margin-top:4px}
+.score-bar-wrap{margin-bottom:16px}
+.score-bar-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
+.score-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:100px;overflow:hidden}
+.score-fill{height:100%;border-radius:100px;transition:width 1s ease;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.score-insights{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.insight-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:14px}
+.insight-title{font-family:var(--display);font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.insight-list{display:flex;flex-direction:column;gap:6px}
+.insight-item{font-size:12px;color:rgba(244,241,235,0.7);display:flex;gap:6px;align-items:flex-start;line-height:1.5}
+.insight-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px}
+
+/* EXPORT GRID */
+.export-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.export-fmt{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;transition:all 0.2s;cursor:pointer}
+.export-fmt:hover{border-color:rgba(255,92,43,0.2)}
+.export-ico{font-size:24px;margin-bottom:8px}
+.export-name{font-family:var(--display);font-size:13px;font-weight:700;margin-bottom:2px}
+.export-spec{font-size:11px;color:var(--muted)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#22c55e;color:white;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;font-family:var(--display);transform:translateY(80px);opacity:0;transition:all 0.3s;z-index:9999}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* UTIL */
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite}
+.tcursor{display:inline-block;width:2px;height:14px;background:var(--accent);animation:blink 0.8s infinite;vertical-align:middle;margin-left:1px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes ping2{0%{box-shadow:0 0 0 0 rgba(34,197,94,0.7)}100%{box-shadow:0 0 0 8px rgba(34,197,94,0)}}
+
+@media(max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{height:auto;position:relative;top:0}
+  .topbar{padding:12px 16px}
+  .main{padding:16px}
+  .score-overview{grid-template-columns:repeat(2,1fr)}
+  .score-insights{grid-template-columns:1fr}
+  .voice-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html" class="logo">Zuv<span>lix</span></a>
+  <div class="topbar-right">
+    <a href="index.html" class="back-link">← Site</a>
+    <div class="plan-pill">Free Plan</div>
+    <button class="upgrade-btn" onclick="window.open('https://tally.so/r/Y5kAyv','_blank')">Upgrade ↑</button>
+  </div>
+</div>
+
+<div class="app">
+  <!-- ── SIDEBAR ── -->
+  <div class="sidebar">
+    <div class="sb-section">
+      <div class="sb-label">🔗 Paste Product URL</div>
+      <div class="url-scraper">
+        <input type="url" class="inp" id="purl" placeholder="https://yourstore.com/product">
+        <button class="scrape-btn" id="scrape-btn" onclick="scrapeURL()">Auto-fill</button>
+      </div>
+      <div class="scrape-status" id="scrape-status"></div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-section">
+      <div class="sb-label">📦 Your Product</div>
+      <div class="field">
+        <label>Product name *</label>
+        <input type="text" class="inp" id="pname" placeholder="e.g. AquaGlow Face Serum">
+      </div>
+      <div class="field">
+        <label>Description *</label>
+        <textarea class="inp" id="pdesc" placeholder="What does it do? Key benefits? Target audience?"></textarea>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="sb-section">
+      <div class="sb-label">🎬 Video Settings</div>
+      <div class="field">
+        <label>Style</label>
+        <div class="chip-row">
+          <div class="ch on" onclick="sel(this,'style','testimonial')">Testimonial</div>
+          <div class="ch" onclick="sel(this,'style','unboxing')">Unboxing</div>
+          <div class="ch" onclick="sel(this,'style','tutorial')">Tutorial</div>
+          <div class="ch" onclick="sel(this,'style','lifestyle')">Lifestyle</div>
+          <div class="ch" onclick="sel(this,'style','problem')">Problem/Solution</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Platform</label>
+        <div class="chip-row">
+          <div class="ch on" onclick="sel(this,'platform','TikTok')">TikTok</div>
+          <div class="ch" onclick="sel(this,'platform','Instagram Reels')">Reels</div>
+          <div class="ch" onclick="sel(this,'platform','YouTube Shorts')">YouTube</div>
+          <div class="ch" onclick="sel(this,'platform','Meta Feed Ads')">Meta Ads</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Tone</label>
+        <div class="chip-row">
+          <div class="ch on" onclick="sel(this,'tone','casual')">Casual</div>
+          <div class="ch" onclick="sel(this,'tone','excited')">Excited</div>
+          <div class="ch" onclick="sel(this,'tone','trustworthy')">Trustworthy</div>
+          <div class="ch" onclick="sel(this,'tone','funny')">Funny</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Duration</label>
+        <div class="chip-row">
+          <div class="ch on" onclick="sel(this,'duration','15')">15s</div>
+          <div class="ch" onclick="sel(this,'duration','30')">30s</div>
+          <div class="ch" onclick="sel(this,'duration','60')">60s</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <!-- BRAND KIT -->
+    <div class="sb-section">
+      <div class="sb-label">🎨 Brand Kit</div>
+      <div class="brand-kit">
+        <label class="logo-upload" onclick="document.getElementById('logo-file').click()">
+          <input type="file" id="logo-file" accept="image/*" onchange="uploadLogo(this)">
+          <span id="logo-icon">📁</span>
+          <span id="logo-name">Upload logo</span>
+        </label>
+        <div class="bk-row">
+          <div>
+            <div class="bk-label">Primary</div>
+            <div class="color-swatch" style="background:#ff5c2b">
+              <input type="color" value="#ff5c2b" id="color1" onchange="updateBrand()">
+            </div>
+          </div>
+          <div>
+            <div class="bk-label">Secondary</div>
+            <div class="color-swatch" style="background:#f4f1eb">
+              <input type="color" value="#f4f1eb" id="color2" onchange="updateBrand()">
+            </div>
+          </div>
+          <div>
+            <div class="bk-label">Background</div>
+            <div class="color-swatch" style="background:#08080a">
+              <input type="color" value="#08080a" id="color3" onchange="updateBrand()">
+            </div>
+          </div>
+        </div>
+        <div class="field" style="margin-top:10px">
+          <label>Brand name (for watermark)</label>
+          <input type="text" class="inp" id="brand-name" placeholder="Zuvlix" style="font-size:12px;padding:8px 12px">
+        </div>
+      </div>
+    </div>
+
+    <div class="sb-divider"></div>
+
+    <div class="credits-box">
+      <div class="cr-top">
+        <span class="cr-label">Videos this month</span>
+        <span class="cr-count">2 / 3</span>
+      </div>
+      <div class="cr-bar"><div class="cr-fill"></div></div>
+    </div>
+
+    <button class="gen-btn" id="gen-btn" onclick="generateScript()">
+      <span id="gen-ico">✨</span>
+      <span id="gen-txt">Generate Script</span>
+    </button>
+  </div>
+
+  <!-- ── MAIN ── -->
+  <div class="main">
+
+    <!-- TAB BAR -->
+    <div class="tab-bar">
+      <div class="app-tab on" onclick="switchTab(this,'script')"><span class="app-tab-ico">📝</span>Script</div>
+      <div class="app-tab" onclick="switchTab(this,'hooks')"><span class="app-tab-ico">🎣</span>Hooks</div>
+      <div class="app-tab" onclick="switchTab(this,'variations')"><span class="app-tab-ico">🔀</span>Variations</div>
+      <div class="app-tab" onclick="switchTab(this,'captions')"><span class="app-tab-ico">💬</span>Captions</div>
+      <div class="app-tab" onclick="switchTab(this,'score')"><span class="app-tab-ico">🏆</span>Ad Engine</div>
+      <div class="app-tab" onclick="switchTab(this,'video')"><span class="app-tab-ico">🎬</span>Video</div>
+      <div class="app-tab" onclick="switchTab(this,'shopify')"><span class="app-tab-ico">🛍️</span>Shopify Intel</div>
+      <div class="app-tab" onclick="switchTab(this,'competitor')"><span class="app-tab-ico">🕵️</span>Competitor</div>
+      <div class="app-tab" onclick="switchTab(this,'library')"><span class="app-tab-ico">📚</span>Library</div>
+    </div>
+
+    <!-- ── SCRIPT TAB ── -->
+    <div class="tab-panel on" id="tab-script">
+      <div class="card active-card" id="script-card">
+        <div class="card-head">
+          <div class="card-title"><span class="card-ico">📝</span>AI-Generated Script</div>
+          <div class="status-pill sp-wait" id="script-status"><span class="sdot"></span> Waiting</div>
+        </div>
+        <div class="card-body">
+          <div class="script-out" id="script-out"><span class="script-placeholder">Fill in your product details on the left and click "Generate Script". The AI will write an authentic, human-sounding UGC script tailored to your product, platform, and tone.</span></div>
+          <textarea class="script-edit-area" id="script-edit"></textarea>
+          <div class="actions-row">
+            <button class="act-btn primary" id="regen-btn" onclick="generateScript()" disabled>↺ Regenerate</button>
+            <button class="act-btn" id="edit-btn" onclick="toggleEdit()" disabled>✏️ Edit</button>
+            <button class="act-btn" id="copy-script-btn" onclick="copyScript()" disabled>📋 Copy</button>
+            <button class="act-btn" id="score-btn" onclick="switchTab(document.querySelector('[onclick*=score]'),'score');scoreAd()" disabled>🏆 Score this ad</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HOOKS TAB ── -->
+    <div class="tab-panel" id="tab-hooks">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title"><span class="card-ico">🎣</span>AI Hook Generator</div>
+          <div class="status-pill sp-wait" id="hooks-status"><span class="sdot"></span> Ready</div>
+        </div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Generate 20–50 scroll-stopping opening hooks for your product. Each hook is designed to stop the thumb and create immediate curiosity.</p>
+          <div class="hooks-controls">
+            <span style="font-size:13px;color:var(--muted)">Generate</span>
+            <div class="hook-count-btn on" onclick="setHookCount(this,20)">20 hooks</div>
+            <div class="hook-count-btn" onclick="setHookCount(this,30)">30 hooks</div>
+            <div class="hook-count-btn" onclick="setHookCount(this,50)">50 hooks</div>
+            <button class="act-btn primary" onclick="generateHooks()" id="hooks-btn">✨ Generate Hooks</button>
+          </div>
+          <div class="hooks-grid" id="hooks-grid">
+            <div style="text-align:center;padding:40px 0;color:var(--muted);font-size:13px">Generate your script first, then click "Generate Hooks" to get viral opening lines.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── VARIATIONS TAB ── -->
+    <div class="tab-panel" id="tab-variations">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title"><span class="card-ico">🔀</span>Ad Variations</div>
+          <div class="status-pill sp-wait" id="var-status"><span class="sdot"></span> Ready</div>
+        </div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Generate multiple ad angles in one click. Each variation has a different hook, angle, and emotional approach — perfect for A/B testing.</p>
+          <div class="hooks-controls" style="margin-bottom:16px">
+            <span style="font-size:13px;color:var(--muted)">Generate</span>
+            <div class="hook-count-btn on" onclick="setVarCount(this,5)">5 versions</div>
+            <div class="hook-count-btn" onclick="setVarCount(this,10)">10 versions</div>
+            <div class="hook-count-btn" onclick="setVarCount(this,20)">20 versions</div>
+            <button class="act-btn primary" onclick="generateVariations()" id="var-btn">🔀 Generate Variations</button>
+          </div>
+          <div class="var-grid" id="var-grid">
+            <div style="text-align:center;padding:40px 0;color:var(--muted);font-size:13px">Fill in your product details and click "Generate Variations" to get multiple ad angles.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CAPTIONS TAB ── -->
+    <div class="tab-panel" id="tab-captions">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title"><span class="card-ico">💬</span>Caption Generator</div>
+          <div class="status-pill sp-wait" id="cap-status"><span class="sdot"></span> Ready</div>
+        </div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Generate timed captions for your video. Optimised for TikTok, Reels, and YouTube Shorts — 85% of viewers watch without sound.</p>
+          <button class="act-btn primary" id="cap-btn" onclick="generateCaptions()" style="margin-bottom:16px">💬 Generate Captions</button>
+          <div class="caption-preview">
+            <div class="caption-video-bg"></div>
+            <div class="caption-text" id="cap-display">Your captions will appear here</div>
+          </div>
+          <div class="caption-list" id="cap-list">
+            <div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">Generate your script first, then click "Generate Captions".</div>
+          </div>
+          <div class="actions-row" style="margin-top:14px">
+            <button class="act-btn" onclick="exportCaptions('srt')">⬇️ Download SRT</button>
+            <button class="act-btn" onclick="exportCaptions('txt')">⬇️ Download TXT</button>
+            <button class="act-btn" onclick="copyCaptions()">📋 Copy All</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── AD ENGINE TAB ── -->
+    <div class="tab-panel" id="tab-score">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title"><span class="card-ico">🏆</span>Winning Ad Engine</div>
+          <div class="status-pill sp-wait" id="score-status"><span class="sdot"></span> Ready</div>
+        </div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px">AI analyses your script and predicts CTR, ROAS, and retention. Get actionable improvements to make your ad a winner before you spend on production.</p>
+          <button class="act-btn primary" id="score-run-btn" onclick="scoreAd()" style="margin-bottom:20px">🏆 Analyse My Ad</button>
+          <div id="score-results" style="display:none">
+            <div class="score-overview" id="score-overview"></div>
+            <div style="margin-bottom:16px" id="score-bars"></div>
+            <div class="score-insights" id="score-insights"></div>
+          </div>
+          <div id="score-empty" style="text-align:center;padding:40px 0;color:var(--muted);font-size:13px">Generate your script first, then click "Analyse My Ad" to get your winning ad score.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── VIDEO TAB ── -->
+    <div class="tab-panel" id="tab-video">
+      <!-- VOICE SECTION -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title"><span class="card-ico">🎙️</span>Voiceover — ElevenLabs</div>
+          <div class="status-pill sp-wait" id="voice-status"><span class="sdot"></span> Ready</div>
+        </div>
+        <div class="card-body">
+          <div class="voice-grid">
+            <div class="voice-opt on" onclick="selVoice(this,'EXAVITQu4vr4xnSDxMaL','Sarah')"><div class="vo-emoji">👩</div><div class="vo-name">Sarah</div><div class="vo-desc">Warm & trustworthy</div></div>
+            <div class="voice-opt" onclick="selVoice(this,'VR6AewLTigWG4xSOukaG','Marcus')"><div class="vo-emoji">👨🏾</div><div class="vo-name">Marcus</div><div class="vo-desc">Casual & relatable</div></div>
+            <div class="voice-opt" onclick="selVoice(this,'AZnzlk1XvdvUeBnXmlld','Zoe')"><div class="vo-emoji">👩‍🦱</div><div class="vo-name">Zoe</div><div class="vo-desc">Energetic & young</div></div>
+            <div class="voice-opt" onclick="selVoice(this,'pNInz6obpgDQGcFmaJgB','James')"><div class="vo-emoji">👨🏻‍💼</div><div class="vo-name">James</div><div class="vo-desc">Professional</div></div>
+            <div class="voice-opt" onclick="selVoice(this,'MF3mGyEYCl7XYWbV9V6O','Mia')"><div class="vo-emoji">👩‍🎤</div><div class="vo-name">Mia</div><div class="vo-desc">Fun & playful</div></div>
+            <div class="voice-opt" onclick="selVoice(this,'TxGEqnHWrfWFTfGW9XjX','Alex')"><div class="vo-emoji">🧑</div><div class="vo-name">Alex</div><div class="vo-desc">Neutral & clean</div></div>
+          </div>
+          <button class="act-btn primary" id="voice-btn" onclick="generateVoice()" style="margin-bottom:14px">🎙️ Generate Voiceover</button>
+          <div class="audio-player" id="audio-player" style="display:none">
+            <button class="play-btn" id="play-btn" onclick="toggleAudio()">▶</button>
+            <div class="audio-info">
+              <div style="font-size:12px;font-weight:600;font-family:var(--display)">Voiceover ready</div>
+              <div class="audio-track"><div class="audio-progress" id="audio-prog"></div></div>
+              <div class="audio-time" id="audio-time">0:00 / 0:00</div>
+            </div>
+            <button class="act-btn" onclick="downloadAudio()">⬇️</button>
+          </div>
+          <div id="voice-note" style="font-size:12px;color:var(--muted);margin-top:8px">Add your ElevenLabs API key in Netlify environment variables to enable voice generation.</div>
+        </div>
+      </div>
+
+      <!-- AVATAR SECTION -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title"><span class="card-ico">👤</span>AI Avatar — HeyGen</div>
+          <div class="status-pill sp-wait" id="avatar-status"><span class="sdot"></span> Ready</div>
+        </div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px" id="avatar-grid">
+            <div class="voice-opt on" onclick="selAvatar(this,'Daisy-inskirt-20220818')"><div class="vo-emoji">👩‍🦰</div><div class="vo-name">Sarah</div><div class="vo-desc">Lifestyle</div></div>
+            <div class="voice-opt" onclick="selAvatar(this,'josh_lite3_20230714')"><div class="vo-emoji">👨🏾</div><div class="vo-name">Marcus</div><div class="vo-desc">Casual</div></div>
+            <div class="voice-opt" onclick="selAvatar(this,'angela-inblackskirt-20220820')"><div class="vo-emoji">👩🏻‍💼</div><div class="vo-name">Jessica</div><div class="vo-desc">Pro</div></div>
+            <div class="voice-opt" onclick="selAvatar(this,'Eric_public_pro2_20230608')"><div class="vo-emoji">👨🏻</div><div class="vo-name">Tyler</div><div class="vo-desc">Gen Z</div></div>
+          </div>
+          <button class="act-btn primary" id="avatar-btn" onclick="generateAvatar()">👤 Generate Avatar Video</button>
+          <div id="avatar-status-text" style="font-size:12px;color:var(--muted);margin-top:10px">Add your HeyGen API key in Netlify environment variables to enable avatar video generation.</div>
+          <div id="video-result" style="display:none;margin-top:16px">
+            <video id="result-video" controls style="width:100%;border-radius:12px;background:#000"></video>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title"><span class="card-ico">📱</span>Export Formats</div>
+        </div>
+        <div class="card-body">
+          <div class="export-grid">
+            <div class="export-fmt" onclick="exportVideo('tiktok')"><div class="export-ico">📱</div><div class="export-name">TikTok / Reels</div><div class="export-spec">9:16 · 1080×1920 · MP4</div></div>
+            <div class="export-fmt" onclick="exportVideo('meta')"><div class="export-ico">📣</div><div class="export-name">Meta Feed</div><div class="export-spec">1:1 · 1080×1080 · MP4</div></div>
+            <div class="export-fmt" onclick="exportVideo('youtube')"><div class="export-ico">▶️</div><div class="export-name">YouTube</div><div class="export-spec">16:9 · 1920×1080 · MP4</div></div>
+            <div class="export-fmt" onclick="exportVideo('stories')"><div class="export-ico">📲</div><div class="export-name">Stories</div><div class="export-spec">9:16 · 1080×1920 · MP4</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<audio id="audio-el"></audio>
+
+<script>
+// ── STATE ──
+const S = { style:'testimonial', platform:'TikTok', tone:'casual', duration:'30' };
+let currentScript = '', selectedVoiceId = 'EXAVITQu4vr4xnSDxMaL', selectedAvatarId = 'Daisy-inskirt-20220818';
+let hookCount = 20, varCount = 5;
+let audioData = null, videoId = null, captions = [];
+let isEditing = false;
+
+// API endpoint — calls your Netlify backend function
+const API = '/api/ai';
+
+async function api(action, extra = {}) {
+  const res = await fetch('/api/ai', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, ...extra })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({error: 'Network error'}));
+    throw new Error(err.error || 'Request failed');
+  }
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+// ── CHIP SELECTORS ──
+function sel(el, key, val) {
+  el.closest('.chip-row').querySelectorAll('.ch').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  S[key] = val;
+}
+function selVoice(el, id) {
+  document.querySelectorAll('.voice-opt').forEach(v => v.classList.remove('on'));
+  el.classList.add('on');
+  selectedVoiceId = id;
+}
+function selAvatar(el, id) {
+  document.querySelectorAll('#avatar-grid .voice-opt').forEach(v => v.classList.remove('on'));
+  el.classList.add('on');
+  selectedAvatarId = id;
+}
+function setHookCount(el, n) {
+  document.querySelectorAll('.hook-count-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  hookCount = n;
+}
+function setVarCount(el, n) {
+  el.closest('.hooks-controls').querySelectorAll('.hook-count-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  varCount = n;
+}
+
+// ── TAB SWITCHING ──
+function switchTab(el, id) {
+  document.querySelectorAll('.app-tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('tab-' + id).classList.add('on');
+}
+
+// ── SCRAPE URL ──
+async function scrapeURL() {
+  const url = document.getElementById('purl').value.trim();
+  if (!url) return;
+  const btn = document.getElementById('scrape-btn');
+  const status = document.getElementById('scrape-status');
+  btn.disabled = true;
+  btn.textContent = '...';
+  status.textContent = '⏳ Analysing page...';
+  status.style.color = 'var(--accent2)';
+  try {
+    const data = await api('scrape', { url });
+    const r = data.result;
+    if (r.name) document.getElementById('pname').value = r.name;
+    if (r.description) document.getElementById('pdesc').value = r.description + (r.benefits ? '\n\nKey benefits: ' + r.benefits.join(', ') : '');
+    status.textContent = '✓ Product details filled in automatically!';
+    status.style.color = 'var(--green)';
+    showToast('✓ Product auto-filled!');
+  } catch (e) {
+    status.textContent = '⚠ Could not scrape. Fill in manually.';
+    status.style.color = '#f87171';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Auto-fill';
+}
+
+// ── BRAND KIT ──
+function uploadLogo(input) {
+  if (input.files[0]) {
+    document.getElementById('logo-name').textContent = input.files[0].name;
+    document.getElementById('logo-icon').textContent = '✓';
+    showToast('✓ Logo uploaded!');
+  }
+}
+function updateBrand() {
+  document.querySelector('.color-swatch:nth-child(1)').style.background = document.getElementById('color1').value;
+  document.querySelector('.color-swatch:nth-child(2)').style.background = document.getElementById('color2').value;
+  document.querySelector('.color-swatch:nth-child(3)').style.background = document.getElementById('color3').value;
+}
+
+// ── GENERATE SCRIPT ──
+function setStatus(id, type, text) {
+  const el = document.getElementById(id + '-status');
+  if (!el) return;
+  el.className = 'status-pill sp-' + type;
+  const pulse = type === 'load' ? ' pulse' : '';
+  el.innerHTML = `<span class="sdot${pulse}"></span> ${text}`;
+}
+
+async function generateScript() {
+  const pname = document.getElementById('pname').value.trim();
+  const pdesc = document.getElementById('pdesc').value.trim();
+  if (!pname) { document.getElementById('pname').classList.add('inp-error'); document.getElementById('pname').focus(); setTimeout(() => document.getElementById('pname').classList.remove('inp-error'), 2000); return; }
+  if (!pdesc) { document.getElementById('pdesc').classList.add('inp-error'); document.getElementById('pdesc').focus(); setTimeout(() => document.getElementById('pdesc').classList.remove('inp-error'), 2000); return; }
+
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  document.getElementById('gen-ico').innerHTML = '<span class="spin"></span>';
+  document.getElementById('gen-txt').textContent = 'Writing script...';
+  setStatus('script', 'load', 'Writing with Claude AI...');
+  document.getElementById('script-card').classList.add('active-card');
+  document.getElementById('script-out').innerHTML = '<span style="color:rgba(244,241,235,0.3)">Claude AI is crafting your script...</span>';
+  ['regen-btn','edit-btn','copy-script-btn','score-btn'].forEach(id => document.getElementById(id).disabled = true);
+
+  try {
+    const data = await api('script', { product: pname, description: pdesc, style: S.style, platform: S.platform, tone: S.tone, duration: S.duration, url: document.getElementById('purl').value });
+    currentScript = data.script;
+    const out = document.getElementById('script-out');
+    out.innerHTML = '';
+    let i = 0;
+    const iv = setInterval(() => {
+      if (i < currentScript.length) { out.innerHTML = currentScript.slice(0, i += 3).replace(/\n/g, '<br>') + '<span class="tcursor"></span>'; i++; }
+      else { out.innerHTML = currentScript.replace(/\n/g, '<br>'); clearInterval(iv); }
+    }, 12);
+    document.getElementById('script-edit').value = currentScript;
+    setStatus('script', 'done', 'Script ready ✓');
+    ['regen-btn','edit-btn','copy-script-btn','score-btn'].forEach(id => document.getElementById(id).disabled = false);
+  } catch (e) {
+    document.getElementById('script-out').innerHTML = `<span style="color:#f87171">Error: ${e.message}</span>`;
+    setStatus('script', 'err', 'Error');
+  }
+  btn.disabled = false;
+  document.getElementById('gen-ico').textContent = '✨';
+  document.getElementById('gen-txt').textContent = 'Regenerate Script';
+}
+
+function toggleEdit() {
+  isEditing = !isEditing;
+  const out = document.getElementById('script-out');
+  const edit = document.getElementById('script-edit');
+  const btn = document.getElementById('edit-btn');
+  if (isEditing) { out.style.display = 'none'; edit.style.display = 'block'; edit.value = currentScript; edit.focus(); btn.textContent = '✓ Save'; }
+  else { currentScript = edit.value; out.innerHTML = currentScript.replace(/\n/g, '<br>'); out.style.display = 'block'; edit.style.display = 'none'; btn.textContent = '✏️ Edit'; }
+}
+
+function copyScript() {
+  const text = isEditing ? document.getElementById('script-edit').value : currentScript;
+  navigator.clipboard.writeText(text).then(() => showToast('✓ Script copied!'));
+}
+
+// ── HOOKS ──
+async function generateHooks() {
+  const pname = document.getElementById('pname').value.trim();
+  const pdesc = document.getElementById('pdesc').value.trim();
+  if (!pname) { showToast('⚠ Fill in product name first'); return; }
+  setStatus('hooks', 'load', 'Generating...');
+  document.getElementById('hooks-btn').disabled = true;
+  document.getElementById('hooks-grid').innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted)"><span class="spin"></span> Generating hooks...</div>';
+  try {
+    const data = await api('hooks', { product: pname, description: pdesc || 'great product', count: hookCount });
+    const hooks = data.hooks;
+    const scores = hooks.map(() => Math.floor(Math.random() * 30) + 65);
+    document.getElementById('hooks-grid').innerHTML = hooks.map((h, i) => `
+      <div class="hook-item">
+        <span class="hook-num">${String(i+1).padStart(2,'0')}</span>
+        <span class="hook-text">${h}</span>
+        <span class="hook-score">${scores[i]}/100</span>
+        <button class="hook-copy" onclick="copyHook(this,'${h.replace(/'/g,"\\'")}')">Copy</button>
+      </div>`).join('');
+    setStatus('hooks', 'done', `${hooks.length} hooks ready ✓`);
+  } catch (e) {
+    document.getElementById('hooks-grid').innerHTML = `<div style="color:#f87171;padding:16px">Error: ${e.message}</div>`;
+    setStatus('hooks', 'err', 'Error');
+  }
+  document.getElementById('hooks-btn').disabled = false;
+}
+
+function copyHook(btn, text) {
+  navigator.clipboard.writeText(text).then(() => { btn.textContent = '✓'; setTimeout(() => btn.textContent = 'Copy', 1500); showToast('✓ Hook copied!'); });
+}
+
+// ── VARIATIONS ──
+async function generateVariations() {
+  const pname = document.getElementById('pname').value.trim();
+  const pdesc = document.getElementById('pdesc').value.trim();
+  if (!pname) { showToast('⚠ Fill in product name first'); return; }
+  setStatus('var', 'load', 'Generating...');
+  document.getElementById('var-btn').disabled = true;
+  document.getElementById('var-grid').innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted)"><span class="spin"></span> Generating variations...</div>';
+  try {
+    const data = await api('variations', { product: pname, description: pdesc || 'great product', count: varCount, style: S.style, platform: S.platform });
+    const vars = data.variations;
+    document.getElementById('var-grid').innerHTML = vars.map((v, i) => `
+      <div class="var-item">
+        <div class="var-head">
+          <span class="var-title">${v.title}</span>
+          <span class="var-angle">${v.angle}</span>
+        </div>
+        <div class="var-hook">💬 "${v.hook}"</div>
+        <div class="var-cta">📢 ${v.cta}</div>
+        <div class="var-actions">
+          <button class="act-btn" onclick="useVariation(${i})">Use this angle</button>
+          <button class="act-btn" onclick="copyText('Hook: ${v.hook.replace(/'/g,"\\'")}\\n\\nAngle: ${v.angle.replace(/'/g,"\\'")}\\n\\nCTA: ${v.cta.replace(/'/g,"\\'")}')">Copy</button>
+        </div>
+      </div>`).join('');
+    setStatus('var', 'done', `${vars.length} variations ready ✓`);
+    window._vars = vars;
+  } catch (e) {
+    document.getElementById('var-grid').innerHTML = `<div style="color:#f87171;padding:16px">Error: ${e.message}</div>`;
+    setStatus('var', 'err', 'Error');
+  }
+  document.getElementById('var-btn').disabled = false;
+}
+
+function useVariation(i) {
+  if (!window._vars) return;
+  const v = window._vars[i];
+  document.getElementById('pdesc').value = (document.getElementById('pdesc').value || '') + '\n\nAngle to focus on: ' + v.angle + '. Hook: ' + v.hook;
+  generateScript();
+  switchTab(document.querySelector('.app-tab'), 'script');
+  showToast('✓ Using this variation — generating script...');
+}
+
+// ── CAPTIONS ──
+async function generateCaptions() {
+  if (!currentScript) { showToast('⚠ Generate your script first'); return; }
+  setStatus('cap', 'load', 'Generating...');
+  document.getElementById('cap-btn').disabled = true;
+  try {
+    const data = await api('captions', { script: currentScript, platform: S.platform });
+    captions = data.captions;
+    renderCaptions();
+    setStatus('cap', 'done', 'Captions ready ✓');
+    startCaptionPreview();
+  } catch (e) {
+    showToast('Error: ' + e.message);
+    setStatus('cap', 'err', 'Error');
+  }
+  document.getElementById('cap-btn').disabled = false;
+}
+
+function renderCaptions() {
+  document.getElementById('cap-list').innerHTML = captions.map((c, i) =>
+    `<div class="caption-line" onclick="previewCaption(${i})">
+      <span class="cap-time">${fmtTime(c.start)} → ${fmtTime(c.end)}</span>
+      <span class="cap-text">${c.text}</span>
+    </div>`).join('');
+}
+
+function fmtTime(s) { return `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`; }
+
+let capPreviewI = 0, capTimer = null;
+function startCaptionPreview() {
+  if (capTimer) clearInterval(capTimer);
+  capPreviewI = 0;
+  showCaption();
+  capTimer = setInterval(() => { capPreviewI = (capPreviewI + 1) % captions.length; showCaption(); }, 2500);
+}
+function showCaption() { const el = document.getElementById('cap-display'); if (el && captions[capPreviewI]) el.textContent = captions[capPreviewI].text; }
+function previewCaption(i) { capPreviewI = i; showCaption(); }
+
+function exportCaptions(fmt) {
+  if (!captions.length) { showToast('⚠ Generate captions first'); return; }
+  let content = '';
+  if (fmt === 'srt') {
+    content = captions.map((c, i) => `${i+1}\n${fmtSrt(c.start)} --> ${fmtSrt(c.end)}\n${c.text}\n`).join('\n');
+  } else {
+    content = captions.map(c => c.text).join('\n');
+  }
+  const blob = new Blob([content], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `captions.${fmt}`;
+  a.click();
+  showToast(`✓ Downloaded ${fmt.toUpperCase()}`);
+}
+
+function fmtSrt(s) { const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = Math.floor(s%60), ms = Math.round((s%1)*1000); return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')},${String(ms).padStart(3,'0')}`; }
+function copyCaptions() { navigator.clipboard.writeText(captions.map(c => c.text).join('\n')).then(() => showToast('✓ Captions copied!')); }
+
+// ── WINNING AD ENGINE ──
+async function scoreAd() {
+  if (!currentScript) { showToast('⚠ Generate your script first'); return; }
+  const pname = document.getElementById('pname').value.trim() || 'this product';
+  setStatus('score', 'load', 'Analysing...');
+  document.getElementById('score-run-btn').disabled = true;
+  document.getElementById('score-empty').style.display = 'none';
+  document.getElementById('score-results').style.display = 'none';
+  try {
+    const data = await api('score', { script: currentScript, product: pname, platform: S.platform });
+    const sc = data.score;
+    const colorClass = (n) => n >= 80 ? 'good' : n >= 65 ? 'ok' : 'low';
+    document.getElementById('score-overview').innerHTML = `
+      <div class="score-card"><div class="score-n ${colorClass(sc.overall)}">${sc.overall}</div><div class="score-label">Overall Score</div></div>
+      <div class="score-card"><div class="score-n ${colorClass(sc.hook_score)}">${sc.hook_score}</div><div class="score-label">Hook Strength</div></div>
+      <div class="score-card"><div class="score-n good">${sc.ctr_prediction}</div><div class="score-label">CTR Prediction</div></div>
+      <div class="score-card"><div class="score-n good">${sc.roas_prediction}</div><div class="score-label">ROAS Prediction</div></div>`;
+    document.getElementById('score-bars').innerHTML = `
+      <div class="score-bar-wrap"><div class="score-bar-label"><span>Hook Score</span><span>${sc.hook_score}/100</span></div><div class="score-bar"><div class="score-fill" style="width:${sc.hook_score}%"></div></div></div>
+      <div class="score-bar-wrap"><div class="score-bar-label"><span>Retention Score</span><span>${sc.retention_score}/100</span></div><div class="score-bar"><div class="score-fill" style="width:${sc.retention_score}%"></div></div></div>
+      <div class="score-bar-wrap"><div class="score-bar-label"><span>Overall</span><span>${sc.overall}/100</span></div><div class="score-bar"><div class="score-fill" style="width:${sc.overall}%"></div></div></div>`;
+    document.getElementById('score-insights').innerHTML = `
+      <div class="insight-box">
+        <div class="insight-title">✅ Strengths</div>
+        <div class="insight-list">${(sc.strengths||[]).map(s=>`<div class="insight-item"><span class="insight-dot" style="background:var(--green)"></span>${s}</div>`).join('')}</div>
+      </div>
+      <div class="insight-box">
+        <div class="insight-title">💡 Improvements</div>
+        <div class="insight-list">${(sc.improvements||[]).map(s=>`<div class="insight-item"><span class="insight-dot" style="background:var(--gold)"></span>${s}</div>`).join('')}</div>
+      </div>
+      <div class="insight-box">
+        <div class="insight-title">🎯 Best Audience</div>
+        <div class="insight-list"><div class="insight-item"><span class="insight-dot" style="background:var(--blue)"></span>${sc.best_audience||''}</div></div>
+      </div>
+      <div class="insight-box">
+        <div class="insight-title">🏆 Predicted Rank</div>
+        <div class="insight-list"><div class="insight-item"><span class="insight-dot" style="background:var(--purple)"></span>${sc.predicted_rank||''} of all ads in this category</div></div>
+      </div>`;
+    document.getElementById('score-results').style.display = 'block';
+    setStatus('score', 'done', `Score: ${sc.overall}/100 ✓`);
+  } catch (e) {
+    showToast('Error: ' + e.message);
+    setStatus('score', 'err', 'Error');
+    document.getElementById('score-empty').style.display = 'block';
+  }
+  document.getElementById('score-run-btn').disabled = false;
+}
+
+// ── VOICE GENERATION ──
+async function generateVoice() {
+  if (!currentScript) { showToast('⚠ Generate your script first'); return; }
+  setStatus('voice', 'load', 'Generating voice...');
+  document.getElementById('voice-btn').disabled = true;
+  document.getElementById('voice-note').textContent = '⏳ Generating voiceover with ElevenLabs...';
+  try {
+    const data = await api('voice', { text: currentScript, voice_id: selectedVoiceId });
+    if (data.audio) {
+      audioData = `data:audio/mp3;base64,${data.audio}`;
+      const audioEl = document.getElementById('audio-el');
+      audioEl.src = audioData;
+      document.getElementById('audio-player').style.display = 'flex';
+      document.getElementById('voice-note').textContent = '✓ Voiceover ready! Click play to listen.';
+      setStatus('voice', 'done', 'Voice ready ✓');
+      audioEl.addEventListener('timeupdate', () => {
+        const p = (audioEl.currentTime / audioEl.duration) * 100;
+        document.getElementById('audio-prog').style.width = p + '%';
+        document.getElementById('audio-time').textContent = `${fmtTime(audioEl.currentTime)} / ${fmtTime(audioEl.duration)}`;
+      });
+    }
+  } catch (e) {
+    document.getElementById('voice-note').textContent = '⚠ ' + e.message;
+    setStatus('voice', 'err', 'Error');
+  }
+  document.getElementById('voice-btn').disabled = false;
+}
+
+function toggleAudio() {
+  const a = document.getElementById('audio-el');
+  const btn = document.getElementById('play-btn');
+  if (a.paused) { a.play(); btn.textContent = '⏸'; } else { a.pause(); btn.textContent = '▶'; }
+}
+function downloadAudio() {
+  if (!audioData) return;
+  const a = document.createElement('a');
+  a.href = audioData;
+  a.download = 'zuvlix-voiceover.mp3';
+  a.click();
+  showToast('✓ Downloading voiceover...');
+}
+
+// ── AVATAR VIDEO ──
+async function generateAvatar() {
+  if (!currentScript) { showToast('⚠ Generate your script first'); return; }
+  setStatus('avatar', 'load', 'Generating video...');
+  document.getElementById('avatar-btn').disabled = true;
+  document.getElementById('avatar-status-text').textContent = '⏳ Sending to HeyGen... this takes 2–4 minutes.';
+  try {
+    const data = await api('avatar', { script: currentScript, avatar_id: selectedAvatarId });
+    videoId = data.video_id;
+    document.getElementById('avatar-status-text').textContent = '⏳ Video rendering... checking status every 15 seconds.';
+    pollAvatarStatus();
+  } catch (e) {
+    document.getElementById('avatar-status-text').textContent = '⚠ ' + e.message;
+    setStatus('avatar', 'err', 'Error');
+    document.getElementById('avatar-btn').disabled = false;
+  }
+}
+
+async function pollAvatarStatus() {
+  if (!videoId) return;
+  try {
+    const data = await api('avatar_status', { video_id: videoId });
+    if (data.status === 'completed' && data.video_url) {
+      document.getElementById('result-video').src = data.video_url;
+      document.getElementById('video-result').style.display = 'block';
+      document.getElementById('avatar-status-text').textContent = '✓ Video ready! Download below.';
+      setStatus('avatar', 'done', 'Video ready ✓');
+      document.getElementById('avatar-btn').disabled = false;
+      showToast('🎉 Your video is ready!');
+    } else if (data.status === 'failed') {
+      document.getElementById('avatar-status-text').textContent = '⚠ Video generation failed. Please try again.';
+      setStatus('avatar', 'err', 'Failed');
+      document.getElementById('avatar-btn').disabled = false;
+    } else {
+      setTimeout(pollAvatarStatus, 15000);
+    }
+  } catch (e) {
+    setTimeout(pollAvatarStatus, 15000);
+  }
+}
+
+function exportVideo(fmt) {
+  const v = document.getElementById('result-video');
+  if (v.src) {
+    const a = document.createElement('a');
+    a.href = v.src;
+    a.download = `zuvlix-video-${fmt}.mp4`;
+    a.click();
+    showToast(`✓ Downloading ${fmt} format...`);
+  } else {
+    showToast('⚠ Generate your video first');
+  }
+}
+
+// ── UTILS ──
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => showToast('✓ Copied!'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── SHOPIFY INTELLIGENCE ──
+let shopifyData = null;
+async function runShopifyIntel() {
+  const url = document.getElementById('shopify-url').value.trim();
+  const pname = document.getElementById('pname').value.trim();
+  const pdesc = document.getElementById('pdesc').value.trim();
+  if (!url && !pname) { showToast('⚠ Enter a URL or fill in product details first'); return; }
+  setStatus('shopify', 'load', 'Analysing...');
+  document.getElementById('shopify-btn').disabled = true;
+  document.getElementById('shopify-empty').style.display = 'none';
+  document.getElementById('shopify-results').style.display = 'none';
+  try {
+    const data = await api('shopify_intel', { url, product: pname || 'unknown', description: pdesc || 'unknown' });
+    shopifyData = data.intel;
+    const si = shopifyData;
+    document.getElementById('shopify-grid').innerHTML = `
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px">
+        <div style="font-family:var(--display);font-size:12px;font-weight:700;color:var(--accent2);margin-bottom:10px">🎯 Best Ad Angles</div>
+        ${si.best_angles.map(a=>`<div style="font-size:12.5px;color:rgba(244,241,235,0.75);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:7px"><span style="color:var(--accent2)">→</span>${a}</div>`).join('')}
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px">
+        <div style="font-family:var(--display);font-size:12px;font-weight:700;color:var(--green);margin-bottom:10px">👥 Target Audiences</div>
+        ${si.target_audiences.map(a=>`<div style="font-size:12.5px;color:rgba(244,241,235,0.75);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:7px"><span style="color:var(--green)">→</span>${a}</div>`).join('')}
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px">
+        <div style="font-family:var(--display);font-size:12px;font-weight:700;color:var(--gold);margin-bottom:10px">💢 Pain Points to Address</div>
+        ${si.pain_points.map(a=>`<div style="font-size:12.5px;color:rgba(244,241,235,0.75);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:7px"><span style="color:var(--gold)">→</span>${a}</div>`).join('')}
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px">
+        <div style="font-family:var(--display);font-size:12px;font-weight:700;color:#8b5cf6;margin-bottom:10px">❤️ Emotional Triggers</div>
+        ${si.emotional_triggers.map(a=>`<div style="font-size:12.5px;color:rgba(244,241,235,0.75);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:7px"><span style="color:#8b5cf6">→</span>${a}</div>`).join('')}
+      </div>`;
+    document.getElementById('shopify-hook-formula').textContent = si.killer_hook_formula;
+    document.getElementById('shopify-results').style.display = 'flex';
+    setStatus('shopify', 'done', 'Intel ready ✓');
+  } catch(e) {
+    showToast('Error: ' + e.message);
+    setStatus('shopify', 'err', 'Error');
+    document.getElementById('shopify-empty').style.display = 'block';
+  }
+  document.getElementById('shopify-btn').disabled = false;
+}
+
+function applyShopifyIntel() {
+  if (!shopifyData) return;
+  const si = shopifyData;
+  if (si.target_audiences[0]) {
+    const existing = document.getElementById('pdesc').value;
+    document.getElementById('pdesc').value = existing + '
+
+Target audience: ' + si.target_audiences[0] + '
+Key pain point: ' + (si.pain_points[0] || '') + '
+Best angle: ' + (si.best_angles[0] || '');
+  }
+  generateScript();
+  switchTab(document.querySelector('.app-tab'), 'script');
+  showToast('✓ Applied intelligence — generating script...');
+}
+
+// ── COMPETITOR INTELLIGENCE ──
+async function runCompetitorIntel() {
+  const compUrl = document.getElementById('comp-url').value.trim();
+  const pname = document.getElementById('pname').value.trim();
+  const pdesc = document.getElementById('pdesc').value.trim();
+  if (!compUrl) { showToast('⚠ Enter competitor brand or URL'); return; }
+  if (!pname) { showToast('⚠ Fill in your product name first'); return; }
+  setStatus('comp', 'load', 'Analysing...');
+  document.getElementById('comp-btn').disabled = true;
+  document.getElementById('comp-empty').style.display = 'none';
+  document.getElementById('comp-results').style.display = 'none';
+  try {
+    const data = await api('competitor_intel', { competitor_url: compUrl, product: pname, description: pdesc || 'great product' });
+    const ci = data.intel;
+    document.getElementById('comp-grid').innerHTML = `
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px">
+        <div style="font-family:var(--display);font-size:12px;font-weight:700;color:#8b5cf6;margin-bottom:10px">🎭 Their Likely Angles</div>
+        ${ci.likely_competitor_angles.map(a=>`<div style="font-size:12.5px;color:rgba(244,241,235,0.75);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:7px"><span style="color:#8b5cf6">→</span>${a}</div>`).join('')}
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px">
+        <div style="font-family:var(--display);font-size:12px;font-weight:700;color:var(--green);margin-bottom:10px">🎯 Gaps We Can Exploit</div>
+        ${ci.gaps_we_can_exploit.map(a=>`<div style="font-size:12.5px;color:rgba(244,241,235,0.75);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:7px"><span style="color:var(--green)">→</span>${a}</div>`).join('')}
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px">
+        <div style="font-family:var(--display);font-size:12px;font-weight:700;color:var(--accent2);margin-bottom:10px">⚡ Hooks That Beat Them</div>
+        ${ci.differentiation_hooks.map(a=>`<div style="font-size:12.5px;color:rgba(244,241,235,0.75);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:7px"><span style="color:var(--accent2)">→</span>${a}</div>`).join('')}
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px">
+        <div style="font-family:var(--display);font-size:12px;font-weight:700;color:#f87171;margin-bottom:10px">⚠️ Angles to Avoid</div>
+        ${ci.ad_angles_to_avoid.map(a=>`<div style="font-size:12.5px;color:rgba(244,241,235,0.75);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:7px"><span style="color:#f87171">→</span>${a}</div>`).join('')}
+      </div>`;
+    document.getElementById('comp-strategy').textContent = ci.best_counter_strategy;
+    document.getElementById('comp-results').style.display = 'flex';
+    setStatus('comp', 'done', 'Intel ready ✓');
+  } catch(e) {
+    showToast('Error: ' + e.message);
+    setStatus('comp', 'err', 'Error');
+    document.getElementById('comp-empty').style.display = 'block';
+  }
+  document.getElementById('comp-btn').disabled = false;
+}
+
+// ── CREATIVE LIBRARY ──
+let library = JSON.parse(localStorage.getItem('zuvlix_library') || '[]');
+function saveToLibrary() {
+  if (!currentScript) { showToast('⚠ Generate a script first'); return; }
+  const item = {
+    id: Date.now(),
+    product: document.getElementById('pname').value || 'Unknown product',
+    platform: S.platform,
+    style: S.style,
+    script: currentScript,
+    date: new Date().toLocaleDateString()
+  };
+  library.unshift(item);
+  if (library.length > 50) library.pop();
+  localStorage.setItem('zuvlix_library', JSON.stringify(library));
+  renderLibrary();
+  showToast('✓ Saved to library!');
+}
+function renderLibrary() {
+  const el = document.getElementById('library-grid');
+  const empty = document.getElementById('library-empty');
+  if (!library.length) { el.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  el.innerHTML = library.map(item => `
+    <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div>
+          <div style="font-family:var(--display);font-size:13px;font-weight:700">${item.product}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">${item.style} · ${item.platform} · ${item.date}</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="act-btn" onclick="loadFromLibrary(${item.id})">Load</button>
+          <button class="act-btn" onclick="deleteFromLibrary(${item.id})">✕</button>
+        </div>
+      </div>
+      <div style="font-size:12.5px;color:rgba(244,241,235,0.6);line-height:1.6;max-height:80px;overflow:hidden">${item.script.replace(/
+/g,'<br>').slice(0,200)}...</div>
+    </div>`).join('');
+}
+function loadFromLibrary(id) {
+  const item = library.find(i => i.id === id);
+  if (!item) return;
+  currentScript = item.script;
+  document.getElementById('script-out').innerHTML = currentScript.replace(/
+/g,'<br>');
+  document.getElementById('script-edit').value = currentScript;
+  ['regen-btn','edit-btn','copy-script-btn','score-btn'].forEach(i => document.getElementById(i).disabled = false);
+  switchTab(document.querySelector('.app-tab'), 'script');
+  showToast('✓ Script loaded!');
+}
+function deleteFromLibrary(id) {
+  library = library.filter(i => i.id !== id);
+  localStorage.setItem('zuvlix_library', JSON.stringify(library));
+  renderLibrary();
+  showToast('Deleted from library');
+}
+renderLibrary();
+
+</script>
+</body>
+</html>

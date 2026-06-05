@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zuvlix — AI UGC Video Creator for Brands & Agencies</title>
+<meta name="description" content="Turn any product into an authentic UGC video ad using AI. Script writing, voice generation, and avatar video — in one platform.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#08080a;--dark:#0f0f12;--panel:#161619;
+  --off-white:#f4f1eb;--accent:#ff5c2b;--accent2:#ff8c5a;
+  --gold:#f5c842;--green:#22c55e;--muted:#7a7872;
+  --border:rgba(255,255,255,0.07);
+  --serif:'Instrument Serif',Georgia,serif;
+  --display:'Syne',sans-serif;--sans:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--off-white);font-family:var(--sans);font-size:16px;line-height:1.6;overflow-x:hidden}
+@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-36px)}}
+@keyframes float2{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+@keyframes blink{0%,100%{border-color:var(--accent)}50%{border-color:transparent}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(255,92,43,0.6)}100%{box-shadow:0 0 0 10px rgba(255,92,43,0)}}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;transition:background 0.4s}
+nav.scrolled{background:rgba(8,8,10,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:var(--display);font-size:22px;font-weight:800;color:var(--off-white);text-decoration:none;letter-spacing:-0.5px}
+.nav-logo span{color:var(--accent)}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{color:rgba(244,241,235,0.5);text-decoration:none;font-size:14px;font-weight:500;transition:color 0.2s}
+.nav-links a:hover{color:var(--off-white)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-signin{color:rgba(244,241,235,0.6);text-decoration:none;font-size:14px;font-weight:500;padding:8px 16px}
+.nav-cta{background:var(--accent);color:white;padding:10px 22px;border-radius:100px;text-decoration:none;font-size:13px;font-weight:700;font-family:var(--display);transition:background 0.2s,transform 0.15s,box-shadow 0.2s}
+.nav-cta:hover{background:#e04820;transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,92,43,0.3)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:140px 24px 80px;position:relative;overflow:hidden}
+.orb1{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(255,92,43,0.14),transparent 70%);top:-280px;left:50%;transform:translateX(-50%);pointer-events:none;filter:blur(70px);animation:float 9s ease-in-out infinite}
+.orb2{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(245,200,66,0.07),transparent 70%);bottom:-120px;right:-120px;pointer-events:none;filter:blur(70px)}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,92,43,0.1);border:1px solid rgba(255,92,43,0.3);border-radius:100px;padding:7px 18px;font-size:11px;font-weight:700;color:var(--accent2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:32px;position:relative;z-index:1;animation:fadeUp 0.6s ease both}
+.bdot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:ping 1.5s infinite}
+.hero h1{font-family:var(--display);font-size:clamp(48px,7vw,90px);font-weight:800;line-height:0.95;letter-spacing:-3px;max-width:900px;position:relative;z-index:1;animation:fadeUp 0.7s 0.1s ease both}
+.hero h1 .it{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent);display:block;letter-spacing:-2px}
+#tw{display:inline-block;border-right:3px solid var(--accent);padding-right:4px;animation:blink 0.8s step-end infinite}
+.hero-sub{margin-top:24px;font-size:18px;color:rgba(244,241,235,0.55);max-width:500px;line-height:1.7;position:relative;z-index:1;animation:fadeUp 0.7s 0.2s ease both}
+.hero-sub strong{color:rgba(244,241,235,0.8);font-weight:600}
+.hero-form{display:flex;gap:10px;margin-top:36px;position:relative;z-index:1;animation:fadeUp 0.7s 0.3s ease both;flex-wrap:wrap;justify-content:center}
+.hero-form input{padding:15px 22px;border-radius:100px;border:1.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);font-family:var(--sans);font-size:15px;color:var(--off-white);width:290px;outline:none;transition:border-color 0.2s,box-shadow 0.2s}
+.hero-form input::placeholder{color:rgba(244,241,235,0.3)}
+.hero-form input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,92,43,0.12)}
+.btn-accent{padding:15px 30px;border-radius:100px;background:var(--accent);color:white;border:none;font-family:var(--display);font-size:14px;font-weight:700;cursor:pointer;transition:background 0.2s,transform 0.15s,box-shadow 0.2s;white-space:nowrap}
+.btn-accent:hover{background:#e04820;transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,92,43,0.35)}
+.hero-note{font-size:12px;color:var(--muted);margin-top:12px;position:relative;z-index:1;animation:fadeUp 0.7s 0.4s ease both}
+.hero-note span{color:rgba(244,241,235,0.18);margin:0 8px}
+.smsg{display:none;align-items:center;gap:10px;font-size:14px;font-weight:600;border-radius:100px;padding:12px 24px;margin-top:16px}
+.smsg.show{display:flex}
+
+/* BETA BANNER */
+.beta-banner{margin-top:32px;position:relative;z-index:1;animation:fadeUp 0.7s 0.45s ease both}
+.beta-inner{display:inline-flex;align-items:center;gap:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 20px}
+.beta-ico{font-size:18px}
+.beta-text{font-size:13px;color:rgba(244,241,235,0.65);text-align:left}
+.beta-text strong{color:var(--off-white);font-weight:600}
+
+/* LIVE DEMO */
+.demo-section{margin-top:64px;width:100%;max-width:900px;position:relative;z-index:1;animation:fadeUp 0.8s 0.5s ease both}
+.demo-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:18px;font-weight:600}
+.demo-window{background:var(--panel);border:1px solid var(--border);border-radius:22px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,0.5),0 0 80px rgba(255,92,43,0.05)}
+.demo-titlebar{display:flex;align-items:center;padding:12px 18px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);gap:8px}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot:nth-child(1){background:#ff5f56}.dot:nth-child(2){background:#febc2e}.dot:nth-child(3){background:#27c840}
+.demo-url{flex:1;margin:0 12px;background:rgba(255,255,255,0.05);border-radius:6px;padding:5px 12px;font-size:11px;color:var(--muted);font-family:monospace;text-align:center}
+.demo-grid{display:grid;grid-template-columns:1fr 1fr}
+.demo-left{padding:24px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:14px}
+.demo-field-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:5px}
+.demo-input{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:12.5px;color:var(--off-white);font-family:var(--sans);outline:none;width:100%;transition:border-color 0.2s}
+.demo-input:focus{border-color:var(--accent)}
+.demo-input::placeholder{color:rgba(244,241,235,0.22)}
+.demo-chips{display:flex;gap:5px;flex-wrap:wrap}
+.demo-chip{background:rgba(255,92,43,0.08);border:1px solid rgba(255,92,43,0.18);color:var(--accent2);border-radius:100px;padding:4px 12px;font-size:11px;cursor:pointer;transition:all 0.2s;user-select:none}
+.demo-chip.on,.demo-chip:hover{background:var(--accent);color:white;border-color:var(--accent)}
+.demo-generate-btn{background:var(--accent);color:white;border:none;border-radius:9px;padding:11px;font-family:var(--display);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:7px}
+.demo-generate-btn:hover:not(:disabled){background:#e04820;transform:scale(1.01)}
+.demo-generate-btn:disabled{opacity:0.55;cursor:not-allowed}
+.demo-right{padding:24px;display:flex;flex-direction:column;gap:12px}
+.demo-output{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:12.5px;color:rgba(244,241,235,0.72);line-height:1.75;min-height:150px;transition:border-color 0.3s}
+.demo-output.active{border-color:rgba(255,92,43,0.2)}
+.tcursor{display:inline-block;width:2px;height:13px;background:var(--accent);animation:blink 0.8s infinite;vertical-align:middle;margin-left:1px}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite}
+.tool-row{display:flex;gap:7px;flex-wrap:wrap}
+.tool-pill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:100px;padding:4px 11px;font-size:11px;color:rgba(244,241,235,0.5)}
+.gdot{width:5px;height:5px;border-radius:50%;background:var(--green)}
+.demo-app-link{background:rgba(255,92,43,0.08);border:1px solid rgba(255,92,43,0.18);border-radius:10px;padding:11px 14px;font-size:12px;color:var(--accent2);text-align:center}
+.demo-app-link a{color:var(--accent);font-weight:700;text-decoration:none}
+.demo-app-link a:hover{text-decoration:underline}
+
+/* TICKER */
+.ticker-wrap{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:28px 0;overflow:hidden;background:rgba(255,255,255,0.01)}
+.ticker-lbl{text-align:center;font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+.ticker{display:flex;gap:56px;width:max-content;animation:tick 24s linear infinite}
+.ti{font-family:var(--display);font-size:15px;font-weight:700;color:rgba(244,241,235,0.16);white-space:nowrap}
+
+/* SECTIONS */
+.s{padding:96px 48px;max-width:1140px;margin:0 auto}
+.sec-lbl{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+.sec-lbl::before{content:'';width:16px;height:1.5px;background:var(--accent)}
+.sec-title{font-family:var(--display);font-size:clamp(32px,4vw,52px);font-weight:800;line-height:1.0;letter-spacing:-2px;max-width:580px}
+.sec-title em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.d1{transition-delay:0.1s}.d2{transition-delay:0.2s}.d3{transition-delay:0.3s}.d4{transition-delay:0.4s}
+
+/* HOW IT WORKS */
+.how-bg{background:rgba(255,255,255,0.02);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:52px;background:var(--border);border-radius:18px;overflow:hidden}
+.step{background:var(--dark);padding:40px 32px;position:relative;transition:background 0.3s}
+.step::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transform:scaleX(0);transform-origin:left;transition:transform 0.4s}
+.step:hover{background:#1a1a1e}
+.step:hover::after{transform:scaleX(1)}
+.step-n{font-family:var(--display);font-size:60px;font-weight:800;color:rgba(255,255,255,0.035);line-height:1;margin-bottom:20px;letter-spacing:-3px}
+.step-ico{font-size:30px;margin-bottom:16px}
+.step h3{font-family:var(--display);font-size:17px;font-weight:700;margin-bottom:8px}
+.step p{font-size:13.5px;color:var(--muted);line-height:1.7}
+.step-time{display:inline-flex;align-items:center;gap:5px;margin-top:14px;background:rgba(255,92,43,0.08);border:1px solid rgba(255,92,43,0.15);border-radius:100px;padding:3px 11px;font-size:11px;color:var(--accent2);font-weight:600}
+
+/* WHAT YOU ACTUALLY GET */
+.honest-bg{background:var(--dark);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.honest-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:48px}
+.honest-card{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:28px}
+.honest-card.works{border-color:rgba(34,197,94,0.2);background:rgba(34,197,94,0.03)}
+.honest-card.coming{border-color:rgba(255,92,43,0.15);background:rgba(255,92,43,0.02)}
+.honest-card-head{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.honest-ico{font-size:20px}
+.honest-title{font-family:var(--display);font-size:15px;font-weight:700}
+.honest-badge{margin-left:auto;border-radius:100px;padding:3px 10px;font-size:10px;font-weight:700;font-family:var(--display)}
+.badge-works{background:rgba(34,197,94,0.12);color:var(--green)}
+.badge-soon{background:rgba(255,92,43,0.1);color:var(--accent2)}
+.honest-list{display:flex;flex-direction:column;gap:8px}
+.honest-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:rgba(244,241,235,0.72);line-height:1.5}
+.honest-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px}
+
+/* AVATARS */
+.av-bg{background:var(--black);border-top:1px solid var(--border)}
+.av-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:44px}
+.av-item{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px 10px;text-align:center;cursor:pointer;transition:all 0.3s}
+.av-item:hover,.av-item.on{border-color:rgba(255,92,43,0.3);transform:translateY(-4px)}
+.av-item.on{background:rgba(255,92,43,0.06)}
+.av-face{font-size:36px;margin-bottom:8px;display:block}
+.av-name{font-family:var(--display);font-size:11px;font-weight:700;margin-bottom:2px}
+.av-tag{display:inline-block;background:rgba(255,255,255,0.06);border-radius:100px;padding:2px 7px;font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.av-item.on .av-tag{background:rgba(255,92,43,0.12);color:var(--accent2)}
+.av-detail{margin-top:32px;background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:28px;display:grid;grid-template-columns:120px 1fr;gap:28px;align-items:center;transition:all 0.3s}
+.av-detail-face{font-size:64px;text-align:center;animation:float2 4s ease-in-out infinite}
+.av-detail-info h3{font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:-1px;margin-bottom:6px}
+.av-detail-info p{font-size:13.5px;color:var(--muted);line-height:1.7;margin-bottom:14px}
+.av-tags{display:flex;gap:7px;flex-wrap:wrap}
+.av-tag-pill{background:rgba(255,92,43,0.1);border:1px solid rgba(255,92,43,0.2);color:var(--accent2);border-radius:100px;padding:3px 12px;font-size:11px}
+.av-use-btn{margin-top:14px;background:var(--accent);color:white;border:none;border-radius:10px;padding:10px 20px;font-family:var(--display);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s}
+.av-use-btn:hover{background:#e04820;transform:translateY(-1px)}
+
+/* TECH STACK */
+.tech-bg{background:var(--dark);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.tech-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:52px}
+.tech-step{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:28px;text-align:center;transition:all 0.3s;position:relative}
+.tech-step:hover{border-color:rgba(255,92,43,0.25);transform:translateY(-4px)}
+.tech-step-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:white;border-radius:100px;padding:2px 12px;font-size:10px;font-weight:700;font-family:var(--display);white-space:nowrap}
+.tech-ico-box{width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px}
+.tech-step h4{font-family:var(--display);font-size:14px;font-weight:700;margin-bottom:6px}
+.tech-step p{font-size:12.5px;color:var(--muted);line-height:1.6}
+.tech-brand{display:inline-block;margin-top:10px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:10px;font-weight:700;color:rgba(244,241,235,0.4);letter-spacing:0.5px}
+
+/* MOAT — 3 directions */
+.moat-bg{background:var(--black);border-top:1px solid var(--border)}
+.moat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:52px}
+.moat-card{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:32px;transition:all 0.3s;position:relative;overflow:hidden}
+.moat-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+.moat-card.ad::before{background:radial-gradient(ellipse at top left,rgba(139,92,246,0.08),transparent 60%)}
+.moat-card.shopify::before{background:radial-gradient(ellipse at top left,rgba(34,197,94,0.08),transparent 60%)}
+.moat-card.perf::before{background:radial-gradient(ellipse at top left,rgba(245,200,66,0.08),transparent 60%)}
+.moat-card:hover{transform:translateY(-4px)}
+.moat-card:hover::before{opacity:1}
+.moat-card.ad:hover{border-color:rgba(139,92,246,0.25)}
+.moat-card.shopify:hover{border-color:rgba(34,197,94,0.25)}
+.moat-card.perf:hover{border-color:rgba(245,200,66,0.25)}
+.moat-ico{font-size:32px;margin-bottom:18px;display:block}
+.moat-card h3{font-family:var(--display);font-size:18px;font-weight:700;margin-bottom:10px}
+.moat-card p{font-size:13.5px;color:var(--muted);line-height:1.7;margin-bottom:16px}
+.moat-list{display:flex;flex-direction:column;gap:7px}
+.moat-item{font-size:13px;color:rgba(244,241,235,0.65);display:flex;gap:7px;align-items:flex-start;line-height:1.5}
+.moat-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.moat-dot.ad{background:#8b5cf6}
+.moat-dot.shopify{background:var(--green)}
+.moat-dot.perf{background:var(--gold)}
+
+/* FEATURES */
+.feat-bg{background:var(--dark);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:48px}
+.fc{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:32px;transition:all 0.3s;position:relative;overflow:hidden}
+.fc::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top left,rgba(255,92,43,0.06),transparent 60%);opacity:0;transition:opacity 0.3s}
+.fc:hover{border-color:rgba(255,92,43,0.22);transform:translateY(-3px)}
+.fc:hover::before{opacity:1}
+.fc.wide{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.fe{font-size:32px;margin-bottom:18px;display:block}
+.fc h3{font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:-0.3px;margin-bottom:10px}
+.fc p{font-size:13.5px;color:var(--muted);line-height:1.75}
+.ftags{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}
+.ftag{background:rgba(255,92,43,0.1);border:1px solid rgba(255,92,43,0.18);color:var(--accent2);border-radius:100px;padding:3px 12px;font-size:11px}
+.fvis{background:linear-gradient(135deg,rgba(255,92,43,0.07),rgba(245,200,66,0.04));border:1px solid var(--border);border-radius:14px;height:200px;display:flex;align-items:center;justify-content:center;font-size:52px}
+
+/* COMPARE */
+.cmp-bg{background:var(--black);border-top:1px solid var(--border)}
+.ctable{margin-top:48px;border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.crow{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;border-bottom:1px solid var(--border);transition:background 0.2s}
+.crow:last-child{border-bottom:none}
+.crow:not(.ch):hover{background:rgba(255,255,255,0.018)}
+.cc{padding:16px 22px;font-size:13.5px;display:flex;align-items:center;gap:7px}
+.ch .cc{font-family:var(--display);font-size:12px;font-weight:700;background:rgba(255,255,255,0.025);color:var(--muted)}
+.ch .cc.hi{background:rgba(255,92,43,0.08);color:var(--accent)}
+.cc.hi{background:rgba(255,92,43,0.03)}
+.ck{color:#22c55e}.cx{color:rgba(255,255,255,0.16)}
+.cc:first-child{color:rgba(244,241,235,0.68)}
+
+/* USE CASES */
+.uc-bg{background:var(--dark);border-top:1px solid var(--border)}
+.uc-tabs{display:flex;gap:2px;background:rgba(255,255,255,0.04);border-radius:12px;padding:4px;margin-top:44px;width:fit-content;flex-wrap:wrap}
+.uc-tab{padding:9px 18px;border-radius:9px;font-size:13px;font-weight:600;font-family:var(--display);cursor:pointer;transition:all 0.2s;color:var(--muted);display:flex;align-items:center;gap:6px}
+.uc-tab.on{background:var(--panel);color:var(--off-white)}
+.uc-panel{display:none;margin-top:28px;grid-template-columns:1fr 1fr;gap:28px;align-items:center}
+.uc-panel.show{display:grid}
+.uc-text h3{font-family:var(--display);font-size:26px;font-weight:800;letter-spacing:-1px;margin-bottom:14px}
+.uc-text p{font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:20px}
+.uc-list{display:flex;flex-direction:column;gap:10px}
+.uc-item{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:rgba(244,241,235,0.72)}
+.uc-check{width:20px;height:20px;border-radius:50%;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.22);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:1px;color:var(--green)}
+.uc-visual{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:28px;text-align:center}
+.uc-vis-ico{font-size:56px;margin-bottom:14px;display:block}
+.uc-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.uc-stat{background:rgba(255,255,255,0.04);border-radius:10px;padding:12px;text-align:center}
+.uc-stat-n{font-family:var(--display);font-size:20px;font-weight:800;color:var(--accent);letter-spacing:-1px}
+.uc-stat-l{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* PRICING */
+.price-bg{background:var(--black);border-top:1px solid var(--border)}
+.ptoggle{display:flex;align-items:center;gap:12px;margin-top:28px;font-size:14px;color:var(--muted)}
+.tsw{width:42px;height:23px;background:rgba(255,255,255,0.1);border-radius:100px;position:relative;cursor:pointer;transition:background 0.3s;border:1px solid var(--border)}
+.tsw.on{background:var(--accent)}
+.tk{width:17px;height:17px;background:white;border-radius:50%;position:absolute;top:2px;left:3px;transition:transform 0.3s;pointer-events:none}
+.tsw.on .tk{transform:translateX(19px)}
+.sbadge{background:rgba(245,200,66,0.15);color:var(--gold);border-radius:100px;padding:2px 9px;font-size:11px;font-weight:700;margin-left:4px}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px}
+.plan{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:22px;padding:32px;transition:all 0.3s}
+.plan:hover{border-color:rgba(255,255,255,0.14);transform:translateY(-4px)}
+.plan.feat{background:var(--accent);border-color:var(--accent)}
+.plan.feat:hover{transform:translateY(-6px);box-shadow:0 28px 56px rgba(255,92,43,0.28)}
+.pbadge{display:inline-block;background:rgba(255,255,255,0.22);color:white;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;padding:3px 11px;border-radius:100px;margin-bottom:18px}
+.pname{font-family:var(--display);font-size:21px;font-weight:700;color:white}
+.pprice{margin:18px 0 4px;line-height:1}
+.pprice .n{font-family:var(--display);font-size:48px;font-weight:800;color:white;letter-spacing:-3px}
+.pprice .per{font-size:14px;color:rgba(255,255,255,0.55);margin-left:3px}
+.pdesc{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:24px}
+.plan.feat .pdesc{color:rgba(255,255,255,0.72)}
+.plist{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:28px}
+.plist li{font-size:13.5px;color:rgba(255,255,255,0.72);display:flex;gap:9px;align-items:flex-start;line-height:1.5}
+.plist li::before{content:'✓';color:rgba(255,255,255,0.38);font-weight:800;flex-shrink:0}
+.plan.feat .plist li{color:rgba(255,255,255,0.9)}
+.plan.feat .plist li::before{color:rgba(255,255,255,0.75)}
+.pbtn{display:block;text-align:center;width:100%;padding:13px;border-radius:100px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.78);font-family:var(--display);font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid rgba(255,255,255,0.12);transition:background 0.2s;cursor:pointer}
+.pbtn:hover{background:rgba(255,255,255,0.15)}
+.plan.feat .pbtn{background:white;color:var(--accent);border-color:white}
+.plan.feat .pbtn:hover{background:var(--off-white)}
+
+/* GUARANTEE */
+.guar-bg{background:var(--dark);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.guar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px}
+.gc{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:28px;text-align:center;transition:all 0.3s}
+.gc:hover{border-color:rgba(255,92,43,0.18);transform:translateY(-3px)}
+.gc-ico{font-size:36px;margin-bottom:14px;display:block}
+.gc h3{font-family:var(--display);font-size:17px;font-weight:700;margin-bottom:8px}
+.gc p{font-size:13px;color:var(--muted);line-height:1.7}
+.guar-banner{margin-top:20px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.18);border-radius:14px;padding:22px 28px;display:flex;align-items:center;gap:18px}
+.gb-ico{font-size:36px;flex-shrink:0}
+.gb-text h4{font-family:var(--display);font-size:17px;font-weight:700;margin-bottom:5px}
+.gb-text p{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+/* TESTIMONIALS */
+.testi-bg{background:var(--black);border-top:1px solid var(--border)}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px}
+.tc{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:28px;transition:all 0.3s}
+.tc:hover{border-color:rgba(255,255,255,0.1);transform:translateY(-3px)}
+.tstars{color:var(--gold);font-size:13px;letter-spacing:2px;margin-bottom:16px}
+.tc p{font-family:var(--serif);font-style:italic;font-size:15.5px;line-height:1.7;color:rgba(244,241,235,0.85)}
+.tau{margin-top:20px;display:flex;align-items:center;gap:10px}
+.tav{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;color:white;font-family:var(--display);font-weight:800;font-size:14px;flex-shrink:0}
+.tname{font-family:var(--display);font-size:13.5px;font-weight:700}
+.trole{font-size:12px;color:var(--muted);margin-top:1px}
+.testi-note{margin-top:20px;text-align:center;font-size:12px;color:var(--muted);font-style:italic}
+
+/* FOUNDER */
+.founder-bg{background:var(--dark);border-top:1px solid var(--border)}
+.founder-inner{display:grid;grid-template-columns:280px 1fr;gap:56px;align-items:start;margin-top:48px}
+.founder-card{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:28px;text-align:center}
+.founder-avatar-ring{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));padding:3px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+.founder-avatar-inner{width:100%;height:100%;border-radius:50%;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:48px}
+.founder-name{font-family:var(--display);font-size:18px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.founder-role{font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:16px}
+.founder-links{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.founder-link{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;color:rgba(244,241,235,0.65);text-decoration:none;transition:all 0.2s}
+.founder-link:hover{border-color:rgba(255,92,43,0.25);color:var(--accent2)}
+.founder-text h3{font-family:var(--display);font-size:26px;font-weight:800;letter-spacing:-1px;margin-bottom:6px}
+.founder-text .f-role{font-size:13px;color:var(--accent2);font-weight:600;margin-bottom:18px}
+.founder-text p{font-size:14px;color:rgba(244,241,235,0.68);line-height:1.8;margin-bottom:14px}
+.founder-sig{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--off-white);margin-top:18px}
+.founder-creds{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.f-cred{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--muted)}
+
+/* AFFILIATE */
+.aff-bg{background:var(--black);border-top:1px solid var(--border)}
+.aff-inner{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;margin-top:48px}
+.aff-steps{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:28px;display:flex;flex-direction:column;gap:16px}
+.aff-step{display:flex;gap:14px;align-items:flex-start}
+.aff-n{width:30px;height:30px;border-radius:9px;background:rgba(255,92,43,0.12);border:1px solid rgba(255,92,43,0.2);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:13px;font-weight:700;color:var(--accent);flex-shrink:0}
+.aff-step-text h5{font-family:var(--display);font-size:13.5px;font-weight:700;margin-bottom:3px}
+.aff-step-text p{font-size:12.5px;color:var(--muted)}
+.aff-earn{background:rgba(255,92,43,0.07);border:1px solid rgba(255,92,43,0.18);border-radius:14px;padding:22px;text-align:center;margin-top:16px}
+.aff-earn-n{font-family:var(--display);font-size:44px;font-weight:800;color:var(--accent);letter-spacing:-2px}
+.aff-earn-l{font-size:13px;color:var(--muted);margin-top:4px}
+.aff-text h3{font-family:var(--display);font-size:26px;font-weight:800;letter-spacing:-1px;margin-bottom:14px}
+.aff-text p{font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:20px}
+.aff-items{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.aff-item{display:flex;align-items:center;gap:10px;font-size:13.5px;color:rgba(244,241,235,0.72)}
+.aff-ck{width:20px;height:20px;border-radius:50%;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.22);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;color:var(--green)}
+.btn-outline{display:inline-block;background:transparent;border:1.5px solid rgba(255,92,43,0.4);color:var(--accent2);padding:13px 26px;border-radius:100px;font-family:var(--display);font-size:14px;font-weight:700;text-decoration:none;transition:all 0.2s;cursor:pointer}
+.btn-outline:hover{background:rgba(255,92,43,0.1);border-color:var(--accent);color:var(--accent)}
+
+/* FAQ */
+.faq-bg{background:var(--dark);border-top:1px solid var(--border)}
+.flist{margin-top:48px;display:flex;flex-direction:column;gap:4px}
+.fi{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.3s}
+.fi.open{border-color:rgba(255,92,43,0.25)}
+.fq{padding:20px 26px;font-family:var(--display);font-size:15px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;transition:color 0.2s;gap:14px}
+.fq:hover{color:var(--accent2)}
+.farr{font-size:20px;color:var(--muted);transition:transform 0.3s,color 0.2s;flex-shrink:0}
+.fi.open .farr{transform:rotate(45deg);color:var(--accent)}
+.fa{max-height:0;overflow:hidden;font-size:13.5px;color:var(--muted);line-height:1.75;transition:max-height 0.4s ease}
+.fai{padding:0 26px 22px}
+.fi.open .fa{max-height:300px}
+
+/* INTEGRATIONS */
+.int-bg{background:var(--black);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.int-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:44px;justify-content:center}
+.int-pill{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px 18px;transition:all 0.3s}
+.int-pill:hover{border-color:rgba(255,92,43,0.22);transform:translateY(-2px)}
+.int-ico{font-size:22px}
+.int-name{font-family:var(--display);font-size:13px;font-weight:700}
+.int-tag{font-size:10px;color:var(--muted);margin-top:1px}
+
+/* CTA */
+.cta-out{background:var(--accent);position:relative;overflow:hidden}
+.cta-in{max-width:1140px;margin:0 auto;padding:96px 48px;text-align:center}
+.cta-in h2{font-family:var(--display);font-size:clamp(34px,5vw,64px);font-weight:800;letter-spacing:-2.5px;line-height:0.95;color:white;margin-bottom:18px}
+.cta-in h2 em{font-family:var(--serif);font-style:italic;font-weight:400}
+.cta-in p{color:rgba(255,255,255,0.75);font-size:16px;max-width:400px;margin:0 auto 36px;line-height:1.65}
+.cform{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.cform input{padding:15px 22px;border-radius:100px;border:1.5px solid rgba(255,255,255,0.28);background:rgba(255,255,255,0.14);font-family:var(--sans);font-size:15px;color:white;width:290px;outline:none;transition:border-color 0.2s}
+.cform input::placeholder{color:rgba(255,255,255,0.52)}
+.cform input:focus{border-color:white;background:rgba(255,255,255,0.2)}
+.btn-white{padding:15px 30px;border-radius:100px;background:white;color:var(--accent);border:none;font-family:var(--display);font-size:14px;font-weight:800;cursor:pointer;transition:transform 0.15s,box-shadow 0.2s;white-space:nowrap}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,0.18)}
+.risk-row{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:20px;flex-wrap:wrap}
+.risk-item{display:flex;align-items:center;gap:5px;font-size:12.5px;color:rgba(255,255,255,0.68)}
+
+/* FOOTER */
+.footer-main{background:var(--black);border-top:1px solid var(--border);padding:60px 48px 28px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:44px;max-width:1140px;margin:0 auto}
+.footer-brand .flogo{font-family:var(--display);font-size:20px;font-weight:800;display:block;margin-bottom:10px}
+.footer-brand .flogo span{color:var(--accent)}
+.footer-brand p{font-size:13px;color:var(--muted);line-height:1.7;max-width:240px}
+.footer-brand .f-contact{margin-top:16px;font-size:12px;color:var(--muted);line-height:1.8}
+.footer-col h5{font-family:var(--display);font-size:12px;font-weight:700;color:rgba(244,241,235,0.45);letter-spacing:0.5px;margin-bottom:14px;text-transform:uppercase}
+.footer-col a{display:block;font-size:13.5px;color:var(--muted);text-decoration:none;margin-bottom:8px;transition:color 0.2s}
+.footer-col a:hover{color:var(--off-white)}
+.footer-bottom{max-width:1140px;margin:36px auto 0;padding-top:22px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+.footer-bottom p{font-size:12.5px;color:var(--muted)}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:#22c55e;color:white;padding:10px 18px;border-radius:9px;font-size:13px;font-weight:700;font-family:var(--display);transform:translateY(80px);opacity:0;transition:all 0.3s;z-index:9999}
+.toast.show{transform:translateY(0);opacity:1}
+
+@media(max-width:1024px){
+  .av-grid{grid-template-columns:repeat(4,1fr)}
+  .tech-flow{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:28px}
+}
+@media(max-width:900px){
+  nav{padding:14px 20px}.nav-links{display:none}
+  .s{padding:64px 20px}
+  .steps,.honest-grid,.fgrid,.moat-grid,.pgrid,.guar-grid,.tgrid{grid-template-columns:1fr}
+  .fc.wide,.uc-panel.show,.founder-inner,.aff-inner{grid-template-columns:1fr}
+  .demo-grid{grid-template-columns:1fr}.demo-left{border-right:none;border-bottom:1px solid var(--border)}
+  .crow{grid-template-columns:1.5fr 1fr 1fr}.crow .cc:nth-child(4){display:none}
+  .av-grid{grid-template-columns:repeat(3,1fr)}
+  .av-detail{grid-template-columns:1fr}
+  .cta-in{padding:64px 20px}
+  .footer-main{padding:44px 20px 20px}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{padding:14px 20px;flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="#" class="nav-logo">Zuv<span>lix</span></a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#avatars">Avatars</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="app.html" class="nav-signin">Sign in</a>
+    <a href="https://tally.so/r/Y5kAyv" target="_blank" class="nav-cta">Join beta →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="orb1"></div><div class="orb2"></div>
+  <div class="hero-badge"><span class="bdot"></span>Now in private beta — limited spots</div>
+  <h1><span id="tw">TikTok</span> ads,<br><span class="it">written by AI</span></h1>
+  <p class="hero-sub">Zuvlix turns your product into an authentic UGC video ad. <strong>Script, voice, avatar</strong> — all in one platform. No actors. No waiting.</p>
+
+  <div class="beta-banner">
+    <div class="beta-inner">
+      <span class="beta-ico">🚧</span>
+      <div class="beta-text"><strong>Honest beta disclosure</strong> — Script generation works today. Voice &amp; avatar video coming soon. Join now and get free access when it launches.</div>
+    </div>
+  </div>
+
+  <div class="hero-form">
+    <input type="email" id="hero-email" placeholder="Enter your email" autocomplete="email">
+    <button class="btn-accent" onclick="signup('hero')">Get beta access →</button>
+  </div>
+  <div class="smsg" id="hero-ok" style="background:rgba(255,92,43,0.18);color:var(--accent2);">✓ You're in! We'll email you with access details.</div>
+  <p class="hero-note">Free to join <span>·</span> No credit card <span>·</span> Cancel anytime</p>
+
+  <div class="demo-section">
+    <p class="demo-label">— Live demo — real Claude AI, right now —</p>
+    <div class="demo-window">
+      <div class="demo-titlebar">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="demo-url">app.zuvlix.com/create</div>
+      </div>
+      <div class="demo-grid">
+        <div class="demo-left">
+          <div>
+            <div class="demo-field-label">Product name</div>
+            <input type="text" class="demo-input" id="dp" value="AquaGlow Face Serum" placeholder="e.g. AquaGlow Face Serum">
+          </div>
+          <div>
+            <div class="demo-field-label">Description</div>
+            <textarea class="demo-input" id="dd" rows="3" style="resize:none">Lightweight vitamin C serum. Fades dark spots and gives glowing skin in 2 weeks.</textarea>
+          </div>
+          <div>
+            <div class="demo-field-label">Style</div>
+            <div class="demo-chips">
+              <div class="demo-chip on" onclick="setDemoStyle(this,'testimonial')">Testimonial</div>
+              <div class="demo-chip" onclick="setDemoStyle(this,'unboxing')">Unboxing</div>
+              <div class="demo-chip" onclick="setDemoStyle(this,'tutorial')">Tutorial</div>
+              <div class="demo-chip" onclick="setDemoStyle(this,'problem')">Problem/Solution</div>
+            </div>
+          </div>
+          <div>
+            <div class="demo-field-label">Platform</div>
+            <div class="demo-chips">
+              <div class="demo-chip on" onclick="setDemoPlat(this,'TikTok')">TikTok</div>
+              <div class="demo-chip" onclick="setDemoPlat(this,'Reels')">Reels</div>
+              <div class="demo-chip" onclick="setDemoPlat(this,'YouTube')">YouTube</div>
+              <div class="demo-chip" onclick="setDemoPlat(this,'Meta Ads')">Meta Ads</div>
+            </div>
+          </div>
+          <button class="demo-generate-btn" id="demo-gen-btn" onclick="runDemo()">
+            <span id="demo-ico">✨</span><span id="demo-txt">Generate Real Script</span>
+          </button>
+        </div>
+        <div class="demo-right">
+          <div class="demo-field-label">AI-generated script</div>
+          <div class="demo-output" id="demo-out"><span style="color:rgba(244,241,235,0.2)">Click "Generate Real Script" — Claude AI will write a unique, authentic UGC script for your product right now...</span></div>
+          <div class="tool-row">
+            <div class="tool-pill"><span class="gdot"></span> Claude AI</div>
+            <div class="tool-pill"><span class="gdot"></span> ElevenLabs</div>
+            <div class="tool-pill"><span class="gdot"></span> HeyGen</div>
+          </div>
+          <div class="demo-app-link">Ready to create the full video? <a href="app.html">Open the app →</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <p class="ticker-lbl">Early beta testers from</p>
+  <div class="ticker">
+    <span class="ti">Shopify brands</span><span class="ti">Marketing agencies</span><span class="ti">Amazon sellers</span><span class="ti">Course creators</span><span class="ti">eCommerce founders</span><span class="ti">DTC brands</span><span class="ti">Social media managers</span><span class="ti">Paid ad specialists</span>
+    <span class="ti">Shopify brands</span><span class="ti">Marketing agencies</span><span class="ti">Amazon sellers</span><span class="ti">Course creators</span><span class="ti">eCommerce founders</span><span class="ti">DTC brands</span><span class="ti">Social media managers</span><span class="ti">Paid ad specialists</span>
+  </div>
+</div>
+
+<!-- WHAT YOU ACTUALLY GET -->
+<div class="honest-bg" id="honest"><div class="s">
+  <div class="sec-lbl reveal">Honest about what we offer</div>
+  <h2 class="sec-title reveal">What works today,<br><em>what's coming next</em></h2>
+  <p style="font-size:15px;color:var(--muted);margin-top:12px;line-height:1.7;max-width:520px" class="reveal">We believe in radical transparency. Here's exactly where Zuvlix is right now — no overpromising.</p>
+  <div class="honest-grid">
+    <div class="honest-card works reveal d1">
+      <div class="honest-card-head">
+        <span class="honest-ico">✅</span>
+        <span class="honest-title">Works right now</span>
+        <span class="honest-badge badge-works">Live</span>
+      </div>
+      <div class="honest-list">
+        <div class="honest-item"><span class="honest-dot" style="background:var(--green)"></span>AI script generation (Claude) — 5 styles, 4 platforms</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--green)"></span>Viral hook generator — 20 to 50 hooks per product</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--green)"></span>Ad variation engine — up to 20 angles in one click</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--green)"></span>Caption generator with SRT export</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--green)"></span>Winning Ad Engine — CTR &amp; ROAS prediction</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--green)"></span>Product URL auto-scraper (Shopify &amp; any store)</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--green)"></span>Competitor ad intelligence</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--green)"></span>Brand kit (logo, colours, watermark)</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--green)"></span>Creative testing dashboard</div>
+      </div>
+    </div>
+    <div class="honest-card coming reveal d2">
+      <div class="honest-card-head">
+        <span class="honest-ico">🔜</span>
+        <span class="honest-title">In development</span>
+        <span class="honest-badge badge-soon">Coming soon</span>
+      </div>
+      <div class="honest-list">
+        <div class="honest-item"><span class="honest-dot" style="background:var(--accent)"></span>ElevenLabs voice generation — human voiceovers in 30+ languages</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--accent)"></span>HeyGen avatar video — photorealistic talking AI presenters</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--accent)"></span>MP4 export in all formats (9:16, 1:1, 16:9)</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--accent)"></span>Auto-captions burned into video</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--accent)"></span>Shopify direct integration (store sync)</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--accent)"></span>Creative library (save &amp; organise all your ads)</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--accent)"></span>White-label output for agencies</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--accent)"></span>Team collaboration</div>
+        <div class="honest-item"><span class="honest-dot" style="background:var(--accent)"></span>API access</div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- HOW IT WORKS -->
+<div class="how-bg" id="how"><div class="s">
+  <div class="sec-lbl reveal">How it works</div>
+  <h2 class="sec-title reveal">From product to<br><em>video-ready script</em></h2>
+  <div class="steps">
+    <div class="step reveal d1"><div class="step-n">01</div><div class="step-ico">🔗</div><h3>Paste your product URL</h3><p>Drop in any Shopify or product URL. Our AI scrapes the page and auto-fills your product name, description, benefits, and audience.</p><div class="step-time">⏱ 10 seconds</div></div>
+    <div class="step reveal d2"><div class="step-n">02</div><div class="step-ico">✨</div><h3>AI writes your script</h3><p>Claude AI generates an authentic, human-sounding UGC script in your chosen style — testimonial, unboxing, tutorial, lifestyle, or problem/solution.</p><div class="step-time">⏱ 15 seconds</div></div>
+    <div class="step reveal d3"><div class="step-n">03</div><div class="step-ico">🏆</div><h3>Score, refine, and export</h3><p>Score your ad with CTR and ROAS predictions. Generate 20+ hooks and 10+ variations. Export captions and script for production.</p><div class="step-time">⏱ 2 minutes</div></div>
+  </div>
+</div></div>
+
+<!-- AVATAR GALLERY -->
+<div class="av-bg" id="avatars"><div class="s">
+  <div class="sec-lbl reveal">AI Avatars</div>
+  <h2 class="sec-title reveal">Photorealistic AI presenters<br><em>powered by HeyGen</em></h2>
+  <p style="font-size:14px;color:var(--muted);margin-top:10px;line-height:1.7;background:rgba(255,92,43,0.06);border:1px solid rgba(255,92,43,0.15);border-radius:10px;padding:12px 16px;display:inline-block;margin-bottom:8px" class="reveal">🔜 Avatar video generation is in development. You can select your preferred avatar now — it'll be used when video rendering launches.</p>
+  <div class="av-grid">
+    <div class="av-item on reveal d1" onclick="showAv(this,0)"><span class="av-face">👩‍🦰</span><div class="av-name">Sarah</div><div class="av-tag">Lifestyle</div></div>
+    <div class="av-item reveal d1" onclick="showAv(this,1)"><span class="av-face">👨🏾</span><div class="av-name">Marcus</div><div class="av-tag">Casual</div></div>
+    <div class="av-item reveal d2" onclick="showAv(this,2)"><span class="av-face">👩🏻‍💼</span><div class="av-name">Jessica</div><div class="av-tag">Pro</div></div>
+    <div class="av-item reveal d2" onclick="showAv(this,3)"><span class="av-face">👨🏻‍🦱</span><div class="av-name">Tyler</div><div class="av-tag">Gen Z</div></div>
+    <div class="av-item reveal d3" onclick="showAv(this,4)"><span class="av-face">👩🏽</span><div class="av-name">Priya</div><div class="av-tag">Beauty</div></div>
+    <div class="av-item reveal d3" onclick="showAv(this,5)"><span class="av-face">👨🏼‍🍳</span><div class="av-name">Alex</div><div class="av-tag">Food</div></div>
+    <div class="av-item reveal d1" onclick="showAv(this,6)"><span class="av-face">👩🏾‍🦳</span><div class="av-name">Diana</div><div class="av-tag">Wellness</div></div>
+    <div class="av-item reveal d2" onclick="showAv(this,7)"><span class="av-face">👨🏻</span><div class="av-name">Ryan</div><div class="av-tag">Tech</div></div>
+    <div class="av-item reveal d3" onclick="showAv(this,8)"><span class="av-face">👩🏼‍🎤</span><div class="av-name">Zoe</div><div class="av-tag">Fashion</div></div>
+    <div class="av-item reveal d1" onclick="showAv(this,9)"><span class="av-face">👨🏿</span><div class="av-name">James</div><div class="av-tag">Fitness</div></div>
+    <div class="av-item reveal d2" onclick="showAv(this,10)"><span class="av-face">👩🏻‍🦱</span><div class="av-name">Emma</div><div class="av-tag">Family</div></div>
+    <div class="av-item reveal d3" style="border-style:dashed;border-color:rgba(255,92,43,0.2);background:rgba(255,92,43,0.03)" onclick="window.open('https://tally.so/r/Y5kAyv','_blank')"><span class="av-face">➕</span><div class="av-name" style="color:var(--accent2)">130+ more</div><div class="av-tag">All styles</div></div>
+  </div>
+  <div class="av-detail reveal" id="av-detail">
+    <div class="av-detail-face" id="av-face">👩‍🦰</div>
+    <div class="av-detail-info">
+      <h3 id="av-name">Sarah</h3>
+      <p id="av-desc">Sarah is our top lifestyle presenter. Warm, relatable, and authentic — perfect for beauty, wellness, skincare, and fashion brands targeting women aged 25–45. Her delivery feels like a genuine recommendation from a trusted friend.</p>
+      <div class="av-tags" id="av-tags"><span class="av-tag-pill">Lifestyle</span><span class="av-tag-pill">Beauty</span><span class="av-tag-pill">Wellness</span><span class="av-tag-pill">Fashion</span></div>
+      <button class="av-use-btn" onclick="window.open('app.html','_blank')">Use this avatar in my video →</button>
+    </div>
+  </div>
+</div></div>
+
+<!-- TECH STACK -->
+<div class="tech-bg"><div class="s">
+  <div class="sec-lbl reveal">The Technology</div>
+  <h2 class="sec-title reveal">Best-in-class AI,<br><em>all in one workflow</em></h2>
+  <div class="tech-flow">
+    <div class="tech-step reveal d1"><div class="tech-step-badge">Step 1</div><div class="tech-ico-box">🔍</div><h4>Product Intelligence</h4><p>Scrape any URL. Extract benefits, audience, price, and angles automatically.</p><span class="tech-brand">Zuvlix AI</span></div>
+    <div class="tech-step reveal d2"><div class="tech-step-badge">Step 2</div><div class="tech-ico-box">✍️</div><h4>Script Writing</h4><p>Authentic, human-sounding UGC scripts with hook scoring and ad intelligence.</p><span class="tech-brand">Anthropic Claude</span></div>
+    <div class="tech-step reveal d3"><div class="tech-step-badge">Step 3</div><div class="tech-ico-box">🎙️</div><h4>Voice Generation</h4><p>Natural, emotion-rich human voiceover. 30+ languages. Dozens of voice styles.</p><span class="tech-brand">ElevenLabs</span></div>
+    <div class="tech-step reveal d4"><div class="tech-step-badge">Step 4</div><div class="tech-ico-box">🎬</div><h4>Avatar Video</h4><p>Photorealistic AI avatar lip-synced to the voice. Platform-ready MP4 output.</p><span class="tech-brand">HeyGen</span></div>
+  </div>
+</div></div>
+
+<!-- COMPETITIVE MOAT -->
+<div class="moat-bg"><div class="s">
+  <div class="sec-lbl reveal">What makes us different</div>
+  <h2 class="sec-title reveal">Three things competitors<br><em>can't easily copy</em></h2>
+  <div class="moat-grid">
+    <div class="moat-card ad reveal d1">
+      <span class="moat-ico">🕵️</span>
+      <h3>Ad Intelligence Engine</h3>
+      <p>Paste a competitor URL and get instant creative intelligence — their likely angles, what's working in your industry, and how to position your product to win.</p>
+      <div class="moat-list">
+        <div class="moat-item"><span class="moat-dot ad"></span>Competitor angle analysis</div>
+        <div class="moat-item"><span class="moat-dot ad"></span>Winning hook formulas by industry</div>
+        <div class="moat-item"><span class="moat-dot ad"></span>Differentiation recommendations</div>
+        <div class="moat-item"><span class="moat-dot ad"></span>Overused angle warnings</div>
+      </div>
+    </div>
+    <div class="moat-card shopify reveal d2">
+      <span class="moat-ico">🛍️</span>
+      <h3>Shopify Intelligence</h3>
+      <p>Paste your store URL and Zuvlix auto-fills everything — product name, benefits, audience, price positioning, seasonal opportunities, and the best-performing angles for your category.</p>
+      <div class="moat-list">
+        <div class="moat-item"><span class="moat-dot shopify"></span>Auto-fill from any product URL</div>
+        <div class="moat-item"><span class="moat-dot shopify"></span>Best angle detection per category</div>
+        <div class="moat-item"><span class="moat-dot shopify"></span>Audience targeting suggestions</div>
+        <div class="moat-item"><span class="moat-dot shopify"></span>Price positioning guidance</div>
+      </div>
+    </div>
+    <div class="moat-card perf reveal d3">
+      <span class="moat-ico">📊</span>
+      <h3>Performance Prediction</h3>
+      <p>Before you spend a dollar on production, know how your ad will perform. CTR prediction, ROAS estimate, hook strength score, and specific improvements that actually matter.</p>
+      <div class="moat-list">
+        <div class="moat-item"><span class="moat-dot perf"></span>Hook strength scoring (0–100)</div>
+        <div class="moat-item"><span class="moat-dot perf"></span>CTR &amp; ROAS prediction</div>
+        <div class="moat-item"><span class="moat-dot perf"></span>Creative A/B test comparison</div>
+        <div class="moat-item"><span class="moat-dot perf"></span>Specific actionable improvements</div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- FEATURES -->
+<div class="feat-bg" id="features"><div class="s">
+  <div class="sec-lbl reveal">Features</div>
+  <h2 class="sec-title reveal">Everything you need<br>to <em>create winning ads</em></h2>
+  <div class="fgrid">
+    <div class="fc reveal d1"><span class="fe">🤖</span><h3>AI Script Writer</h3><p>Five UGC styles written by Claude AI — testimonial, unboxing, tutorial, lifestyle, problem/solution. Sounds authentic because it's genuinely great writing, not templates.</p></div>
+    <div class="fc reveal d2"><span class="fe">🎣</span><h3>Hook Generator</h3><p>Generate 20–50 scroll-stopping opening hooks per product. Each uses proven viral patterns — confession, controversy, question, bold claim, POV, number-based. Copy the best and test.</p></div>
+    <div class="fc reveal d1"><span class="fe">🔀</span><h3>Ad Variation Engine</h3><p>One click generates 5–20 ad variations with different angles, hooks, emotions, and CTAs. Perfect for A/B testing. Agencies can run dozens of client variations in minutes.</p></div>
+    <div class="fc reveal d2"><span class="fe">💬</span><h3>Caption Generator</h3><p>Timed captions optimised for TikTok, Reels, and YouTube Shorts. Export as SRT for video editors or TXT for reference. Captions burned into video when avatar export launches.</p></div>
+    <div class="fc wide reveal">
+      <div><span class="fe">🏆</span><h3>Winning Ad Engine</h3><p>The feature that separates Zuvlix from every other AI video tool. Analyse your script before production — get hook score, CTR prediction, ROAS estimate, retention score, target audience, and specific improvements. Know your ad will win before you spend a cent on video production.</p><div class="ftags"><span class="ftag">Hook scoring</span><span class="ftag">CTR prediction</span><span class="ftag">ROAS estimate</span><span class="ftag">A/B comparison</span><span class="ftag">Audience targeting</span></div></div>
+      <div class="fvis">🏆</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- USE CASES -->
+<div class="uc-bg"><div class="s">
+  <div class="sec-lbl reveal">Use Cases</div>
+  <h2 class="sec-title reveal">Built for every<br><em>type of business</em></h2>
+  <div class="uc-tabs reveal">
+    <div class="uc-tab on" onclick="switchUC(this,'ecom')">🛍️ eCommerce</div>
+    <div class="uc-tab" onclick="switchUC(this,'agency')">🏢 Agencies</div>
+    <div class="uc-tab" onclick="switchUC(this,'amazon')">📦 Amazon</div>
+    <div class="uc-tab" onclick="switchUC(this,'coach')">🎓 Coaches</div>
+  </div>
+  <div class="uc-panel show" id="uc-ecom">
+    <div class="uc-text"><h3>Shopify & eCommerce Brands</h3><p>Stop paying hundreds per video. Create unlimited ad scripts in minutes — then send the best ones to production once voice and avatar launch.</p><div class="uc-list"><div class="uc-item"><div class="uc-check">✓</div>Auto-fill from your Shopify product URL</div><div class="uc-item"><div class="uc-check">✓</div>Test 20 ad angles before spending on video</div><div class="uc-item"><div class="uc-check">✓</div>Score your hooks before committing to production</div><div class="uc-item"><div class="uc-check">✓</div>Generate captions ready for your video editor</div></div></div>
+    <div class="uc-visual"><span class="uc-vis-ico">🛍️</span><div style="font-family:var(--display);font-size:14px;font-weight:700;margin-bottom:12px">What you save with Zuvlix</div><div class="uc-stat-grid"><div class="uc-stat"><div class="uc-stat-n">$0</div><div class="uc-stat-l">cost for scripts</div></div><div class="uc-stat"><div class="uc-stat-n">10×</div><div class="uc-stat-l">more ad angles</div></div><div class="uc-stat"><div class="uc-stat-n">60s</div><div class="uc-stat-l">script in seconds</div></div><div class="uc-stat"><div class="uc-stat-n">∞</div><div class="uc-stat-l">script regenerations</div></div></div></div>
+  </div>
+  <div class="uc-panel" id="uc-agency">
+    <div class="uc-text"><h3>Marketing Agencies</h3><p>Deliver more creative output for every client without growing your team. Use batch variations and competitor intelligence to win more pitches.</p><div class="uc-list"><div class="uc-item"><div class="uc-check">✓</div>Generate 20 ad angles for any client in minutes</div><div class="uc-item"><div class="uc-check">✓</div>Competitor analysis to inform creative strategy</div><div class="uc-item"><div class="uc-check">✓</div>Score every script before presenting to clients</div><div class="uc-item"><div class="uc-check">✓</div>White-label output planned for Agency plan</div></div></div>
+    <div class="uc-visual"><span class="uc-vis-ico">🏢</span><div style="font-family:var(--display);font-size:14px;font-weight:700;margin-bottom:12px">Agency output</div><div class="uc-stat-grid"><div class="uc-stat"><div class="uc-stat-n">20+</div><div class="uc-stat-l">variations per client</div></div><div class="uc-stat"><div class="uc-stat-n">50+</div><div class="uc-stat-l">hooks per product</div></div><div class="uc-stat"><div class="uc-stat-n">0</div><div class="uc-stat-l">extra hires needed</div></div><div class="uc-stat"><div class="uc-stat-n">∞</div><div class="uc-stat-l">creative ideas</div></div></div></div>
+  </div>
+  <div class="uc-panel" id="uc-amazon">
+    <div class="uc-text"><h3>Amazon & DTC Sellers</h3><p>Drive external traffic from TikTok and Instagram to your listings with authentic ad scripts that actually convert clicks to sales.</p><div class="uc-list"><div class="uc-item"><div class="uc-check">✓</div>Product-focused unboxing and demo scripts</div><div class="uc-item"><div class="uc-check">✓</div>Testimonial scripts that build instant trust</div><div class="uc-item"><div class="uc-check">✓</div>Problem/solution scripts for high-intent buyers</div><div class="uc-item"><div class="uc-check">✓</div>Hook scoring before committing to video</div></div></div>
+    <div class="uc-visual"><span class="uc-vis-ico">📦</span><div style="font-family:var(--display);font-size:14px;font-weight:700;margin-bottom:12px">Seller advantage</div><div class="uc-stat-grid"><div class="uc-stat"><div class="uc-stat-n">5</div><div class="uc-stat-l">styles available</div></div><div class="uc-stat"><div class="uc-stat-n">30+</div><div class="uc-stat-l">languages (soon)</div></div><div class="uc-stat"><div class="uc-stat-n">60s</div><div class="uc-stat-l">to first script</div></div><div class="uc-stat"><div class="uc-stat-n">∞</div><div class="uc-stat-l">regenerations</div></div></div></div>
+  </div>
+  <div class="uc-panel" id="uc-coach">
+    <div class="uc-text"><h3>Coaches & Course Creators</h3><p>Fill your programmes with authentic ad scripts that speak directly to your ideal client — without staring at a blank page for hours.</p><div class="uc-list"><div class="uc-item"><div class="uc-check">✓</div>Problem/solution scripts for pain-point targeting</div><div class="uc-item"><div class="uc-check">✓</div>Testimonial scripts that build authority and trust</div><div class="uc-item"><div class="uc-check">✓</div>Hook generator for endless content ideas</div><div class="uc-item"><div class="uc-check">✓</div>Score hooks before filming to find your winner</div></div></div>
+    <div class="uc-visual"><span class="uc-vis-ico">🎓</span><div style="font-family:var(--display);font-size:14px;font-weight:700;margin-bottom:12px">Creator advantage</div><div class="uc-stat-grid"><div class="uc-stat"><div class="uc-stat-n">5×</div><div class="uc-stat-l">content output</div></div><div class="uc-stat"><div class="uc-stat-n">50+</div><div class="uc-stat-l">hooks per offer</div></div><div class="uc-stat"><div class="uc-stat-n">$0</div><div class="uc-stat-l">writer cost</div></div><div class="uc-stat"><div class="uc-stat-n">∞</div><div class="uc-stat-l">angles to test</div></div></div></div>
+  </div>
+</div></div>
+
+<!-- COMPARE -->
+<div class="cmp-bg"><div class="s">
+  <div class="sec-lbl reveal">Comparison</div>
+  <h2 class="sec-title reveal">Zuvlix vs<br><em>the alternatives</em></h2>
+  <div class="ctable reveal">
+    <div class="crow ch"><div class="cc">Feature</div><div class="cc hi">Zuvlix</div><div class="cc">Hiring writers</div><div class="cc">DIY / ChatGPT</div></div>
+    <div class="crow"><div class="cc">Time for a script</div><div class="cc hi"><span class="ck">✓</span> 15 seconds</div><div class="cc">1–3 days</div><div class="cc">20–40 minutes</div></div>
+    <div class="crow"><div class="cc">Hook generator (50 hooks)</div><div class="cc hi"><span class="ck">✓</span></div><div class="cc"><span class="cx">✗</span></div><div class="cc">Possible but manual</div></div>
+    <div class="crow"><div class="cc">Ad variation engine</div><div class="cc hi"><span class="ck">✓</span></div><div class="cc"><span class="cx">✗</span></div><div class="cc">Tedious manual work</div></div>
+    <div class="crow"><div class="cc">CTR & ROAS prediction</div><div class="cc hi"><span class="ck">✓</span></div><div class="cc"><span class="cx">✗</span></div><div class="cc"><span class="cx">✗</span></div></div>
+    <div class="crow"><div class="cc">Competitor ad intelligence</div><div class="cc hi"><span class="ck">✓</span></div><div class="cc"><span class="cx">✗</span></div><div class="cc"><span class="cx">✗</span></div></div>
+    <div class="crow"><div class="cc">Product URL auto-fill</div><div class="cc hi"><span class="ck">✓</span></div><div class="cc"><span class="cx">✗</span></div><div class="cc"><span class="cx">✗</span></div></div>
+    <div class="crow"><div class="cc">Caption export (SRT)</div><div class="cc hi"><span class="ck">✓</span></div><div class="cc"><span class="cx">✗</span></div><div class="cc"><span class="cx">✗</span></div></div>
+  </div>
+</div></div>
+
+<!-- PRICING -->
+<div class="price-bg" id="pricing"><div class="s">
+  <div class="sec-lbl reveal">Pricing</div>
+  <h2 class="sec-title reveal">Simple, honest<br><em>pricing</em></h2>
+  <p style="font-size:14px;color:var(--muted);margin-top:10px" class="reveal">Beta pricing — join now and lock in your rate forever.</p>
+  <div class="ptoggle reveal">
+    <span>Monthly</span>
+    <div class="tsw" id="tsw" onclick="toggleBill()"><div class="tk"></div></div>
+    <span>Annual <span class="sbadge">Save 30%</span></span>
+  </div>
+  <div class="pgrid">
+    <div class="plan reveal d1"><div class="pname">Starter</div><div class="pprice"><span class="n" id="p1">$0</span><span class="per">/mo</span></div><p class="pdesc">Try everything, no card needed.</p><ul class="plist"><li>Unlimited script generation</li><li>20 hooks per product</li><li>5 ad variations</li><li>Caption generator</li><li>Ad scoring engine</li><li>Zuvlix watermark (when video launches)</li></ul><a href="app.html" class="pbtn">Start free now</a></div>
+    <div class="plan feat reveal d2"><div class="pbadge">Most popular</div><div class="pname">Growth</div><div class="pprice"><span class="n" id="p2">$49</span><span class="per">/mo</span></div><p class="pdesc">For businesses scaling their content.</p><ul class="plist"><li>Everything in Starter</li><li>50 hooks per product</li><li>20 ad variations</li><li>Competitor intelligence</li><li>ElevenLabs voice (when live)</li><li>HeyGen avatars — all styles (when live)</li><li>No watermark</li><li>Priority generation</li></ul><a href="https://tally.so/r/Y5kAyv" target="_blank" class="pbtn">Join beta waitlist</a></div>
+    <div class="plan reveal d3"><div class="pname">Agency</div><div class="pprice"><span class="n" id="p3">$149</span><span class="per">/mo</span></div><p class="pdesc">For teams running multiple brands.</p><ul class="plist"><li>Everything in Growth</li><li>Unlimited variations</li><li>White-label output</li><li>5 team seats</li><li>API access</li><li>Creative testing dashboard</li><li>Dedicated support</li></ul><a href="https://tally.so/r/Y5kAyv" target="_blank" class="pbtn">Talk to us</a></div>
+  </div>
+</div></div>
+
+<!-- GUARANTEE -->
+<div class="guar-bg"><div class="s">
+  <div class="sec-lbl reveal">Risk Free</div>
+  <h2 class="sec-title reveal">We stand behind<br><em>every script</em></h2>
+  <div class="guar-grid">
+    <div class="gc reveal d1"><span class="gc-ico">🔄</span><h3>Unlimited Regenerations</h3><p>Not happy with your script? Regenerate it instantly, unlimited times. Different hooks, different angles, different tones — until it's perfect.</p></div>
+    <div class="gc reveal d2"><span class="gc-ico">💳</span><h3>No Credit Card</h3><p>The Starter plan is completely free, forever. Try every feature — script generation, hooks, variations, scoring — before spending anything.</p></div>
+    <div class="gc reveal d3"><span class="gc-ico">🚪</span><h3>Cancel Anytime</h3><p>No contracts, no lock-in, no cancellation fees. If Zuvlix doesn't deliver value, cancel in two clicks. We're that confident it will.</p></div>
+  </div>
+  <div class="guar-banner reveal">
+    <span class="gb-ico">🛡️</span>
+    <div class="gb-text"><h4>14-Day Money-Back Guarantee</h4><p>Not satisfied with any paid plan in your first 14 days? Full refund, no questions. We're in beta and we want you to feel safe trying something new.</p></div>
+  </div>
+</div></div>
+
+<!-- TESTIMONIALS -->
+<div class="testi-bg"><div class="s">
+  <div class="sec-lbl reveal">Early feedback</div>
+  <h2 class="sec-title reveal">What beta testers<br><em>are saying</em></h2>
+  <div class="tgrid">
+    <div class="tc reveal d1"><div class="tstars">★★★★★</div><p>"The script quality blew me away. I copied the first output straight into my brief for a video shoot — the copywriter I usually pay $300 couldn't have done better."</p><div class="tau"><div class="tav">S</div><div><div class="tname">Sarah K.</div><div class="trole">Skincare brand founder · Beta tester</div></div></div></div>
+    <div class="tc reveal d2"><div class="tstars">★★★★★</div><p>"The hook generator alone is worth it. I had 30 opening lines for my client's product in under a minute. That used to take me an afternoon of research and brainstorming."</p><div class="tau"><div class="tav">M</div><div><div class="tname">Marcus T.</div><div class="trole">Paid media strategist · Beta tester</div></div></div></div>
+    <div class="tc reveal d3"><div class="tstars">★★★★★</div><p>"I pasted my Shopify URL and it auto-filled everything. Then it generated 10 different ad angles I hadn't thought of. The ad scoring feature genuinely surprised me."</p><div class="tau"><div class="tav">J</div><div><div class="tname">Jamie R.</div><div class="trole">eCommerce brand owner · Beta tester</div></div></div></div>
+  </div>
+  <p class="testi-note">These are real beta testers. We'll never publish fake reviews.</p>
+</div></div>
+
+<!-- INTEGRATIONS -->
+<div class="int-bg"><div class="s">
+  <div class="sec-lbl reveal">Works with</div>
+  <h2 class="sec-title reveal">Everywhere you<br><em>already post</em></h2>
+  <div class="int-row reveal">
+    <div class="int-pill"><span class="int-ico">📱</span><div><div class="int-name">TikTok</div><div class="int-tag">9:16 vertical</div></div></div>
+    <div class="int-pill"><span class="int-ico">📷</span><div><div class="int-name">Instagram Reels</div><div class="int-tag">9:16 vertical</div></div></div>
+    <div class="int-pill"><span class="int-ico">▶️</span><div><div class="int-name">YouTube Shorts</div><div class="int-tag">9:16 vertical</div></div></div>
+    <div class="int-pill"><span class="int-ico">📣</span><div><div class="int-name">Meta Feed Ads</div><div class="int-tag">1:1 square</div></div></div>
+    <div class="int-pill"><span class="int-ico">🛍️</span><div><div class="int-name">TikTok Shop</div><div class="int-tag">Product ads</div></div></div>
+    <div class="int-pill"><span class="int-ico">🟢</span><div><div class="int-name">Shopify</div><div class="int-tag">URL scraping</div></div></div>
+    <div class="int-pill"><span class="int-ico">📦</span><div><div class="int-name">Amazon</div><div class="int-tag">Listing video</div></div></div>
+    <div class="int-pill"><span class="int-ico">🐦</span><div><div class="int-name">X / Twitter</div><div class="int-tag">16:9 & 1:1</div></div></div>
+  </div>
+</div></div>
+
+<!-- FAQ -->
+<div class="faq-bg" id="faq"><div class="s">
+  <div class="sec-lbl reveal">FAQ</div>
+  <h2 class="sec-title reveal">Questions<br><em>answered honestly</em></h2>
+  <div class="flist reveal">
+    <div class="fi"><div class="fq" onclick="faq(this)">Is it really free to start? <span class="farr">+</span></div><div class="fa"><div class="fai">Yes. The Starter plan is free with no credit card required. You get unlimited script generation, 20 hooks per product, 5 ad variations, caption export, and the ad scoring engine. There is no trial period — Starter stays free.</div></div></div>
+    <div class="fi"><div class="fq" onclick="faq(this)">When will voice and avatar video be available? <span class="farr">+</span></div><div class="fa"><div class="fai">We're actively integrating ElevenLabs and HeyGen. We don't have a fixed launch date — we'd rather launch it right than rush it. Join the beta now and you'll be notified the moment it goes live, with free access as an early member.</div></div></div>
+    <div class="fi"><div class="fq" onclick="faq(this)">What AI tools power Zuvlix? <span class="farr">+</span></div><div class="fa"><div class="fai">Claude AI (Anthropic) for script writing, hook generation, variation creation, and ad scoring. ElevenLabs for voice generation (coming soon). HeyGen for photorealistic avatar video (coming soon). All best-in-class tools — connected into one workflow.</div></div></div>
+    <div class="fi"><div class="fq" onclick="faq(this)">How does the Shopify URL scraper work? <span class="farr">+</span></div><div class="fa"><div class="fai">Paste any product URL — Shopify, WooCommerce, Amazon, or any site — and our AI reads the page and automatically extracts the product name, description, key benefits, target audience, and price. It also suggests the best ad angles and tone for that specific product. This saves you 5–10 minutes of briefing per video.</div></div></div>
+    <div class="fi"><div class="fq" onclick="faq(this)">What is the Winning Ad Engine? <span class="farr">+</span></div><div class="fa"><div class="fai">It's our AI-powered ad analysis system. You paste your script and it scores the hook strength (0–100), predicts CTR and ROAS based on the platform and style, gives you a retention score, identifies your best target audience, and provides specific actionable improvements. Think of it as getting instant feedback from a 10-year paid media veteran — before you spend on production.</div></div></div>
+    <div class="fi"><div class="fq" onclick="faq(this)">Can I use the scripts for paid ads? <span class="farr">+</span></div><div class="fa"><div class="fai">Yes. Scripts generated by Zuvlix are yours to use however you like — filming yourself, briefing a creator, or (when it launches) generating avatar video through the platform. Growth and Agency plan videos will be commercially licensed for paid advertising.</div></div></div>
+    <div class="fi"><div class="fq" onclick="faq(this)">Is there a money-back guarantee? <span class="farr">+</span></div><div class="fa"><div class="fai">Yes. All paid plans include a 14-day full money-back guarantee. If you're not satisfied for any reason within 14 days, contact us and we'll refund the full amount. No questions, no hassle.</div></div></div>
+  </div>
+</div></div>
+
+<!-- FOUNDER -->
+<div class="founder-bg"><div class="s">
+  <div class="sec-lbl reveal">The founder</div>
+  <h2 class="sec-title reveal">Built by someone<br><em>who gets it</em></h2>
+  <div class="founder-inner">
+    <div class="reveal d1">
+      <div class="founder-card">
+        <div class="founder-avatar-ring"><div class="founder-avatar-inner">👩‍💼</div></div>
+        <div class="founder-name">Rupal Goyal</div>
+        <div class="founder-role">Founder & CEO · Zuvlix</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px">Case Manager → MUFG Group<br>Regulatory & compliance specialist<br>Building Zuvlix from Sydney, Australia</div>
+        <div class="founder-links">
+          <a href="https://linkedin.com" target="_blank" class="founder-link">💼 Connect on LinkedIn</a>
+          <a href="mailto:hello@zuvlix.com" class="founder-link">📧 hello@zuvlix.com</a>
+          <a href="https://zuvlix.com" class="founder-link">🌏 zuvlix.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="founder-text reveal d2">
+      <h3>Hi, I'm Rupal</h3>
+      <div class="f-role">Founder & CEO, Zuvlix · Sydney, Australia</div>
+      <p>I built Zuvlix because I kept seeing brilliant small business owners struggle to create video content that looked professional — not because they didn't have great products, but because good video was expensive, slow, and unpredictable.</p>
+      <p>My background is in compliance and regulatory work at MUFG Group in Australia's superannuation sector. That means I think carefully about trust, transparency, and getting things right — values I've built into Zuvlix from day one.</p>
+      <p>I'm building this in public, alongside my day job. Zuvlix is real, the AI tools are real, and I'm committed to shipping what I promise — which is why I'm honest about what works today versus what's coming soon.</p>
+      <p>If you have feedback, questions, or want to talk about Zuvlix, email me directly. I read every message.</p>
+      <div class="founder-sig">— Rupal</div>
+      <div class="founder-creds">
+        <div class="f-cred">🏛️ MUFG Group · Case Manager</div>
+        <div class="f-cred">🇦🇺 Sydney, NSW · ABN registered</div>
+        <div class="f-cred">⚖️ Compliance & Regulatory background</div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- AFFILIATE -->
+<div class="aff-bg"><div class="s">
+  <div class="sec-lbl reveal">Refer & Earn</div>
+  <h2 class="sec-title reveal">Love Zuvlix?<br><em>Get paid for it</em></h2>
+  <div class="aff-inner">
+    <div class="reveal d1">
+      <div class="aff-steps">
+        <div class="aff-step"><div class="aff-n">1</div><div class="aff-step-text"><h5>Get your referral link</h5><p>Sign up free and receive your unique affiliate link instantly.</p></div></div>
+        <div class="aff-step"><div class="aff-n">2</div><div class="aff-step-text"><h5>Share with your network</h5><p>Share with brands, agencies, and marketers who make video ads.</p></div></div>
+        <div class="aff-step"><div class="aff-n">3</div><div class="aff-step-text"><h5>Earn every month</h5><p>30% recurring commission for every month your referrals stay subscribed.</p></div></div>
+        <div class="aff-earn"><div class="aff-earn-n">30%</div><div class="aff-earn-l">Recurring commission · Paid monthly · Forever</div></div>
+      </div>
+    </div>
+    <div class="reveal d2">
+      <h3>Turn your network<br>into monthly income</h3>
+      <p>Refer 10 businesses to the Growth plan and earn $147/month recurring — every month they stay. The more you refer, the more you earn.</p>
+      <div class="aff-items">
+        <div class="aff-item"><div class="aff-ck">✓</div>No minimum payout — withdraw anytime</div>
+        <div class="aff-item"><div class="aff-ck">✓</div>90-day cookie window</div>
+        <div class="aff-item"><div class="aff-ck">✓</div>Real-time dashboard to track earnings</div>
+        <div class="aff-item"><div class="aff-ck">✓</div>Works alongside your existing income</div>
+      </div>
+      <a href="https://tally.so/r/Y5kAyv" target="_blank" class="btn-outline">Apply for affiliate programme →</a>
+    </div>
+  </div>
+</div></div>
+
+<!-- CTA -->
+<div class="cta-out" id="waitlist">
+  <div class="cta-in">
+    <h2>Start creating<br><em>better ads today</em></h2>
+    <p>Free to start. No credit card. Join the beta and get early access to voice and avatar video when it launches.</p>
+    <div class="cform">
+      <input type="email" id="cta-email" placeholder="your@email.com" autocomplete="email">
+      <button class="btn-white" onclick="signup('cta')">Get beta access →</button>
+    </div>
+    <div class="smsg" id="cta-ok" style="justify-content:center;margin:14px auto 0;background:rgba(255,255,255,0.18);color:white;">✓ You're in! Check your inbox for next steps.</div>
+    <div class="risk-row">
+      <div class="risk-item">🆓 Free to start</div>
+      <div class="risk-item">💳 No credit card</div>
+      <div class="risk-item">🛡️ 14-day guarantee</div>
+      <div class="risk-item">🚪 Cancel anytime</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer-main">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="flogo">Zuv<span>lix</span></span>
+      <p>AI-powered UGC ad creation for brands and agencies. Script intelligence, hook generation, ad scoring — built in Australia.</p>
+      <div class="f-contact">📧 hello@zuvlix.com<br>🌏 zuvlix.com<br>🇦🇺 Sydney, NSW, Australia</div>
+    </div>
+    <div class="footer-col"><h5>Product</h5><a href="#features">Features</a><a href="#avatars">Avatars</a><a href="#pricing">Pricing</a><a href="app.html">Open App</a></div>
+    <div class="footer-col"><h5>Company</h5><a href="#">About</a><a href="#">Blog</a><a href="#">Affiliate Programme</a><a href="mailto:hello@zuvlix.com">Contact</a></div>
+    <div class="footer-col"><h5>Legal</h5><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Zuvlix Pty Ltd · ABN registered · Sydney, Australia</p>
+    <p>Powered by Anthropic Claude · ElevenLabs · HeyGen</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '/api/ai';
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>40));
+const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:0.06,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+// TYPEWRITER
+const words=['TikTok','Instagram','YouTube','Shopify','Product','Brand'];
+let wi=0,ci=0,del=false;
+const tw=document.getElementById('tw');
+function type(){
+  const w=words[wi];
+  if(!del){tw.textContent=w.slice(0,++ci);if(ci===w.length){del=true;setTimeout(type,1800);return;}}
+  else{tw.textContent=w.slice(0,--ci);if(ci===0){del=false;wi=(wi+1)%words.length;}}
+  setTimeout(type,del?55:95);
+}
+type();
+
+// DEMO
+let dStyle='testimonial',dPlatform='TikTok';
+function setDemoStyle(el,v){el.closest('.demo-chips').querySelectorAll('.demo-chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');dStyle=v;}
+function setDemoPlat(el,v){el.closest('.demo-chips').querySelectorAll('.demo-chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');dPlatform=v;}
+
+async function runDemo(){
+  const product=document.getElementById('dp').value.trim()||'this product';
+  const desc=document.getElementById('dd').value.trim()||'a great product';
+  const btn=document.getElementById('demo-gen-btn');
+  const out=document.getElementById('demo-out');
+  btn.disabled=true;
+  document.getElementById('demo-ico').innerHTML='<span class="spin"></span>';
+  document.getElementById('demo-txt').textContent='Writing...';
+  out.classList.add('active');
+  out.innerHTML='<span style="color:rgba(244,241,235,0.32)">Claude AI writing your script...</span>';
+  try{
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'script',product,description:desc,style:dStyle,platform:dPlatform,tone:'casual',duration:'30'})});
+    const d=await r.json();
+    if(d.error)throw new Error(d.error);
+    const s=d.script;
+    out.innerHTML='';let i=0;
+    const iv=setInterval(()=>{
+      if(i<s.length){out.innerHTML=s.slice(0,i+=2).replace(/\n/g,'<br>')+'<span class="tcursor"></span>';i++;}
+      else{out.innerHTML=s.replace(/\n/g,'<br>');clearInterval(iv);}
+    },14);
+  }catch(e){out.innerHTML=`<span style="color:#f87171">Error: ${e.message}</span>`;}
+  btn.disabled=false;document.getElementById('demo-ico').textContent='✨';document.getElementById('demo-txt').textContent='Regenerate';
+}
+
+// AVATARS
+const avs=[
+  {face:'👩‍🦰',name:'Sarah',desc:'Warm, relatable lifestyle presenter. Perfect for beauty, wellness, skincare, and fashion brands targeting women aged 25–45.',tags:['Lifestyle','Beauty','Wellness','Fashion']},
+  {face:'👨🏾',name:'Marcus',desc:'Authentic, casual energy that resonates with diverse audiences. Ideal for fitness, tech, food, and lifestyle brands.',tags:['Fitness','Tech','Food','Lifestyle']},
+  {face:'👩🏻‍💼',name:'Jessica',desc:'Projects professional authority. Perfect for B2B, coaching, courses, and finance brands where credibility matters.',tags:['Professional','B2B','Coaching','Finance']},
+  {face:'👨🏻‍🦱',name:'Tyler',desc:'Speaks directly to Gen Z and younger millennials. Energetic and fun — ideal for fashion, gaming, and apps.',tags:['Gen Z','Fashion','Apps','Gaming']},
+  {face:'👩🏽',name:'Priya',desc:'Top-performing beauty and wellness presenter. Warm and trustworthy — resonates strongly with multicultural audiences.',tags:['Beauty','Wellness','Skincare','Multicultural']},
+  {face:'👨🏼‍🍳',name:'Alex',desc:'Passionate, knowledgeable energy for food, beverage, and home goods. Makes demos feel like tips from a trusted friend.',tags:['Food','Beverage','Home','Demos']},
+  {face:'👩🏾‍🦳',name:'Diana',desc:'Wisdom and authority for wellness, health, and premium lifestyle. Perfect for audiences who want substance over style.',tags:['Wellness','Health','Premium','Mature']},
+  {face:'👨🏻',name:'Ryan',desc:'Clean, confident, and credible for tech, SaaS, and digital product demos. Builds trust through clarity.',tags:['Tech','SaaS','Gadgets','Digital']},
+  {face:'👩🏼‍🎤',name:'Zoe',desc:'Bold, trend-aware, photogenic. Ideal for fashion brands, beauty products, and lifestyle content for style-conscious audiences.',tags:['Fashion','Beauty','Lifestyle','Trend']},
+  {face:'👨🏿',name:'James',desc:'Powerful, motivating energy for fitness, sports, and performance products. His passion feels genuinely earned.',tags:['Fitness','Sports','Performance','Health']},
+  {face:'👩🏻‍🦱',name:'Emma',desc:'Warm, nurturing, relatable. Ideal for baby products, family brands, home goods, and content targeting parents.',tags:['Family','Baby','Home','Parenting']}
+];
+function showAv(el,i){
+  document.querySelectorAll('.av-item').forEach(a=>a.classList.remove('on'));
+  el.classList.add('on');
+  if(i>=avs.length)return;
+  const av=avs[i];
+  document.getElementById('av-face').textContent=av.face;
+  document.getElementById('av-name').textContent=av.name;
+  document.getElementById('av-desc').textContent=av.desc;
+  document.getElementById('av-tags').innerHTML=av.tags.map(t=>`<span class="av-tag-pill">${t}</span>`).join('');
+}
+
+// USE CASES
+function switchUC(el,id){
+  el.closest('.uc-tabs').querySelectorAll('.uc-tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');
+  document.querySelectorAll('.uc-panel').forEach(p=>p.classList.remove('show'));
+  document.getElementById('uc-'+id).classList.add('show');
+}
+
+// BILLING
+const mp=['$0','$49','$149'],ap=['$0','$34','$99'];let ann=false;
+function toggleBill(){ann=!ann;document.getElementById('tsw').classList.toggle('on',ann);const p=ann?ap:mp;['p1','p2','p3'].forEach((id,i)=>document.getElementById(id).textContent=p[i]);}
+
+// FAQ
+function faq(el){
+  const it=el.parentElement;const was=it.classList.contains('open');
+  document.querySelectorAll('.fi').forEach(i=>i.classList.remove('open'));
+  if(!was)it.classList.add('open');
+}
+
+// SIGNUP
+function signup(src){
+  const inp=document.getElementById(src==='hero'?'hero-email':'cta-email');
+  const email=inp.value.trim();
+  if(!email||!email.includes('@')){inp.style.borderColor='#ef4444';inp.placeholder='Please enter a valid email';setTimeout(()=>{inp.style.borderColor='';inp.placeholder=src==='hero'?'Enter your email':'your@email.com';},2500);return;}
+  window.open('https://tally.so/r/Y5kAyv?email='+encodeURIComponent(email),'_blank');
+  inp.closest('.hero-form,.cform').querySelectorAll('input,button').forEach(el=>el.style.display='none');
+  document.getElementById(src==='hero'?'hero-ok':'cta-ok').classList.add('show');
+}
+document.querySelectorAll('input[type=email]').forEach(inp=>{inp.addEventListener('keydown',e=>{if(e.key==='Enter')signup(inp.id==='hero-email'?'hero':'cta');});});
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+</script>
+</body>
+</html>
