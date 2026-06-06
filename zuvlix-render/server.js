@@ -120,7 +120,7 @@ app.post('/api/ai', async (req, res) => {
       const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'xi-api-key': ELEVEN },
-        body: JSON.stringify({ text, model_id: 'eleven_monolingual_v1', voice_settings: { stability: 0.5, similarity_boost: 0.75 } })
+        body: JSON.stringify({ text, model_id: 'eleven_turbo_v2_5', voice_settings: { stability: 0.5, similarity_boost: 0.75 } })
       });
       if (!r.ok) { const e = await r.json(); throw new Error(e.detail?.message || 'ElevenLabs error'); }
       const buf = await r.arrayBuffer();
