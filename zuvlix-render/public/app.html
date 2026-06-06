@@ -285,6 +285,7 @@ textarea.inp{resize:vertical;min-height:72px}
       <div class="app-tab" id="tab-btn-shopify" onclick="showTab('shopify',this)">🛍️ Shopify</div>
       <div class="app-tab" id="tab-btn-competitor" onclick="showTab('competitor',this)">🕵️ Competitor</div>
       <div class="app-tab" id="tab-btn-library" onclick="showTab('library',this)">📚 Library</div>
+      <div class="app-tab" id="tab-btn-avatar-builder" onclick="showTab('avatar-builder',this)">🎭 My Avatar</div>
     </div>
 
     <!-- SCRIPT TAB -->
@@ -399,13 +400,49 @@ textarea.inp{resize:vertical;min-height:72px}
           <div class="status-pill sp-wait" id="voice-status"><span class="sdot"></span> Ready</div>
         </div>
         <div class="card-body">
+          <style>
+            .voice-opt { position: relative; }
+            .vo-avatar { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 8px; display: block; object-fit: cover; border: 2px solid var(--border); transition: border-color 0.2s; }
+            .voice-opt.on .vo-avatar { border-color: var(--accent); }
+            .voice-opt:hover .vo-avatar { border-color: rgba(255,92,43,0.5); }
+          </style>
           <div class="voice-grid">
-            <div class="voice-opt on" onclick="selVoice(this,'EXAVITQu4vr4xnSDxMaL')"><div class="vo-emoji">👩</div><div class="vo-name">Sarah</div><div class="vo-desc">Warm & trustworthy</div></div>
-            <div class="voice-opt" onclick="selVoice(this,'VR6AewLTigWG4xSOukaG')"><div class="vo-emoji">👨🏾</div><div class="vo-name">Marcus</div><div class="vo-desc">Casual & relatable</div></div>
-            <div class="voice-opt" onclick="selVoice(this,'AZnzlk1XvdvUeBnXmlld')"><div class="vo-emoji">👩‍🦱</div><div class="vo-name">Zoe</div><div class="vo-desc">Energetic & young</div></div>
-            <div class="voice-opt" onclick="selVoice(this,'pNInz6obpgDQGcFmaJgB')"><div class="vo-emoji">👨🏻‍💼</div><div class="vo-name">James</div><div class="vo-desc">Professional</div></div>
-            <div class="voice-opt" onclick="selVoice(this,'MF3mGyEYCl7XYWbV9V6O')"><div class="vo-emoji">👩‍🎤</div><div class="vo-name">Mia</div><div class="vo-desc">Fun & playful</div></div>
-            <div class="voice-opt" onclick="selVoice(this,'TxGEqnHWrfWFTfGW9XjX')"><div class="vo-emoji">🧑</div><div class="vo-name">Alex</div><div class="vo-desc">Neutral & clean</div></div>
+            <div class="voice-opt on" onclick="selVoice(this,'cgSgspJ2msm6clMCkdW9')">
+              <img class="vo-avatar" src="https://api.dicebear.com/9.x/personas/svg?seed=sarah&backgroundColor=b6e3f4&radius=50" alt="Sarah">
+              <div class="vo-name">Sarah</div><div class="vo-desc">Warm & trustworthy</div>
+            </div>
+            <div class="voice-opt" onclick="selVoice(this,'onwK4e9ZLuTAKqWW03F9')">
+              <img class="vo-avatar" src="https://api.dicebear.com/9.x/personas/svg?seed=daniel&backgroundColor=c0aede&radius=50" alt="Daniel">
+              <div class="vo-name">Daniel</div><div class="vo-desc">Casual & relatable</div>
+            </div>
+            <div class="voice-opt" onclick="selVoice(this,'XB0fDUnXU5powFXDhCwa')">
+              <img class="vo-avatar" src="https://api.dicebear.com/9.x/personas/svg?seed=charlotte&backgroundColor=ffd5dc&radius=50" alt="Charlotte">
+              <div class="vo-name">Charlotte</div><div class="vo-desc">Energetic & young</div>
+            </div>
+            <div class="voice-opt" onclick="selVoice(this,'TX3LPaxmHKxFdv7VOQHJ')">
+              <img class="vo-avatar" src="https://api.dicebear.com/9.x/personas/svg?seed=liam&backgroundColor=d1f4d1&radius=50" alt="Liam">
+              <div class="vo-name">Liam</div><div class="vo-desc">Professional</div>
+            </div>
+            <div class="voice-opt" onclick="selVoice(this,'pFZP5JQG7iQjIQuC4Bku')">
+              <img class="vo-avatar" src="https://api.dicebear.com/9.x/personas/svg?seed=lily&backgroundColor=ffd5dc&radius=50" alt="Lily">
+              <div class="vo-name">Lily</div><div class="vo-desc">Fun & playful</div>
+            </div>
+            <div class="voice-opt" onclick="selVoice(this,'cjVigY5qzO86Huf0OWal')">
+              <img class="vo-avatar" src="https://api.dicebear.com/9.x/personas/svg?seed=eric&backgroundColor=b6e3f4&radius=50" alt="Eric">
+              <div class="vo-name">Eric</div><div class="vo-desc">Deep & authoritative</div>
+            </div>
+            <div class="voice-opt" onclick="selVoice(this,'nPczCjzI2devNBz1zQrb')">
+              <img class="vo-avatar" src="https://api.dicebear.com/9.x/personas/svg?seed=rachel&backgroundColor=ffd5dc&radius=50" alt="Rachel">
+              <div class="vo-name">Rachel</div><div class="vo-desc">Calm & soothing</div>
+            </div>
+            <div class="voice-opt" onclick="selVoice(this,'D38z5RcWu1voky8WS1ja')">
+              <img class="vo-avatar" src="https://api.dicebear.com/9.x/personas/svg?seed=wayne&backgroundColor=c0aede&radius=50" alt="Wayne">
+              <div class="vo-name">Wayne</div><div class="vo-desc">Friendly & upbeat</div>
+            </div>
+            <div class="voice-opt" onclick="selVoice(this,'bVMeCyTHy58xNoL34h3p')">
+              <img class="vo-avatar" src="https://api.dicebear.com/9.x/personas/svg?seed=jessica&backgroundColor=ffd5dc&radius=50" alt="Jessica">
+              <div class="vo-name">Jessica</div><div class="vo-desc">Young & vibrant</div>
+            </div>
           </div>
           <button class="act-btn primary" id="voice-btn" onclick="generateVoice()" style="margin-bottom:12px">🎙️ Generate Voiceover</button>
           <div id="audio-player" style="display:none;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px">
@@ -503,6 +540,145 @@ textarea.inp{resize:vertical;min-height:72px}
       </div>
     </div>
 
+
+    <!-- CUSTOM AVATAR BUILDER TAB -->
+    <div class="tab-panel" id="tab-avatar-builder">
+      <!-- STEP 1: DESCRIBE YOUR AVATAR -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">🎭 Create Your Custom Avatar</div>
+          <div class="status-pill sp-wait" id="av-builder-status"><span class="sdot"></span> Ready</div>
+        </div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Describe your ideal video presenter. Our AI will generate a portrait preview, a detailed brief for HeyGen/D-ID, and personalise your scripts to match their speaking style.</p>
+
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="field">
+              <label>Describe your ideal avatar *</label>
+              <textarea class="inp" id="av-description" rows="3" placeholder="e.g. A confident 28-year-old South Asian woman with long dark hair, wearing a casual white linen top, in a bright modern kitchen. Warm, relatable smile. Speaks like a trusted friend."></textarea>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="field">
+                <label>Personality / speaking style</label>
+                <input type="text" class="inp" id="av-personality" placeholder="e.g. Confident, casual, uses slang, very relatable">
+              </div>
+              <div class="field">
+                <label>Signature phrase (optional)</label>
+                <input type="text" class="inp" id="av-catchphrase" placeholder="e.g. Okay so hear me out... / Not gonna lie...">
+              </div>
+            </div>
+            <button class="act-btn primary" id="av-build-btn" onclick="buildAvatar()" style="width:100%;justify-content:center;padding:13px;font-size:14px">✨ Generate My Avatar Profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PORTRAIT PREVIEW -->
+      <div class="card" id="av-portrait-card" style="display:none">
+        <div class="card-head">
+          <div class="card-title">🖼️ Avatar Portrait Preview</div>
+          <div class="status-pill sp-done" id="av-portrait-status"><span class="sdot"></span> Generated</div>
+        </div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:180px 1fr;gap:24px;align-items:start">
+            <div style="text-align:center">
+              <img id="av-portrait-img" src="" alt="Avatar" style="width:160px;height:160px;border-radius:20px;border:3px solid var(--accent);object-fit:cover;display:block;margin:0 auto 12px">
+              <div id="av-portrait-name" style="font-family:var(--display);font-size:14px;font-weight:700;margin-bottom:4px"></div>
+              <div id="av-portrait-desc" style="font-size:12px;color:var(--muted);line-height:1.5"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:14px">
+                <div style="font-family:var(--display);font-size:11px;font-weight:700;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Personality</div>
+                <div id="av-personality-display" style="font-size:13px;color:rgba(244,241,235,0.8);line-height:1.6"></div>
+              </div>
+              <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:14px">
+                <div style="font-family:var(--display);font-size:11px;font-weight:700;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Voice Recommendation</div>
+                <div id="av-voice-rec" style="font-size:13px;color:rgba(244,241,235,0.8);line-height:1.6"></div>
+              </div>
+              <div style="background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:10px;padding:14px">
+                <div style="font-family:var(--display);font-size:11px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Why This Works</div>
+                <div id="av-why-works" style="font-size:13px;color:rgba(244,241,235,0.8);line-height:1.6"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HEYGEN / D-ID BRIEF -->
+      <div class="card" id="av-brief-card" style="display:none">
+        <div class="card-head">
+          <div class="card-title">📋 Production Brief</div>
+          <div class="status-pill sp-done"><span class="sdot"></span> Ready to use</div>
+        </div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+            <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px">
+              <div style="font-family:var(--display);font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px">🎬 HeyGen Prompt <button class="hook-copy-btn" onclick="copyField('heygen-prompt')">Copy</button></div>
+              <div id="heygen-prompt" style="font-size:12.5px;color:rgba(244,241,235,0.75);line-height:1.65"></div>
+            </div>
+            <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px">
+              <div style="font-family:var(--display);font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px">🤖 D-ID Prompt <button class="hook-copy-btn" onclick="copyField('did-prompt')">Copy</button></div>
+              <div id="did-prompt" style="font-size:12.5px;color:rgba(244,241,235,0.75);line-height:1.65"></div>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px">
+            <div style="font-family:var(--display);font-size:13px;font-weight:700;margin-bottom:10px">👤 Appearance Details</div>
+            <div id="av-appearance" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
+          </div>
+          <div id="av-tips-box" style="background:rgba(255,92,43,0.05);border:1px solid rgba(255,92,43,0.15);border-radius:12px;padding:16px">
+            <div style="font-family:var(--display);font-size:13px;font-weight:700;color:var(--accent2);margin-bottom:10px">💡 Tips for Best Results</div>
+            <div id="av-tips"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PERSONALISE SCRIPT WITH THIS AVATAR -->
+      <div class="card" id="av-personalise-card" style="display:none">
+        <div class="card-head">
+          <div class="card-title">✍️ Personalise Your Script</div>
+        </div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Rewrite your current script so it sounds exactly like your custom avatar would say it — with their personality, tone, and speaking style baked in.</p>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px;min-height:60px">
+            <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-family:var(--display)">Current Script</div>
+            <div id="av-current-script" style="font-size:13px;color:rgba(244,241,235,0.7);line-height:1.7">No script generated yet. Go to the Script tab first.</div>
+          </div>
+          <button class="act-btn primary" id="av-personalise-btn" onclick="personaliseScript()" style="width:100%;justify-content:center;padding:12px;font-size:14px;margin-bottom:14px">🎭 Rewrite in My Avatar's Voice</button>
+          <div id="av-personalised-output" style="display:none">
+            <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;font-family:var(--display)">Personalised Script</div>
+            <div id="av-personalised-text" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,92,43,0.2);border-radius:10px;padding:14px;font-size:13.5px;color:rgba(244,241,235,0.85);line-height:1.8;white-space:pre-wrap"></div>
+            <div class="actions-row" style="margin-top:12px">
+              <button class="act-btn" onclick="navigator.clipboard.writeText(document.getElementById('av-personalised-text').textContent).then(function(){showToast('✓ Copied!')})">📋 Copy</button>
+              <button class="act-btn primary" onclick="usePersonalisedScript()">✓ Use this script</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAVE AVATAR PROFILE -->
+      <div class="card" id="av-save-card" style="display:none">
+        <div class="card-head">
+          <div class="card-title">💾 Saved Avatar Profile</div>
+        </div>
+        <div class="card-body">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+            <img id="av-saved-img" src="" style="width:56px;height:56px;border-radius:12px;border:2px solid var(--accent)">
+            <div>
+              <div id="av-saved-name" style="font-family:var(--display);font-size:16px;font-weight:700"></div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px">Your custom avatar profile</div>
+            </div>
+            <button class="act-btn" onclick="clearAvatarProfile()" style="margin-left:auto">✕ Clear</button>
+          </div>
+          <div style="font-size:13px;color:rgba(244,241,235,0.65);line-height:1.6;background:rgba(255,255,255,0.04);border-radius:10px;padding:12px" id="av-saved-desc"></div>
+          <div style="margin-top:12px;font-size:12px;color:var(--green)">✓ Your scripts will automatically be personalised for this avatar when you check the box below</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:10px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:10px;padding:12px;cursor:pointer" onclick="toggleAutoPersonalise()">
+            <div id="auto-personalise-toggle" style="width:20px;height:20px;border-radius:6px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">✓</div>
+            <div style="font-size:13px;color:rgba(244,241,235,0.8)">Auto-personalise all new scripts for this avatar</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </div>
 
@@ -513,7 +689,7 @@ textarea.inp{resize:vertical;min-height:72px}
 // ── STATE ──
 var S = {style:'testimonial', platform:'TikTok', tone:'casual', duration:'30'};
 var currentScript = '';
-var selectedVoiceId = 'EXAVITQu4vr4xnSDxMaL';
+var selectedVoiceId = 'cgSgspJ2msm6clMCkdW9';
 var selectedAvatarId = 'Daisy-inskirt-20220818';
 var hookCount = 20;
 var varCount = 5;
@@ -1111,6 +1287,164 @@ function deleteFromLibrary(id) {
   try { localStorage.setItem('zuvlix_library', JSON.stringify(library)); } catch(e) {}
   renderLibrary();
   showToast('Deleted from library');
+}
+
+
+// ── CUSTOM AVATAR BUILDER ──
+var avatarProfile = null;
+var avatarBrief = null;
+var autoPersonalise = true;
+
+try {
+  var saved = localStorage.getItem('zuvlix_avatar');
+  if (saved) { avatarProfile = JSON.parse(saved); showSavedAvatar(); }
+} catch(e) {}
+
+async function buildAvatar() {
+  var desc = document.getElementById('av-description').value.trim();
+  if (!desc) { showToast('⚠ Please describe your ideal avatar'); return; }
+  var personality = document.getElementById('av-personality').value.trim();
+  var catchphrase = document.getElementById('av-catchphrase').value.trim();
+
+  var btn = document.getElementById('av-build-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Building your avatar...';
+  setStatus('av-builder', 'load', 'Generating...');
+
+  try {
+    // Run brief and portrait in parallel
+    var briefData = api('avatar_brief', {description: desc, platform: S.platform, style: S.style});
+    var portraitData = api('avatar_portrait', {description: desc});
+    var results = await Promise.all([briefData, portraitData]);
+    
+    var brief = results[0].brief || {};
+    var portrait = results[1].portrait || {};
+    avatarBrief = brief;
+
+    // Show portrait
+    var img = document.getElementById('av-portrait-img');
+    img.src = portrait.avatar_url || ('https://api.dicebear.com/9.x/personas/svg?seed=' + desc.slice(0,10).replace(/\s/g,'') + '&radius=50');
+    img.onerror = function() { this.src = 'https://api.dicebear.com/9.x/personas/svg?seed=custom&radius=50'; };
+    document.getElementById('av-portrait-name').textContent = desc.split(' ').slice(0,3).join(' ');
+    document.getElementById('av-portrait-desc').textContent = portrait.portrait_description || desc;
+    document.getElementById('av-personality-display').textContent = brief.personality || personality || 'Authentic and relatable';
+    document.getElementById('av-voice-rec').textContent = brief.voice_recommendation || 'Choose a warm, conversational voice';
+    document.getElementById('av-why-works').textContent = brief.why_it_works || 'This avatar will resonate with your target audience';
+    document.getElementById('av-portrait-card').style.display = 'block';
+
+    // Show brief
+    document.getElementById('heygen-prompt').textContent = brief.heygen_prompt || '';
+    document.getElementById('did-prompt').textContent = brief.did_prompt || '';
+    
+    var app = brief.appearance || {};
+    var appHtml = '';
+    Object.keys(app).forEach(function(k) {
+      appHtml += '<div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:10px"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;font-family:var(--display)">' + k + '</div><div style="font-size:12.5px;color:rgba(244,241,235,0.8)">' + app[k] + '</div></div>';
+    });
+    document.getElementById('av-appearance').innerHTML = appHtml;
+    
+    var tips = brief.tips || [];
+    document.getElementById('av-tips').innerHTML = tips.map(function(t) {
+      return '<div style="display:flex;gap:8px;margin-bottom:8px;font-size:12.5px;color:rgba(244,241,235,0.75)"><span style="color:var(--accent2);flex-shrink:0">→</span>' + t + '</div>';
+    }).join('');
+    document.getElementById('av-brief-card').style.display = 'block';
+
+    // Show personalise section
+    var scriptPreview = currentScript ? currentScript.slice(0,200) + (currentScript.length > 200 ? '...' : '') : 'No script generated yet. Go to the Script tab first.';
+    document.getElementById('av-current-script').textContent = scriptPreview;
+    document.getElementById('av-personalise-card').style.display = 'block';
+
+    // Save profile
+    avatarProfile = {
+      description: desc,
+      personality: personality || brief.personality || 'Casual and authentic',
+      speaking_style: brief.voice_recommendation || 'Natural and conversational',
+      catchphrase: catchphrase,
+      portrait_url: img.src,
+      brief: brief
+    };
+    try { localStorage.setItem('zuvlix_avatar', JSON.stringify(avatarProfile)); } catch(e) {}
+    
+    document.getElementById('av-saved-img').src = img.src;
+    document.getElementById('av-saved-name').textContent = desc.split(',')[0].trim().slice(0,40);
+    document.getElementById('av-saved-desc').textContent = (personality || brief.personality || '') + (catchphrase ? ' · Signature: "' + catchphrase + '"' : '');
+    document.getElementById('av-save-card').style.display = 'block';
+
+    setStatus('av-builder', 'done', 'Avatar created ✓');
+    showToast('✓ Your avatar profile is ready!');
+
+  } catch(e) {
+    showToast('Error: ' + e.message);
+    setStatus('av-builder', 'err', 'Error');
+  }
+  btn.disabled = false;
+  btn.textContent = '✨ Regenerate Avatar Profile';
+}
+
+function copyField(id) {
+  var el = document.getElementById(id);
+  if (el) navigator.clipboard.writeText(el.textContent).then(function(){ showToast('✓ Copied!'); });
+}
+
+async function personaliseScript() {
+  if (!currentScript) { showToast('⚠ Generate a script first in the Script tab'); return; }
+  if (!avatarProfile) { showToast('⚠ Create your avatar profile first'); return; }
+  var btn = document.getElementById('av-personalise-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Rewriting in your avatar's voice...';
+  try {
+    var data = await api('personalise_script', {script: currentScript, avatar_profile: avatarProfile});
+    var personalised = data.script || '';
+    document.getElementById('av-personalised-text').textContent = personalised;
+    document.getElementById('av-personalised-output').style.display = 'block';
+    showToast('✓ Script personalised!');
+  } catch(e) {
+    showToast('Error: ' + e.message);
+  }
+  btn.disabled = false;
+  btn.textContent = '🎭 Rewrite in My Avatar's Voice';
+}
+
+function usePersonalisedScript() {
+  var text = document.getElementById('av-personalised-text').textContent;
+  if (!text) return;
+  currentScript = text;
+  document.getElementById('script-out').innerHTML = currentScript.replace(/\n/g,'<br>');
+  document.getElementById('script-edit').value = currentScript;
+  ['regen-btn','edit-btn','copy-script-btn','score-btn','save-lib-btn'].forEach(function(id){
+    document.getElementById(id).disabled = false;
+  });
+  showTab('script', document.getElementById('tab-btn-script'));
+  showToast('✓ Using personalised script!');
+}
+
+function toggleAutoPersonalise() {
+  autoPersonalise = !autoPersonalise;
+  var toggle = document.getElementById('auto-personalise-toggle');
+  if (toggle) {
+    toggle.style.background = autoPersonalise ? 'var(--green)' : 'rgba(255,255,255,0.1)';
+    toggle.textContent = autoPersonalise ? '✓' : '';
+  }
+}
+
+function clearAvatarProfile() {
+  avatarProfile = null;
+  try { localStorage.removeItem('zuvlix_avatar'); } catch(e) {}
+  document.getElementById('av-save-card').style.display = 'none';
+  document.getElementById('av-portrait-card').style.display = 'none';
+  document.getElementById('av-brief-card').style.display = 'none';
+  document.getElementById('av-personalise-card').style.display = 'none';
+  document.getElementById('av-description').value = '';
+  document.getElementById('av-build-btn').textContent = '✨ Generate My Avatar Profile';
+  showToast('Avatar profile cleared');
+}
+
+function showSavedAvatar() {
+  if (!avatarProfile) return;
+  document.getElementById('av-saved-img').src = avatarProfile.portrait_url || 'https://api.dicebear.com/9.x/personas/svg?seed=custom&radius=50';
+  document.getElementById('av-saved-name').textContent = (avatarProfile.description || '').split(',')[0].trim().slice(0,40);
+  document.getElementById('av-saved-desc').textContent = (avatarProfile.personality || '') + (avatarProfile.catchphrase ? ' · "' + avatarProfile.catchphrase + '"' : '');
+  document.getElementById('av-save-card').style.display = 'block';
 }
 
 // ── INIT ──
