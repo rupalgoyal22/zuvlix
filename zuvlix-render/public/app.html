@@ -3,330 +3,377 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zuvlix App</title>
+<title>Zuvlix App — AI UGC Video Creator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#08080c;--panel:#111118;--panel2:#17171f;--surface:#1e1e28;
-  --text:#f2f0ff;--text2:rgba(242,240,255,0.55);--text3:rgba(242,240,255,0.28);
-  --accent:#ff4d1c;--accent2:#ff7a52;--green:#2dd4a0;--gold:#f5c842;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
-  --display:'Syne',sans-serif;--sans:'DM Sans',sans-serif;
+  --bg:#07070d;--p1:#0f0f1a;--p2:#15151f;--p3:#1c1c28;
+  --text:#f2f0ff;--t2:rgba(242,240,255,0.55);--t3:rgba(242,240,255,0.25);
+  --acc:#ff4d1c;--acc2:#ff7a52;--grn:#2dd4a0;--gld:#f5c842;--pur:#8b7cf8;
+  --brd:rgba(255,255,255,0.07);--brd2:rgba(255,255,255,0.12);
+  --dsp:'Syne',sans-serif;--sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
 }
 html{-webkit-font-smoothing:antialiased}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden}
 
 /* TOPBAR */
-.topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(8,8,12,0.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
-.logo{font-family:var(--display);font-size:18px;font-weight:800;color:var(--text);text-decoration:none}
-.logo em{color:var(--accent);font-style:normal}
-.topbar-right{display:flex;align-items:center;gap:10px}
-.plan-tag{background:rgba(255,77,28,0.1);border:1px solid rgba(255,77,28,0.22);color:var(--accent2);border-radius:100px;padding:4px 12px;font-size:12px;font-weight:600;font-family:var(--display)}
-.upgrade-btn{background:var(--accent);color:#fff;border:none;border-radius:100px;padding:8px 18px;font-family:var(--display);font-size:13px;font-weight:700;cursor:pointer}
-.upgrade-btn:hover{background:#e03d0a}
-.back-a{color:var(--text2);text-decoration:none;font-size:13px}
-.back-a:hover{color:var(--text)}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(7,7,13,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--brd)}
+.logo{font-family:var(--dsp);font-size:17px;font-weight:800;color:var(--text);text-decoration:none;letter-spacing:1px}
+.logo em{color:var(--acc);font-style:normal}
+.tb-right{display:flex;align-items:center;gap:8px}
+.plan-pill{background:rgba(255,77,28,0.1);border:1px solid rgba(255,77,28,0.22);color:var(--acc2);border-radius:100px;padding:4px 12px;font-size:11px;font-weight:700;font-family:var(--mono)}
+.tb-btn{border-radius:100px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--dsp);border:none;transition:all 0.2s}
+.tb-btn-ghost{background:transparent;border:1px solid var(--brd2);color:var(--t2);text-decoration:none;display:inline-flex;align-items:center}
+.tb-btn-ghost:hover{color:var(--text);border-color:rgba(255,255,255,0.22)}
+.tb-btn-primary{background:var(--acc);color:#fff}
+.tb-btn-primary:hover{background:#e03d0a}
 
 /* LAYOUT */
-.app-wrap{padding-top:60px;display:grid;grid-template-columns:300px 1fr;min-height:100vh}
+.layout{padding-top:58px;display:grid;grid-template-columns:290px 1fr;min-height:100vh}
 
 /* SIDEBAR */
-.sidebar{background:var(--panel);border-right:1px solid var(--border);padding:20px 16px;display:flex;flex-direction:column;gap:18px;overflow-y:auto;height:calc(100vh - 60px);position:sticky;top:60px}
-.sb-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-weight:700;margin-bottom:4px;font-family:var(--display)}
-.fld{display:flex;flex-direction:column;gap:4px}
-.fld label{font-size:11px;color:var(--text2)}
-.inp{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);font-family:var(--sans);outline:none;width:100%;transition:border-color 0.2s}
-.inp:focus{border-color:var(--accent)}
-.inp::placeholder{color:var(--text3)}
-textarea.inp{resize:vertical;min-height:68px}
+.sidebar{background:var(--p1);border-right:1px solid var(--brd);padding:18px 14px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;height:calc(100vh - 58px);position:sticky;top:58px}
+.sb-section{display:flex;flex-direction:column;gap:8px}
+.sb-label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--t3);font-weight:700;font-family:var(--mono);margin-bottom:2px}
+.fld{display:flex;flex-direction:column;gap:3px}
+.fld-lbl{font-size:11px;color:var(--t2)}
+.inp{background:rgba(255,255,255,0.05);border:1px solid var(--brd);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);font-family:var(--sans);outline:none;width:100%;transition:border-color 0.2s}
+.inp:focus{border-color:var(--acc)}
+.inp::placeholder{color:var(--t3)}
+textarea.inp{resize:vertical;min-height:72px}
 .chips{display:flex;gap:5px;flex-wrap:wrap}
-.chip{background:rgba(255,77,28,0.07);border:1px solid rgba(255,77,28,0.14);color:var(--accent2);border-radius:100px;padding:4px 11px;font-size:11px;cursor:pointer;transition:all 0.2s;user-select:none;font-weight:500}
-.chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
-.divider{height:1px;background:var(--border)}
-.credits-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.chip{background:rgba(255,255,255,0.04);border:1px solid var(--brd);color:var(--t2);border-radius:100px;padding:5px 11px;font-size:11px;cursor:pointer;transition:all 0.2s;user-select:none;font-weight:500}
+.chip.on{background:rgba(255,77,28,0.1);border-color:rgba(255,77,28,0.3);color:var(--acc2)}
+.hr{height:1px;background:var(--brd)}
+.cred-box{background:rgba(255,255,255,0.03);border:1px solid var(--brd);border-radius:8px;padding:10px 12px}
 .cred-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
-.cred-lbl{font-size:11px;color:var(--text2)}
-.cred-n{font-family:var(--display);font-size:13px;font-weight:700}
-.cred-bar{height:3px;background:rgba(255,255,255,0.08);border-radius:100px;overflow:hidden}
-.cred-fill{height:100%;background:var(--accent);border-radius:100px;width:67%}
-.gen-btn{background:linear-gradient(135deg,var(--accent),#c93800);color:#fff;border:none;border-radius:10px;padding:14px;font-family:var(--display);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 20px rgba(255,77,28,0.22)}
-.gen-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 10px 28px rgba(255,77,28,0.32)}
+.cred-lbl{font-size:11px;color:var(--t2)}
+.cred-n{font-family:var(--dsp);font-size:13px;font-weight:700}
+.cred-bar{height:3px;background:rgba(255,255,255,0.07);border-radius:100px;overflow:hidden}
+.cred-fill{height:100%;background:var(--acc);border-radius:100px;width:67%}
+.gen-btn{background:linear-gradient(135deg,var(--acc),#c93800);color:#fff;border:none;border-radius:10px;padding:13px;font-family:var(--dsp);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 20px rgba(255,77,28,0.22);transition:all 0.2s}
+.gen-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 10px 28px rgba(255,77,28,0.35)}
 .gen-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 .url-row{display:flex;gap:6px}
 .url-row .inp{flex:1}
-.scrape-btn{background:rgba(255,77,28,0.12);border:1px solid rgba(255,77,28,0.25);color:var(--accent2);border-radius:8px;padding:9px 12px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:var(--display)}
-.scrape-btn:hover{background:rgba(255,77,28,0.2)}
+.scrape-btn{background:rgba(255,77,28,0.1);border:1px solid rgba(255,77,28,0.22);color:var(--acc2);border-radius:8px;padding:9px 11px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:var(--dsp);transition:all 0.2s}
+.scrape-btn:hover:not(:disabled){background:rgba(255,77,28,0.2)}
 .scrape-btn:disabled{opacity:0.5;cursor:not-allowed}
-.scrape-note{font-size:11px;color:var(--text3);margin-top:3px}
-.brand-box{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px}
-.logo-upload{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.03);border:1px dashed var(--border2);border-radius:7px;padding:7px 10px;cursor:pointer;font-size:11px;color:var(--text2)}
-.color-row{display:flex;gap:8px;align-items:center}
-.color-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px;color:var(--text3)}
-.swatch{width:26px;height:26px;border-radius:6px;border:1.5px solid var(--border2);cursor:pointer;position:relative;overflow:hidden}
+.note{font-size:11px;color:var(--t3)}
+.brand-box{background:var(--p2);border:1px solid var(--brd);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.logo-upload{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.03);border:1px dashed var(--brd2);border-radius:7px;padding:7px 10px;cursor:pointer;font-size:11px;color:var(--t2)}
+.color-row{display:flex;gap:8px}
+.color-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px;color:var(--t3)}
+.swatch{width:26px;height:26px;border-radius:6px;border:1.5px solid var(--brd2);position:relative;overflow:hidden;cursor:pointer}
 .swatch input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 
 /* MAIN */
-.main{padding:24px;display:flex;flex-direction:column;gap:16px;overflow-y:auto}
+.main{padding:20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
 
 /* TABS */
-.tabs{display:flex;background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden;flex-shrink:0;flex-wrap:wrap}
-.tab{flex:1;min-width:80px;padding:11px 6px;display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.2s;border-right:1px solid var(--border);font-family:var(--display);user-select:none}
-.tab:last-child{border-right:none}
-.tab.on{background:rgba(255,77,28,0.08);color:var(--accent2)}
+.tabs-wrap{background:var(--p1);border:1px solid var(--brd);border-radius:12px;overflow:hidden;display:grid;grid-template-columns:repeat(5,1fr);flex-shrink:0}
+.tabs-row2{grid-template-columns:repeat(5,1fr)}
+.tab-btn{padding:10px 4px;display:flex;align-items:center;justify-content:center;gap:3px;font-size:10px;font-weight:700;color:var(--t2);cursor:pointer;transition:all 0.2s;border-right:1px solid var(--brd);border-bottom:1px solid var(--brd);font-family:var(--dsp);user-select:none;text-align:center;letter-spacing:0.5px}
+.tab-btn:nth-child(5n),.tab-btn:last-child{border-right:none}
+.tab-btn.on{background:rgba(255,77,28,0.08);color:var(--acc2)}
+.tab-btn:hover:not(.on){background:rgba(255,255,255,0.03);color:var(--text)}
 
 /* PANELS */
 .panel{display:none;flex-direction:column;gap:14px}
 .panel.on{display:flex}
 
-/* CARDS */
-.card{background:var(--panel);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-.card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
-.card-title{font-family:var(--display);font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px}
-.card-body{padding:20px}
-.status{display:flex;align-items:center;gap:4px;border-radius:100px;padding:3px 10px;font-size:10px;font-weight:700}
-.s-wait{background:rgba(255,255,255,0.05);color:var(--text2)}
-.s-load{background:rgba(255,77,28,0.1);color:var(--accent2)}
-.s-done{background:rgba(45,212,160,0.1);color:var(--green)}
-.s-err{background:rgba(239,68,68,0.1);color:#f87171}
-.sdot{width:4px;height:4px;border-radius:50%;background:currentColor}
-.sdot.pulse{animation:pulse-dot 1.5s infinite}
+/* CARD */
+.card{background:var(--p1);border:1px solid var(--brd);border-radius:16px;overflow:hidden}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.card-title{font-family:var(--dsp);font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.card-body{padding:18px}
+.status-pill{display:inline-flex;align-items:center;gap:5px;border-radius:100px;padding:3px 10px;font-size:9px;font-weight:700;font-family:var(--mono)}
+.sp-wait{background:rgba(255,255,255,0.05);color:var(--t2)}
+.sp-load{background:rgba(255,77,28,0.1);color:var(--acc2)}
+.sp-done{background:rgba(45,212,160,0.1);color:var(--grn)}
+.sp-err{background:rgba(239,68,68,0.1);color:#f87171}
+.sdot{width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0}
+.sdot.pu{animation:pu 1.5s infinite}
 
-/* SCRIPT */
-.script-text{font-size:14px;color:rgba(242,240,255,0.82);line-height:1.8;min-height:90px;white-space:pre-wrap}
-.script-ph{color:var(--text3);font-style:italic;font-size:13px}
-.script-edit{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:13.5px;color:var(--text);font-family:var(--sans);line-height:1.8;outline:none;resize:vertical;min-height:140px;display:none}
-.script-edit:focus{border-color:var(--accent)}
-.acts{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
-.act{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.05);border:1px solid var(--border2);color:rgba(242,240,255,0.6);border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:var(--display)}
-.act:hover{background:rgba(255,255,255,0.09);color:var(--text)}
-.act.hi{background:rgba(255,77,28,0.1);border-color:rgba(255,77,28,0.22);color:var(--accent2)}
-.act.hi:hover{background:rgba(255,77,28,0.18)}
+/* ACTION BUTTONS */
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.act{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.05);border:1px solid var(--brd2);color:rgba(242,240,255,0.6);border-radius:7px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:var(--dsp)}
+.act:hover:not(:disabled){background:rgba(255,255,255,0.09);color:var(--text)}
+.act.hi{background:rgba(255,77,28,0.1);border-color:rgba(255,77,28,0.25);color:var(--acc2)}
+.act.hi:hover:not(:disabled){background:rgba(255,77,28,0.2)}
 .act:disabled{opacity:0.3;cursor:not-allowed}
 
-/* VOICES */
-.voice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
-.voice-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:9px;padding:10px;cursor:pointer;transition:all 0.2s;text-align:center}
-.voice-card:hover{border-color:rgba(255,255,255,0.14)}
-.voice-card.on{background:rgba(255,77,28,0.08);border-color:rgba(255,77,28,0.28)}
-.voice-img{width:48px;height:48px;border-radius:50%;margin:0 auto 7px;display:block;border:2px solid var(--border)}
-.voice-card.on .voice-img{border-color:var(--accent)}
-.voice-name{font-size:11px;font-weight:700;font-family:var(--display)}
-.voice-desc{font-size:9px;color:var(--text3);margin-top:1px}
+/* SCRIPT */
+.script-display{font-size:14px;color:rgba(242,240,255,0.82);line-height:1.8;min-height:100px;white-space:pre-wrap}
+.script-ph{color:var(--t3);font-style:italic;font-size:13px}
+.script-ta{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--brd);border-radius:8px;padding:12px;font-size:13.5px;color:var(--text);font-family:var(--sans);line-height:1.8;outline:none;resize:vertical;min-height:150px;display:none}
+.script-ta:focus{border-color:var(--acc)}
+
+/* TIMELINE */
+.timeline-wrap{display:flex;flex-direction:column;gap:10px}
+.scene-card{background:var(--p2);border:1px solid var(--brd);border-radius:12px;overflow:hidden}
+.scene-head{padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--brd)}
+.scene-label{font-family:var(--dsp);font-size:11px;font-weight:700;letter-spacing:1px}
+.scene-label.hook{color:var(--acc2)}
+.scene-label.main{color:var(--pur)}
+.scene-label.cta{color:var(--grn)}
+.scene-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.scene-ta{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--brd);border-radius:7px;padding:10px 12px;font-size:13px;color:var(--text);font-family:var(--sans);line-height:1.7;outline:none;resize:none;min-height:68px}
+.scene-ta:focus{border-color:var(--acc)}
+.scene-footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.duration-row{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--t2)}
+.duration-row input[type=range]{width:90px;accent-color:var(--acc)}
+.dur-val{font-family:var(--mono);font-size:11px;color:var(--acc2);min-width:24px}
+.timeline-bar{display:flex;gap:0;border-radius:8px;overflow:hidden;height:8px;margin-bottom:10px}
+.tbar-seg{transition:flex 0.3s}
+.tbar-hook{background:var(--acc);flex:3}
+.tbar-main{background:var(--pur);flex:22}
+.tbar-cta{background:var(--grn);flex:5}
 
 /* HOOKS */
-.hc-row{display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
-.hc-btn{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);border-radius:7px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:var(--display);font-weight:600}
-.hc-btn.on{background:rgba(255,77,28,0.12);border-color:rgba(255,77,28,0.28);color:var(--accent2)}
-.hook-item{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:11px 14px;display:flex;align-items:center;gap:10px;margin-bottom:6px}
-.hook-item:hover{border-color:rgba(255,77,28,0.18)}
-.hook-n{font-family:var(--display);font-size:10px;font-weight:700;color:var(--accent2);width:20px;flex-shrink:0}
+.hcount-row{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.hc-pill{background:rgba(255,255,255,0.05);border:1px solid var(--brd);color:var(--t2);border-radius:7px;padding:5px 11px;font-size:11px;cursor:pointer;font-family:var(--dsp);font-weight:600;transition:all 0.2s}
+.hc-pill.on{background:rgba(255,77,28,0.12);border-color:rgba(255,77,28,0.28);color:var(--acc2)}
+.hook-row{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);border:1px solid var(--brd);border-radius:8px;padding:10px 12px;margin-bottom:5px;transition:border-color 0.2s}
+.hook-row:hover{border-color:rgba(255,77,28,0.18)}
+.hook-num{font-family:var(--mono);font-size:10px;color:var(--acc2);width:22px;flex-shrink:0}
 .hook-txt{flex:1;font-size:13px;color:rgba(242,240,255,0.8);line-height:1.5}
-.hook-copy{background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--text2);border-radius:5px;padding:3px 9px;font-size:10px;cursor:pointer;font-family:var(--display);flex-shrink:0}
+.hook-copy{background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--t2);border-radius:5px;padding:3px 9px;font-size:10px;cursor:pointer;font-family:var(--dsp);flex-shrink:0;transition:all 0.2s}
 .hook-copy:hover{background:rgba(255,255,255,0.07);color:var(--text)}
 
 /* VARIATIONS */
-.var-item{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px}
-.var-item:hover{border-color:rgba(255,77,28,0.18)}
-.var-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
-.var-title{font-family:var(--display);font-size:12px;font-weight:700}
-.var-badge{background:rgba(255,77,28,0.1);border:1px solid rgba(255,77,28,0.2);color:var(--accent2);border-radius:100px;padding:2px 9px;font-size:9px;font-weight:700}
-.var-hook{font-size:12.5px;color:rgba(242,240,255,0.72);font-style:italic;margin-bottom:5px}
-.var-cta{font-size:11px;color:var(--text2)}
+.var-card{background:rgba(255,255,255,0.03);border:1px solid var(--brd);border-radius:10px;padding:13px;margin-bottom:8px;transition:border-color 0.2s}
+.var-card:hover{border-color:rgba(255,77,28,0.18)}
+.var-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.var-title{font-family:var(--dsp);font-size:12px;font-weight:700}
+.var-angle{background:rgba(255,77,28,0.1);border:1px solid rgba(255,77,28,0.2);color:var(--acc2);border-radius:100px;padding:2px 9px;font-size:9px;font-weight:700}
+.var-hook{font-size:12.5px;color:rgba(242,240,255,0.72);font-style:italic;margin-bottom:4px}
+.var-cta{font-size:11px;color:var(--t2)}
 
 /* CAPTIONS */
-.cap-preview{background:rgba(0,0,0,0.45);border-radius:10px;padding:20px;min-height:160px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.05);margin-bottom:12px}
-.cap-preview-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0f0f1e,#1a0a1e);opacity:0.7}
-.cap-preview-txt{position:relative;z-index:1;text-align:center;font-family:var(--display);font-size:17px;font-weight:700;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.8);padding:7px 14px;background:rgba(0,0,0,0.45);border-radius:7px;max-width:80%}
-.cap-line{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:7px;padding:7px 10px;margin-bottom:5px}
-.cap-time{font-family:monospace;font-size:10px;color:var(--text2);flex-shrink:0}
+.cap-preview{background:rgba(0,0,0,0.5);border-radius:10px;padding:20px;min-height:140px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.05);margin-bottom:12px}
+.cap-preview-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0f0f1e,#1a0a1e)}
+.cap-txt{position:relative;z-index:1;text-align:center;font-family:var(--dsp);font-size:16px;font-weight:700;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.8);padding:6px 12px;background:rgba(0,0,0,0.4);border-radius:6px;max-width:80%}
+.cap-line{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);border:1px solid var(--brd);border-radius:7px;padding:7px 10px;margin-bottom:5px;cursor:pointer}
+.cap-time{font-family:var(--mono);font-size:10px;color:var(--t2);flex-shrink:0}
 
 /* SCORE */
-.score-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
-.score-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:13px;text-align:center}
-.score-n{font-family:var(--display);font-size:24px;font-weight:800;letter-spacing:-1px}
-.score-n.g{color:var(--green)}.score-n.o{color:var(--gold)}.score-n.r{color:var(--accent)}
-.score-lbl{font-size:10px;color:var(--text2);margin-top:3px}
-.bar-row{margin-bottom:10px}
-.bar-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px}
+.score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.score-box{background:rgba(255,255,255,0.03);border:1px solid var(--brd);border-radius:10px;padding:12px;text-align:center}
+.score-n{font-family:var(--dsp);font-size:26px;font-weight:800;letter-spacing:-1px}
+.score-n.g{color:var(--grn)}.score-n.o{color:var(--gld)}.score-n.r{color:var(--acc)}
+.score-lbl{font-size:10px;color:var(--t2);margin-top:2px;font-family:var(--mono)}
+.bar-row{margin-bottom:9px}
+.bar-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-bottom:3px}
 .bar{height:4px;background:rgba(255,255,255,0.07);border-radius:100px;overflow:hidden}
-.bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 1s ease}
+.bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width 0.8s ease}
 .insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.insight-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px}
-.insight-title{font-family:var(--display);font-size:11px;font-weight:700;margin-bottom:7px}
-.insight-item{font-size:11.5px;color:rgba(242,240,255,0.65);display:flex;gap:5px;margin-bottom:5px;line-height:1.5}
-.i-dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.insight-box{background:rgba(255,255,255,0.03);border:1px solid var(--brd);border-radius:10px;padding:12px}
+.insight-title{font-family:var(--dsp);font-size:11px;font-weight:700;margin-bottom:6px}
+.insight-item{font-size:11.5px;color:rgba(242,240,255,0.65);display:flex;gap:5px;margin-bottom:4px;line-height:1.5}
+.idot{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:5px}
 
-/* COMING SOON BOX */
-.cs{background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.09);border-radius:10px;padding:20px;text-align:center}
-.cs-ico{font-size:28px;margin-bottom:8px}
-.cs-title{font-family:var(--display);font-size:13px;font-weight:700;color:rgba(242,240,255,0.45);margin-bottom:5px}
-.cs-sub{font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6}
-.cs-badge{display:inline-block;background:rgba(255,77,28,0.08);border:1px solid rgba(255,77,28,0.18);color:var(--accent2);border-radius:100px;padding:2px 11px;font-size:10px;font-weight:700}
+/* IMAGE TO VIDEO */
+.img2vid-upload{border:2px dashed var(--brd2);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:all 0.2s}
+.img2vid-upload:hover{border-color:rgba(255,77,28,0.4);background:rgba(255,77,28,0.03)}
+.img2vid-upload input{display:none}
+.img2vid-preview{display:none;align-items:center;gap:14px;background:rgba(255,255,255,0.03);border:1px solid var(--brd);border-radius:10px;padding:12px}
+.img2vid-thumb{width:80px;height:80px;object-fit:cover;border-radius:8px;display:block}
+.i2v-brief{background:rgba(255,255,255,0.03);border:1px solid var(--brd);border-radius:10px;padding:13px;margin-top:12px}
+.i2v-brief-title{font-family:var(--dsp);font-size:11px;font-weight:700;color:var(--acc2);margin-bottom:8px}
+.i2v-hooks{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px}
+.i2v-hook{background:rgba(255,255,255,0.04);border:1px solid var(--brd);border-radius:7px;padding:7px 10px;font-size:11.5px;color:rgba(242,240,255,0.72);line-height:1.4;cursor:pointer;transition:border-color 0.2s}
+.i2v-hook:hover{border-color:rgba(255,77,28,0.25)}
+
+/* URL TO VIDEO */
+.url2vid-row{display:flex;gap:8px}
+.url2vid-row .inp{flex:1}
+.url2vid-btn{background:var(--acc);border:none;color:#fff;border-radius:8px;padding:9px 16px;font-weight:700;font-size:12px;cursor:pointer;font-family:var(--dsp);white-space:nowrap;transition:all 0.2s}
+.url2vid-btn:hover:not(:disabled){background:#e03d0a}
+.url2vid-btn:disabled{opacity:0.5;cursor:not-allowed}
+.brief-result{background:rgba(255,255,255,0.03);border:1px solid var(--brd);border-radius:10px;padding:14px;margin-top:12px}
+.brief-product{font-family:var(--dsp);font-size:14px;font-weight:700;margin-bottom:6px}
+.brief-desc{font-size:13px;color:rgba(242,240,255,0.72);line-height:1.6;margin-bottom:10px}
+.brief-section-title{font-family:var(--mono);font-size:9px;color:var(--acc2);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+
+/* VOICE */
+.voice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
+.voice-card{background:rgba(255,255,255,0.04);border:1px solid var(--brd);border-radius:9px;padding:10px;cursor:pointer;transition:all 0.2s;text-align:center}
+.voice-card:hover{border-color:rgba(255,255,255,0.14)}
+.voice-card.on{background:rgba(255,77,28,0.08);border-color:rgba(255,77,28,0.3)}
+.v-img{width:48px;height:48px;border-radius:50%;margin:0 auto 7px;display:block;border:2px solid var(--brd);transition:border-color 0.2s}
+.voice-card.on .v-img{border-color:var(--acc)}
+.v-name{font-size:11px;font-weight:700;font-family:var(--dsp)}
+.v-tag{font-size:9px;color:var(--t3);margin-top:1px;font-family:var(--mono)}
+.audio-player{background:rgba(255,255,255,0.03);border:1px solid var(--brd);border-radius:9px;padding:12px 14px;display:none;align-items:center;gap:10px}
+.play-btn{width:34px;height:34px;border-radius:50%;background:var(--acc);border:none;color:#fff;font-size:13px;cursor:pointer;flex-shrink:0;transition:all 0.2s}
+.play-btn:hover{background:#e03d0a}
+.audio-prog-wrap{flex:1}
+.audio-bar{height:3px;background:rgba(255,255,255,0.09);border-radius:100px;margin-top:4px;overflow:hidden;cursor:pointer}
+.audio-bar-fill{height:100%;background:var(--acc);border-radius:100px;width:0%;transition:width 0.1s}
+.audio-time{font-size:10px;color:var(--t2);margin-top:3px;font-family:var(--mono)}
+
+/* AVATAR PANEL */
+.avatar-lib-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.av-lib-card{background:rgba(255,255,255,0.04);border:1px solid var(--brd);border-radius:9px;padding:10px;cursor:pointer;transition:all 0.2s;text-align:center}
+.av-lib-card:hover{border-color:rgba(255,255,255,0.14)}
+.av-lib-card.on{background:rgba(255,77,28,0.08);border-color:rgba(255,77,28,0.3)}
+.av-lib-img{width:56px;height:56px;border-radius:50%;margin:0 auto 7px;display:block;border:2px solid var(--brd);transition:border-color 0.2s}
+.av-lib-card.on .av-lib-img{border-color:var(--acc)}
+.av-lib-name{font-size:11px;font-weight:700;font-family:var(--dsp)}
+.av-lib-style{font-size:9px;color:var(--t3);margin-top:1px;font-family:var(--mono)}
+.av-detail-box{background:var(--p2);border:1px solid var(--brd);border-radius:10px;padding:14px;margin-bottom:10px}
+.av-dl{font-family:var(--mono);font-size:10px;color:var(--acc2);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.av-dc{font-size:12.5px;color:rgba(242,240,255,0.8);line-height:1.6}
 
 /* INTEL */
 .intel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.intel-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:13px}
-.intel-title{font-family:var(--display);font-size:11px;font-weight:700;margin-bottom:8px}
-.intel-item{font-size:12px;color:rgba(242,240,255,0.72);padding:4px 0;border-bottom:1px solid var(--border);display:flex;gap:6px;line-height:1.5}
+.intel-box{background:rgba(255,255,255,0.03);border:1px solid var(--brd);border-radius:10px;padding:13px}
+.intel-title{font-family:var(--dsp);font-size:11px;font-weight:700;margin-bottom:7px}
+.intel-item{font-size:12px;color:rgba(242,240,255,0.72);padding:4px 0;border-bottom:1px solid var(--brd);display:flex;gap:6px;line-height:1.5}
 .intel-item:last-child{border-bottom:none}
-.strategy-box{background:rgba(255,77,28,0.05);border:1px solid rgba(255,77,28,0.15);border-radius:10px;padding:14px;margin-top:10px}
-.strategy-title{font-family:var(--display);font-size:11px;font-weight:700;color:var(--accent2);margin-bottom:7px}
+.strategy-box{background:rgba(255,77,28,0.04);border:1px solid rgba(255,77,28,0.14);border-radius:10px;padding:13px;margin-top:10px}
+.strat-title{font-family:var(--dsp);font-size:11px;font-weight:700;color:var(--acc2);margin-bottom:6px}
+
+/* MY AVATAR BUILDER */
+.av-portrait{width:84px;height:84px;border-radius:50%;margin:0 auto;display:block;border:3px solid var(--acc)}
 
 /* LIBRARY */
-.lib-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:13px;margin-bottom:7px}
-.lib-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
-.lib-title{font-family:var(--display);font-size:12px;font-weight:700}
-.lib-meta{font-size:10px;color:var(--text2);margin-top:1px}
-.lib-preview{font-size:11.5px;color:rgba(242,240,255,0.5);line-height:1.5;overflow:hidden;max-height:52px}
+.lib-card{background:rgba(255,255,255,0.03);border:1px solid var(--brd);border-radius:10px;padding:13px;margin-bottom:7px}
+.lib-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.lib-title{font-family:var(--dsp);font-size:12px;font-weight:700}
+.lib-meta{font-size:10px;color:var(--t2);margin-top:1px;font-family:var(--mono)}
+.lib-preview{font-size:11.5px;color:rgba(242,240,255,0.5);line-height:1.5}
 
-/* MY AVATAR */
-.av-portrait{width:90px;height:90px;border-radius:50%;margin:0 auto;display:block;border:3px solid var(--accent)}
-.av-detail-box{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:13px;margin-bottom:8px}
-.av-detail-lbl{font-family:var(--display);font-size:10px;font-weight:700;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
-.av-tips-item{font-size:12px;color:rgba(242,240,255,0.7);display:flex;gap:6px;margin-bottom:6px}
-
-/* AVATAR VIDEO SECTION */
-.avatar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+/* VIDEO OUTPUT */
+.video-wrap{border:1px solid var(--brd);border-radius:12px;overflow:hidden;background:#000;aspect-ratio:9/16;max-height:480px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.video-ph{text-align:center;padding:30px;color:var(--t2);font-size:13px}
+.video-ph-ico{font-size:48px;margin-bottom:12px}
+.progress-wrap{background:rgba(255,255,255,0.07);border-radius:100px;height:4px;margin-bottom:8px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:100px;transition:width 0.5s;width:0%}
 
 /* TOAST */
-.toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:#04342C;padding:9px 16px;border-radius:9px;font-size:13px;font-weight:700;transform:translateY(80px);opacity:0;transition:all 0.3s;z-index:999;font-family:var(--display)}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--grn);color:#04342c;padding:9px 16px;border-radius:9px;font-size:13px;font-weight:700;transform:translateY(80px);opacity:0;transition:all 0.3s;z-index:999;font-family:var(--dsp)}
 .toast.show{transform:translateY(0);opacity:1}
 
-.spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.25);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite}
-.tcur{display:inline-block;width:2px;height:13px;background:var(--accent);animation:blink 0.8s infinite;vertical-align:middle;margin-left:1px}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.2);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite}
+.tcur{display:inline-block;width:2px;height:13px;background:var(--acc);animation:blink 0.8s infinite;vertical-align:middle;margin-left:1px}
+.empty-state{text-align:center;padding:32px 0;color:var(--t2);font-size:13px;line-height:1.6}
+
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-@keyframes pulse-dot{0%{box-shadow:0 0 0 0 rgba(45,212,160,0.6)}100%{box-shadow:0 0 0 8px rgba(45,212,160,0)}}
+@keyframes pu{0%{box-shadow:0 0 0 0 rgba(45,212,160,0.5)}100%{box-shadow:0 0 0 8px rgba(45,212,160,0)}}
 
 @media(max-width:900px){
-  .app-wrap{grid-template-columns:1fr}
+  .layout{grid-template-columns:1fr}
   .sidebar{height:auto;position:relative;top:0}
-  .main{padding:14px}
-  .score-overview{grid-template-columns:repeat(2,1fr)}
+  .main{padding:12px}
+  .score-grid{grid-template-columns:repeat(2,1fr)}
   .insight-grid,.intel-grid{grid-template-columns:1fr}
   .voice-grid{grid-template-columns:repeat(2,1fr)}
+  .avatar-lib-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <a href="/" class="logo">Zuv<em>lix</em></a>
-  <div class="topbar-right">
-    <a href="/" class="back-a">Back to site</a>
-    <div class="plan-tag">Free Plan</div>
-    <button class="upgrade-btn" onclick="window.open('https://tally.so/r/Y5kAyv','_blank')">Upgrade</button>
+  <a href="/" class="logo">ZUV<em>LIX</em></a>
+  <div class="tb-right">
+    <a href="/" class="tb-btn tb-btn-ghost">← Site</a>
+    <div class="plan-pill">Free Plan</div>
+    <button class="tb-btn tb-btn-primary" onclick="window.open('https://tally.so/r/Y5kAyv','_blank')">Upgrade</button>
   </div>
 </div>
 
-<div class="app-wrap">
-
+<div class="layout">
   <!-- SIDEBAR -->
   <div class="sidebar">
 
-    <div>
-      <div class="sb-lbl">Product URL</div>
+    <div class="sb-section">
+      <div class="sb-label">URL to Video</div>
       <div class="url-row">
-        <input type="url" class="inp" id="purl" placeholder="https://yourstore.com/product">
-        <button class="scrape-btn" id="scrape-btn" onclick="scrapeURL()">Auto-fill</button>
+        <input type="url" class="inp" id="purl" placeholder="Paste product URL...">
+        <button class="scrape-btn" id="scrape-btn" onclick="scrapeURL()">Scrape</button>
       </div>
-      <div class="scrape-note" id="scrape-note">Paste any Shopify or product URL</div>
+      <div class="note" id="scrape-note">Auto-fills everything below</div>
     </div>
 
-    <div class="divider"></div>
+    <div class="hr"></div>
 
-    <div>
-      <div class="sb-lbl">Your Product</div>
-      <div class="fld" style="gap:8px">
-        <div class="fld">
-          <label>Product name *</label>
-          <input type="text" class="inp" id="pname" placeholder="e.g. AquaGlow Face Serum">
-        </div>
-        <div class="fld">
-          <label>Description *</label>
-          <textarea class="inp" id="pdesc" placeholder="What does it do? Key benefits? Target audience?"></textarea>
-        </div>
-      </div>
+    <div class="sb-section">
+      <div class="sb-label">Product Details</div>
+      <div class="fld"><label class="fld-lbl">Product name *</label><input type="text" class="inp" id="pname" placeholder="e.g. AquaGlow Serum"></div>
+      <div class="fld"><label class="fld-lbl">Description *</label><textarea class="inp" id="pdesc" placeholder="What it does. Who it's for. Key benefits."></textarea></div>
     </div>
 
-    <div class="divider"></div>
+    <div class="hr"></div>
 
-    <div>
-      <div class="sb-lbl">Video Settings</div>
-      <div class="fld" style="gap:8px">
-        <div class="fld">
-          <label>Style</label>
-          <div class="chips" id="style-group">
-            <div class="chip on" onclick="pickChip('style-group',this,'testimonial')">Testimonial</div>
-            <div class="chip" onclick="pickChip('style-group',this,'unboxing')">Unboxing</div>
-            <div class="chip" onclick="pickChip('style-group',this,'tutorial')">Tutorial</div>
-            <div class="chip" onclick="pickChip('style-group',this,'lifestyle')">Lifestyle</div>
-            <div class="chip" onclick="pickChip('style-group',this,'problem')">Problem/Sol</div>
-          </div>
+    <div class="sb-section">
+      <div class="sb-label">Video Settings</div>
+      <div class="fld"><label class="fld-lbl">Style</label>
+        <div class="chips" id="style-chips">
+          <div class="chip on" onclick="setChip('style-chips',this,'testimonial')">Testimonial</div>
+          <div class="chip" onclick="setChip('style-chips',this,'unboxing')">Unboxing</div>
+          <div class="chip" onclick="setChip('style-chips',this,'tutorial')">Tutorial</div>
+          <div class="chip" onclick="setChip('style-chips',this,'lifestyle')">Lifestyle</div>
+          <div class="chip" onclick="setChip('style-chips',this,'problem')">Problem/Sol</div>
         </div>
-        <div class="fld">
-          <label>Platform</label>
-          <div class="chips" id="plat-group">
-            <div class="chip on" onclick="pickChip('plat-group',this,'TikTok')">TikTok</div>
-            <div class="chip" onclick="pickChip('plat-group',this,'Instagram Reels')">Reels</div>
-            <div class="chip" onclick="pickChip('plat-group',this,'YouTube Shorts')">YouTube</div>
-            <div class="chip" onclick="pickChip('plat-group',this,'Meta Feed Ads')">Meta Ads</div>
-          </div>
+      </div>
+      <div class="fld"><label class="fld-lbl">Platform</label>
+        <div class="chips" id="plat-chips">
+          <div class="chip on" onclick="setChip('plat-chips',this,'TikTok')">TikTok</div>
+          <div class="chip" onclick="setChip('plat-chips',this,'Instagram Reels')">Reels</div>
+          <div class="chip" onclick="setChip('plat-chips',this,'YouTube Shorts')">YouTube</div>
+          <div class="chip" onclick="setChip('plat-chips',this,'Meta Ads')">Meta Ads</div>
         </div>
-        <div class="fld">
-          <label>Tone</label>
-          <div class="chips" id="tone-group">
-            <div class="chip on" onclick="pickChip('tone-group',this,'casual')">Casual</div>
-            <div class="chip" onclick="pickChip('tone-group',this,'excited')">Excited</div>
-            <div class="chip" onclick="pickChip('tone-group',this,'trustworthy')">Trustworthy</div>
-            <div class="chip" onclick="pickChip('tone-group',this,'funny')">Funny</div>
-          </div>
+      </div>
+      <div class="fld"><label class="fld-lbl">Tone</label>
+        <div class="chips" id="tone-chips">
+          <div class="chip on" onclick="setChip('tone-chips',this,'casual')">Casual</div>
+          <div class="chip" onclick="setChip('tone-chips',this,'excited')">Excited</div>
+          <div class="chip" onclick="setChip('tone-chips',this,'trustworthy')">Trustworthy</div>
+          <div class="chip" onclick="setChip('tone-chips',this,'funny')">Funny</div>
         </div>
-        <div class="fld">
-          <label>Duration</label>
-          <div class="chips" id="dur-group">
-            <div class="chip on" onclick="pickChip('dur-group',this,'30')">30s</div>
-            <div class="chip" onclick="pickChip('dur-group',this,'15')">15s</div>
-            <div class="chip" onclick="pickChip('dur-group',this,'60')">60s</div>
-          </div>
+      </div>
+      <div class="fld"><label class="fld-lbl">Duration</label>
+        <div class="chips" id="dur-chips">
+          <div class="chip on" onclick="setChip('dur-chips',this,'30')">30s</div>
+          <div class="chip" onclick="setChip('dur-chips',this,'15')">15s</div>
+          <div class="chip" onclick="setChip('dur-chips',this,'60')">60s</div>
         </div>
       </div>
     </div>
 
-    <div class="divider"></div>
+    <div class="hr"></div>
 
-    <div>
-      <div class="sb-lbl">Brand Kit</div>
+    <div class="sb-section">
+      <div class="sb-label">Brand Kit</div>
       <div class="brand-box">
         <label class="logo-upload" onclick="document.getElementById('logo-file').click()">
           <input type="file" id="logo-file" accept="image/*" style="display:none" onchange="handleLogo(this)">
-          <span id="logo-ico">📁</span>
-          <span id="logo-lbl">Upload logo</span>
+          <span id="logo-ico">📁</span><span id="logo-lbl">Upload logo</span>
         </label>
         <div class="color-row">
           <div class="color-item">Primary<div class="swatch" style="background:#ff4d1c"><input type="color" value="#ff4d1c"></div></div>
           <div class="color-item">Secondary<div class="swatch" style="background:#f2f0ff"><input type="color" value="#f2f0ff"></div></div>
-          <div class="color-item">Background<div class="swatch" style="background:#08080c"><input type="color" value="#08080c"></div></div>
+          <div class="color-item">BG<div class="swatch" style="background:#07070d"><input type="color" value="#07070d"></div></div>
         </div>
-        <div class="fld">
-          <label>Brand name (watermark)</label>
-          <input type="text" class="inp" id="brand-name" placeholder="Zuvlix" style="font-size:12px;padding:7px 10px">
-        </div>
+        <div class="fld"><label class="fld-lbl">Brand name</label><input type="text" class="inp" id="brand-name" placeholder="Zuvlix" style="font-size:12px;padding:7px 10px"></div>
       </div>
     </div>
 
-    <div class="divider"></div>
+    <div class="hr"></div>
 
-    <div class="credits-box">
+    <div class="cred-box">
       <div class="cred-row"><span class="cred-lbl">Videos this month</span><span class="cred-n">2 / 3</span></div>
       <div class="cred-bar"><div class="cred-fill"></div></div>
     </div>
 
     <button class="gen-btn" id="gen-btn" onclick="generateScript()">
-      <span id="gen-ico">✨</span>
-      <span id="gen-txt">Generate Script</span>
+      <span id="gen-ico">✨</span><span id="gen-txt">Generate Script</span>
     </button>
 
   </div>
@@ -334,36 +381,78 @@ textarea.inp{resize:vertical;min-height:68px}
   <!-- MAIN -->
   <div class="main">
 
-    <!-- TABS -->
-    <div class="tabs">
-      <div class="tab on" id="tab-script" onclick="showTab('script')">📝 Script</div>
-      <div class="tab" id="tab-hooks" onclick="showTab('hooks')">🎣 Hooks</div>
-      <div class="tab" id="tab-variations" onclick="showTab('variations')">🔀 Variations</div>
-      <div class="tab" id="tab-captions" onclick="showTab('captions')">💬 Captions</div>
-      <div class="tab" id="tab-score" onclick="showTab('score')">🏆 Ad Engine</div>
-      <div class="tab" id="tab-video" onclick="showTab('video')">🎬 Video</div>
-      <div class="tab" id="tab-shopify" onclick="showTab('shopify')">🛍 Shopify</div>
-      <div class="tab" id="tab-competitor" onclick="showTab('competitor')">🕵️ Competitor</div>
-      <div class="tab" id="tab-avatar" onclick="showTab('avatar')">🎭 My Avatar</div>
-      <div class="tab" id="tab-library" onclick="showTab('library')">📚 Library</div>
+    <!-- TABS ROW 1 -->
+    <div class="tabs-wrap">
+      <div class="tab-btn on" id="tab-script" onclick="showTab('script')">📝 Script</div>
+      <div class="tab-btn" id="tab-timeline" onclick="showTab('timeline')">🎬 Timeline</div>
+      <div class="tab-btn" id="tab-hooks" onclick="showTab('hooks')">🎣 Hooks</div>
+      <div class="tab-btn" id="tab-variations" onclick="showTab('variations')">🔀 Variations</div>
+      <div class="tab-btn" id="tab-captions" onclick="showTab('captions')">💬 Captions</div>
+    </div>
+
+    <!-- TABS ROW 2 -->
+    <div class="tabs-wrap">
+      <div class="tab-btn" id="tab-score" onclick="showTab('score')">🏆 Ad Engine</div>
+      <div class="tab-btn" id="tab-image" onclick="showTab('image')">📸 Img→Video</div>
+      <div class="tab-btn" id="tab-video" onclick="showTab('video')">🎙️ Voice+Video</div>
+      <div class="tab-btn" id="tab-shopify" onclick="showTab('shopify')">🛍 Shopify</div>
+      <div class="tab-btn" id="tab-competitor" onclick="showTab('competitor')">🕵️ Competitor</div>
+    </div>
+
+    <!-- TABS ROW 3 -->
+    <div class="tabs-wrap">
+      <div class="tab-btn" id="tab-avatar" onclick="showTab('avatar')">🎭 My Avatar</div>
+      <div class="tab-btn" id="tab-library" onclick="showTab('library')">📚 Library</div>
+      <div class="tab-btn"></div><div class="tab-btn"></div><div class="tab-btn"></div>
     </div>
 
     <!-- SCRIPT PANEL -->
     <div class="panel on" id="panel-script">
       <div class="card">
         <div class="card-head">
-          <div class="card-title">📝 AI-Generated Script</div>
-          <div class="status s-wait" id="script-status"><span class="sdot"></span> Waiting</div>
+          <div class="card-title">📝 AI Script — Claude</div>
+          <div class="status-pill sp-wait" id="st-script"><span class="sdot"></span> Waiting</div>
         </div>
         <div class="card-body">
-          <div class="script-text" id="script-out"><span class="script-ph">Fill in your product details on the left and click Generate Script. Claude AI will write an authentic, human-sounding UGC script tailored to your product, platform, and tone.</span></div>
-          <textarea class="script-edit" id="script-edit"></textarea>
+          <div class="script-display" id="script-out"><span class="script-ph">Fill in your product details on the left, then click Generate Script. Claude AI writes a unique, authentic UGC script every time.</span></div>
+          <textarea class="script-ta" id="script-ta"></textarea>
           <div class="acts">
-            <button class="act hi" id="btn-regen" onclick="generateScript()" disabled>↺ Regenerate</button>
-            <button class="act" id="btn-edit" onclick="toggleEdit()" disabled>✏️ Edit</button>
-            <button class="act" id="btn-copy" onclick="copyScript()" disabled>📋 Copy</button>
-            <button class="act hi" id="btn-score" onclick="showTab('score');scoreAd()" disabled>🏆 Score this ad</button>
-            <button class="act" id="btn-save" onclick="saveToLibrary()" disabled>💾 Save</button>
+            <button class="act hi" id="act-regen" onclick="generateScript()" disabled>↺ Regen</button>
+            <button class="act" id="act-edit" onclick="toggleEdit()" disabled>✏️ Edit</button>
+            <button class="act" id="act-copy" onclick="copyScript()" disabled>📋 Copy</button>
+            <button class="act hi" id="act-score" onclick="showTab('score');scoreAd()" disabled>🏆 Score</button>
+            <button class="act hi" id="act-hooks" onclick="showTab('hooks');generateHooks()" disabled>🎣 Hooks</button>
+            <button class="act" id="act-save" onclick="saveToLibrary()" disabled>💾 Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMELINE PANEL -->
+    <div class="panel" id="panel-timeline">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">🎬 Timeline Scene Editor</div>
+          <div class="status-pill sp-wait" id="st-timeline"><span class="sdot"></span> Ready</div>
+        </div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--t2);margin-bottom:14px">Edit your script scene by scene. Adjust timing and regenerate individual scenes.</p>
+          <div class="timeline-bar">
+            <div class="tbar-seg tbar-hook" id="tbar-hook"></div>
+            <div class="tbar-seg tbar-main" id="tbar-main"></div>
+            <div class="tbar-seg tbar-cta" id="tbar-cta"></div>
+          </div>
+          <div style="display:flex;gap:12px;margin-bottom:12px;font-size:10px;font-family:var(--mono)">
+            <span style="color:var(--acc2)">■ HOOK</span>
+            <span style="color:var(--pur)">■ MAIN</span>
+            <span style="color:var(--grn)">■ CTA</span>
+          </div>
+          <div class="acts" style="margin-bottom:14px">
+            <button class="act hi" onclick="splitToTimeline()">✂️ Split Script into Scenes</button>
+            <button class="act" onclick="combineScenes()">⊕ Combine to Script</button>
+          </div>
+          <div id="timeline-scenes" class="timeline-wrap">
+            <div class="empty-state">Generate a script first, then click Split Script into Scenes.</div>
           </div>
         </div>
       </div>
@@ -374,18 +463,18 @@ textarea.inp{resize:vertical;min-height:68px}
       <div class="card">
         <div class="card-head">
           <div class="card-title">🎣 Hook Generator</div>
-          <div class="status s-wait" id="hooks-status"><span class="sdot"></span> Ready</div>
+          <div class="status-pill sp-wait" id="st-hooks"><span class="sdot"></span> Ready</div>
         </div>
         <div class="card-body">
-          <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Generate scroll-stopping opening hooks for your product. Fill in product details first.</p>
-          <div class="hc-row">
-            <span style="font-size:12px;color:var(--text2)">Generate</span>
-            <div class="hc-btn on" id="hc20" onclick="setHookCount(this,20)">20 hooks</div>
-            <div class="hc-btn" id="hc30" onclick="setHookCount(this,30)">30 hooks</div>
-            <div class="hc-btn" id="hc50" onclick="setHookCount(this,50)">50 hooks</div>
+          <div class="hcount-row">
+            <span style="font-size:12px;color:var(--t2)">Generate</span>
+            <div class="hc-pill on" id="hc20" onclick="setHookCount(this,20)">20</div>
+            <div class="hc-pill" id="hc30" onclick="setHookCount(this,30)">30</div>
+            <div class="hc-pill" id="hc50" onclick="setHookCount(this,50)">50</div>
+            <span style="font-size:12px;color:var(--t2)">hooks</span>
             <button class="act hi" id="btn-hooks" onclick="generateHooks()">✨ Generate Hooks</button>
           </div>
-          <div id="hooks-grid"><p style="text-align:center;padding:32px 0;color:var(--text2);font-size:13px">Generate your script first, then click Generate Hooks.</p></div>
+          <div id="hooks-out"><div class="empty-state">Fill in product details and click Generate Hooks.</div></div>
         </div>
       </div>
     </div>
@@ -395,18 +484,18 @@ textarea.inp{resize:vertical;min-height:68px}
       <div class="card">
         <div class="card-head">
           <div class="card-title">🔀 Ad Variations</div>
-          <div class="status s-wait" id="var-status"><span class="sdot"></span> Ready</div>
+          <div class="status-pill sp-wait" id="st-variations"><span class="sdot"></span> Ready</div>
         </div>
         <div class="card-body">
-          <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Generate multiple ad angles for A/B testing. Fill in product details first.</p>
-          <div class="hc-row">
-            <span style="font-size:12px;color:var(--text2)">Generate</span>
-            <div class="hc-btn on" id="vc5" onclick="setVarCount(this,5)">5 versions</div>
-            <div class="hc-btn" id="vc10" onclick="setVarCount(this,10)">10 versions</div>
-            <div class="hc-btn" id="vc20" onclick="setVarCount(this,20)">20 versions</div>
+          <div class="hcount-row">
+            <span style="font-size:12px;color:var(--t2)">Generate</span>
+            <div class="hc-pill on" id="vc5" onclick="setVarCount(this,5)">5</div>
+            <div class="hc-pill" id="vc10" onclick="setVarCount(this,10)">10</div>
+            <div class="hc-pill" id="vc20" onclick="setVarCount(this,20)">20</div>
+            <span style="font-size:12px;color:var(--t2)">variations</span>
             <button class="act hi" id="btn-vars" onclick="generateVariations()">🔀 Generate</button>
           </div>
-          <div id="var-grid"><p style="text-align:center;padding:32px 0;color:var(--text2);font-size:13px">Fill in product details and click Generate.</p></div>
+          <div id="variations-out"><div class="empty-state">Fill in product details and click Generate.</div></div>
         </div>
       </div>
     </div>
@@ -416,132 +505,130 @@ textarea.inp{resize:vertical;min-height:68px}
       <div class="card">
         <div class="card-head">
           <div class="card-title">💬 Caption Generator</div>
-          <div class="status s-wait" id="cap-status"><span class="sdot"></span> Ready</div>
+          <div class="status-pill sp-wait" id="st-captions"><span class="sdot"></span> Ready</div>
         </div>
         <div class="card-body">
-          <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Generate timed captions from your script. Generate your script first.</p>
-          <button class="act hi" id="btn-caps" onclick="generateCaptions()" style="margin-bottom:14px">💬 Generate Captions</button>
-          <div class="cap-preview">
-            <div class="cap-preview-bg"></div>
-            <div class="cap-preview-txt" id="cap-display">Your captions appear here</div>
+          <div class="acts" style="margin-bottom:14px">
+            <button class="act hi" id="btn-caps" onclick="generateCaptions()">💬 Generate Captions</button>
+            <button class="act" onclick="exportSrt()">⬇ SRT</button>
+            <button class="act" onclick="exportTxt()">⬇ TXT</button>
+            <button class="act" onclick="copyCaps()">📋 Copy all</button>
           </div>
-          <div id="cap-list"><p style="text-align:center;padding:16px 0;color:var(--text2);font-size:13px">Generate your script first.</p></div>
-          <div class="acts" style="margin-top:12px">
-            <button class="act" onclick="exportCaptions('srt')">⬇ SRT</button>
-            <button class="act" onclick="exportCaptions('txt')">⬇ TXT</button>
-            <button class="act" onclick="copyCaptions()">📋 Copy All</button>
-          </div>
+          <div class="cap-preview"><div class="cap-preview-bg"></div><div class="cap-txt" id="cap-preview-txt">Captions appear here</div></div>
+          <div id="captions-out"><div class="empty-state">Generate your script first, then click Generate Captions.</div></div>
         </div>
       </div>
     </div>
 
-    <!-- SCORE PANEL -->
+    <!-- AD ENGINE PANEL -->
     <div class="panel" id="panel-score">
       <div class="card">
         <div class="card-head">
           <div class="card-title">🏆 Winning Ad Engine</div>
-          <div class="status s-wait" id="score-status"><span class="sdot"></span> Ready</div>
+          <div class="status-pill sp-wait" id="st-score"><span class="sdot"></span> Ready</div>
         </div>
         <div class="card-body">
-          <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Analyse your script — CTR prediction, ROAS estimate, hook score, and improvements. Generate your script first.</p>
-          <button class="act hi" id="btn-score-run" onclick="scoreAd()" style="margin-bottom:16px">🏆 Analyse My Ad</button>
+          <p style="font-size:13px;color:var(--t2);margin-bottom:14px">Score your script before production. CTR prediction, ROAS estimate, hook strength, and specific improvements.</p>
+          <button class="act hi" id="btn-score" onclick="scoreAd()" style="margin-bottom:16px">🏆 Analyse My Ad</button>
+          <div id="score-empty" class="empty-state">Generate your script first, then click Analyse.</div>
           <div id="score-results" style="display:none">
-            <div class="score-overview" id="score-overview"></div>
+            <div class="score-grid" id="score-overview"></div>
             <div id="score-bars"></div>
             <div class="insight-grid" id="score-insights"></div>
           </div>
-          <div id="score-empty"><p style="text-align:center;padding:32px 0;color:var(--text2);font-size:13px">Generate your script first, then click Analyse My Ad.</p></div>
         </div>
       </div>
     </div>
 
-    <!-- VIDEO PANEL -->
+    <!-- IMAGE TO VIDEO PANEL -->
+    <div class="panel" id="panel-image">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">📸 Image to Video — Claude Vision</div>
+          <div class="status-pill sp-wait" id="st-image"><span class="sdot"></span> Ready</div>
+        </div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--t2);margin-bottom:14px">Drop any product image. Claude Vision identifies the product and generates a complete video brief — script, hooks, and recommended voice.</p>
+          <div id="i2v-upload" class="img2vid-upload" onclick="document.getElementById('i2v-file').click()">
+            <input type="file" id="i2v-file" accept="image/*" onchange="handleI2VUpload(this)" style="display:none">
+            <div style="font-size:36px;margin-bottom:10px">📸</div>
+            <div style="font-size:14px;color:var(--t2)">Drop product image here or click to upload</div>
+            <div style="font-size:11px;color:var(--t3);margin-top:4px;font-family:var(--mono)">JPG, PNG, WEBP supported</div>
+          </div>
+          <div id="i2v-preview" class="img2vid-preview">
+            <img id="i2v-thumb" class="img2vid-thumb" src="" alt="Product">
+            <div>
+              <div style="font-size:13px;font-weight:700;margin-bottom:5px" id="i2v-filename">image.jpg</div>
+              <div style="font-size:12px;color:var(--t2)">Ready to analyse with Claude Vision</div>
+              <div class="acts" style="margin-top:8px">
+                <button class="act hi" id="btn-i2v" onclick="runImageToVideo()">📸 Analyse and Generate Brief</button>
+                <button class="act" onclick="removeI2V()">Remove</button>
+              </div>
+            </div>
+          </div>
+          <div id="i2v-result" style="display:none">
+            <div class="i2v-brief">
+              <div class="i2v-brief-title">Claude Vision Analysis</div>
+              <div id="i2v-product" style="font-family:var(--dsp);font-size:14px;font-weight:700;margin-bottom:4px"></div>
+              <div id="i2v-desc" style="font-size:13px;color:rgba(242,240,255,0.72);margin-bottom:10px;line-height:1.6"></div>
+              <div class="i2v-brief-title">Generated Script</div>
+              <div id="i2v-script" style="font-size:13px;color:rgba(242,240,255,0.8);line-height:1.8;white-space:pre-wrap;margin-bottom:10px;background:rgba(255,255,255,0.03);border-radius:8px;padding:10px"></div>
+              <div class="i2v-brief-title">Top Hooks</div>
+              <div id="i2v-hooks" class="i2v-hooks"></div>
+            </div>
+            <div class="acts" style="margin-top:12px">
+              <button class="act hi" onclick="useI2VScript()">Use this script</button>
+              <button class="act" onclick="copyText(document.getElementById('i2v-script').textContent)">📋 Copy script</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOICE + VIDEO PANEL -->
     <div class="panel" id="panel-video">
       <div class="card">
         <div class="card-head">
-          <div class="card-title">🎙️ Voiceover — ElevenLabs</div>
-          <div class="status s-wait" id="voice-status"><span class="sdot"></span> Ready</div>
+          <div class="card-title">🎙️ AI Voiceover — ElevenLabs</div>
+          <div class="status-pill sp-wait" id="st-voice"><span class="sdot"></span> Ready</div>
         </div>
         <div class="card-body">
-          <div class="voice-grid">
-            <div class="voice-card on" onclick="selVoice(this,'cgSgspJ2msm6clMCkdW9')">
-              <img class="voice-img" src="https://api.dicebear.com/9.x/personas/svg?seed=sarah&backgroundColor=b6e3f4&radius=50" alt="Sarah">
-              <div class="voice-name">Sarah</div><div class="voice-desc">Warm</div>
-            </div>
-            <div class="voice-card" onclick="selVoice(this,'onwK4e9ZLuTAKqWW03F9')">
-              <img class="voice-img" src="https://api.dicebear.com/9.x/personas/svg?seed=daniel&backgroundColor=c0aede&radius=50" alt="Daniel">
-              <div class="voice-name">Daniel</div><div class="voice-desc">Casual</div>
-            </div>
-            <div class="voice-card" onclick="selVoice(this,'XB0fDUnXU5powFXDhCwa')">
-              <img class="voice-img" src="https://api.dicebear.com/9.x/personas/svg?seed=charlotte&backgroundColor=ffd5dc&radius=50" alt="Charlotte">
-              <div class="voice-name">Charlotte</div><div class="voice-desc">Young</div>
-            </div>
-            <div class="voice-card" onclick="selVoice(this,'TX3LPaxmHKxFdv7VOQHJ')">
-              <img class="voice-img" src="https://api.dicebear.com/9.x/personas/svg?seed=liam&backgroundColor=d1f4d1&radius=50" alt="Liam">
-              <div class="voice-name">Liam</div><div class="voice-desc">Professional</div>
-            </div>
-            <div class="voice-card" onclick="selVoice(this,'pFZP5JQG7iQjIQuC4Bku')">
-              <img class="voice-img" src="https://api.dicebear.com/9.x/personas/svg?seed=lily&backgroundColor=ffd5dc&radius=50" alt="Lily">
-              <div class="voice-name">Lily</div><div class="voice-desc">Playful</div>
-            </div>
-            <div class="voice-card" onclick="selVoice(this,'cjVigY5qzO86Huf0OWal')">
-              <img class="voice-img" src="https://api.dicebear.com/9.x/personas/svg?seed=eric&backgroundColor=b6e3f4&radius=50" alt="Eric">
-              <div class="voice-name">Eric</div><div class="voice-desc">Deep</div>
-            </div>
-            <div class="voice-card" onclick="selVoice(this,'nPczCjzI2devNBz1zQrb')">
-              <img class="voice-img" src="https://api.dicebear.com/9.x/personas/svg?seed=rachel&backgroundColor=ffd5dc&radius=50" alt="Rachel">
-              <div class="voice-name">Rachel</div><div class="voice-desc">Calm</div>
-            </div>
-            <div class="voice-card" onclick="selVoice(this,'D38z5RcWu1voky8WS1ja')">
-              <img class="voice-img" src="https://api.dicebear.com/9.x/personas/svg?seed=wayne&backgroundColor=c0aede&radius=50" alt="Wayne">
-              <div class="voice-name">Wayne</div><div class="voice-desc">Friendly</div>
-            </div>
-            <div class="voice-card" onclick="selVoice(this,'bVMeCyTHy58xNoL34h3p')">
-              <img class="voice-img" src="https://api.dicebear.com/9.x/personas/svg?seed=jessica&backgroundColor=ffd5dc&radius=50" alt="Jessica">
-              <div class="voice-name">Jessica</div><div class="voice-desc">Vibrant</div>
-            </div>
+          <div class="voice-grid" id="voice-grid"></div>
+          <div class="acts" style="margin-bottom:12px">
+            <button class="act hi" id="btn-voice" onclick="generateVoice()">🎙️ Generate Voiceover</button>
           </div>
-          <button class="act hi" id="btn-voice" onclick="generateVoice()" style="margin-bottom:12px">🎙️ Generate Voiceover</button>
-          <div id="audio-player" style="display:none;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:9px;padding:11px 14px;display:none;align-items:center;gap:10px">
-            <button onclick="toggleAudio()" id="play-btn" style="width:34px;height:34px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:13px;cursor:pointer;flex-shrink:0">▶</button>
-            <div style="flex:1">
-              <div style="font-size:12px;font-weight:600;font-family:var(--display)">Voiceover ready</div>
-              <div style="height:3px;background:rgba(255,255,255,0.09);border-radius:100px;margin-top:5px;overflow:hidden"><div id="audio-prog" style="height:100%;background:var(--accent);border-radius:100px;width:0%;transition:width 0.1s"></div></div>
-              <div id="audio-time" style="font-size:10px;color:var(--text2);margin-top:3px">0:00 / 0:00</div>
+          <div class="audio-player" id="audio-player">
+            <button class="play-btn" id="play-btn" onclick="toggleAudio()">▶</button>
+            <div class="audio-prog-wrap">
+              <div style="font-size:12px;font-weight:700;font-family:var(--dsp)">Voiceover ready</div>
+              <div class="audio-bar"><div class="audio-bar-fill" id="audio-fill"></div></div>
+              <div class="audio-time" id="audio-time">0:00 / 0:00</div>
             </div>
-            <button class="act" onclick="downloadAudio()">⬇</button>
+            <button class="act" onclick="downloadAudio()">⬇ MP3</button>
           </div>
-          <div id="voice-note" style="font-size:12px;color:var(--text2);margin-top:8px">Generate your script first, then select a voice and click Generate Voiceover.</div>
+          <div style="font-size:12px;color:var(--t2);margin-top:8px" id="voice-note">Generate your script first, then select a voice.</div>
         </div>
       </div>
       <div class="card">
         <div class="card-head">
-          <div class="card-title">👤 AI Avatar — HeyGen</div>
-          <div class="status s-wait" id="avatar-status"><span class="sdot"></span> Ready</div>
+          <div class="card-title">👤 Avatar Video — HeyGen</div>
+          <div class="status-pill sp-wait" id="st-avatar"><span class="sdot"></span> Ready</div>
         </div>
         <div class="card-body">
-          <div class="avatar-grid">
-            <div class="voice-card on" onclick="selAvatar(this,'Daisy-inskirt-20220818')">
-              <img class="voice-img" src="https://api.dicebear.com/9.x/personas/svg?seed=sarah&backgroundColor=b6e3f4&radius=50" alt="Sarah">
-              <div class="voice-name">Sarah</div>
-            </div>
-            <div class="voice-card" onclick="selAvatar(this,'josh_lite3_20230714')">
-              <img class="voice-img" src="https://api.dicebear.com/9.x/personas/svg?seed=marcus&backgroundColor=c0aede&radius=50" alt="Marcus">
-              <div class="voice-name">Marcus</div>
-            </div>
-            <div class="voice-card" onclick="selAvatar(this,'angela-inblackskirt-20220820')">
-              <img class="voice-img" src="https://api.dicebear.com/9.x/personas/svg?seed=jessica&backgroundColor=ffd5dc&radius=50" alt="Jessica">
-              <div class="voice-name">Jessica</div>
-            </div>
-            <div class="voice-card" onclick="selAvatar(this,'Eric_public_pro2_20230608')">
-              <img class="voice-img" src="https://api.dicebear.com/9.x/personas/svg?seed=tyler&backgroundColor=d1f4d1&radius=50" alt="Tyler">
-              <div class="voice-name">Tyler</div>
-            </div>
+          <div class="avatar-lib-grid" id="avatar-lib-grid"></div>
+          <div class="acts" style="margin-bottom:12px">
+            <button class="act hi" id="btn-avatar" onclick="generateAvatarVideo()">👤 Generate Avatar Video</button>
           </div>
-          <button class="act hi" id="btn-avatar" onclick="generateAvatar()">👤 Generate Avatar Video</button>
-          <div id="avatar-note" style="font-size:12px;color:var(--text2);margin-top:9px">Requires HeyGen API key in Render environment variables.</div>
-          <div id="video-result" style="display:none;margin-top:14px">
-            <video id="result-video" controls style="width:100%;border-radius:10px;background:#000"></video>
+          <div class="video-wrap" id="video-wrap">
+            <div class="video-ph"><div class="video-ph-ico">🎬</div><p>Your avatar video will appear here.<br>Generate a script and voiceover first.</p></div>
+          </div>
+          <div class="progress-wrap" id="video-progress-wrap" style="display:none">
+            <div class="progress-fill" id="video-progress-fill"></div>
+          </div>
+          <div style="font-size:12px;color:var(--t2)" id="avatar-note">Requires HeyGen API key in Render environment variables.</div>
+          <div class="acts" id="video-acts" style="display:none">
+            <button class="act hi" onclick="downloadVideo()">⬇ Download MP4</button>
+            <button class="act" onclick="shareVideo()">↗ Share</button>
           </div>
         </div>
       </div>
@@ -552,22 +639,21 @@ textarea.inp{resize:vertical;min-height:68px}
       <div class="card">
         <div class="card-head">
           <div class="card-title">🛍 Shopify Intelligence</div>
-          <div class="status s-wait" id="shopify-status"><span class="sdot"></span> Ready</div>
+          <div class="status-pill sp-wait" id="st-shopify"><span class="sdot"></span> Ready</div>
         </div>
         <div class="card-body">
-          <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Paste your product URL and make sure product details are filled in. Get the best angles, audiences, emotional triggers, and hook formula.</p>
+          <p style="font-size:13px;color:var(--t2);margin-bottom:12px">Get the best ad angles, audiences, pain points, and a killer hook formula for your product.</p>
           <div style="display:flex;gap:7px;margin-bottom:14px">
             <input type="url" class="inp" id="shopify-url" placeholder="https://yourstore.com/products/..." style="flex:1">
-            <button class="act hi" id="btn-shopify" onclick="runShopifyIntel()" style="white-space:nowrap">🛍 Analyse</button>
+            <button class="act hi" id="btn-shopify" onclick="runShopifyIntel()">🛍 Analyse</button>
           </div>
-          <div id="shopify-empty"><p style="text-align:center;padding:32px 0;color:var(--text2);font-size:13px">Enter your product URL or fill in product details, then click Analyse.</p></div>
+          <div id="shopify-empty" class="empty-state">Paste your product URL or fill in the product details in the sidebar.</div>
           <div id="shopify-results" style="display:none">
-            <div class="intel-grid" id="shopify-grid"></div>
-            <div class="strategy-box" style="margin-top:10px">
-              <div class="strategy-title">Killer Hook Formula</div>
-              <div id="shopify-hook" style="font-size:13px;color:rgba(242,240,255,0.8);line-height:1.6"></div>
+            <div class="intel-grid" id="shopify-intel-grid"></div>
+            <div class="strategy-box"><div class="strat-title">Killer Hook Formula</div><div id="shopify-hook" style="font-size:13px;color:rgba(242,240,255,0.8);line-height:1.6"></div></div>
+            <div class="acts" style="margin-top:10px">
+              <button class="act hi" onclick="applyShopifyIntel()">✨ Apply intel and generate script</button>
             </div>
-            <button class="act hi" onclick="applyShopifyIntel()" style="margin-top:10px;width:100%;justify-content:center">✨ Apply intel and generate script</button>
           </div>
         </div>
       </div>
@@ -578,114 +664,74 @@ textarea.inp{resize:vertical;min-height:68px}
       <div class="card">
         <div class="card-head">
           <div class="card-title">🕵️ Competitor Intelligence</div>
-          <div class="status s-wait" id="comp-status"><span class="sdot"></span> Ready</div>
+          <div class="status-pill sp-wait" id="st-competitor"><span class="sdot"></span> Ready</div>
         </div>
         <div class="card-body">
-          <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Enter your competitor brand name or URL. Make sure your product details are filled in first.</p>
+          <p style="font-size:13px;color:var(--t2);margin-bottom:12px">Analyse any competitor. Get gaps to exploit, winning angles, and a counter-strategy.</p>
           <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
-            <input type="text" class="inp" id="comp-url" placeholder="e.g. The Ordinary or theordinary.com">
+            <input type="text" class="inp" id="comp-input" placeholder="Brand name or URL (e.g. The Ordinary or theordinary.com)">
             <button class="act hi" id="btn-comp" onclick="runCompetitorIntel()">🕵️ Analyse Competitor</button>
           </div>
-          <div id="comp-empty"><p style="text-align:center;padding:32px 0;color:var(--text2);font-size:13px">Fill in your product details and enter a competitor.</p></div>
+          <div id="comp-empty" class="empty-state">Enter a competitor brand or URL to get started.</div>
           <div id="comp-results" style="display:none">
-            <div class="intel-grid" id="comp-grid"></div>
-            <div class="strategy-box" style="margin-top:10px">
-              <div class="strategy-title">Counter Strategy</div>
-              <div id="comp-strategy" style="font-size:13px;color:rgba(242,240,255,0.8);line-height:1.6"></div>
-            </div>
+            <div class="intel-grid" id="comp-intel-grid"></div>
+            <div class="strategy-box"><div class="strat-title">Counter Strategy</div><div id="comp-strategy" style="font-size:13px;color:rgba(242,240,255,0.8);line-height:1.6"></div></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- MY AVATAR PANEL -->
+    <!-- AVATAR BUILDER PANEL -->
     <div class="panel" id="panel-avatar">
       <div class="card">
         <div class="card-head">
           <div class="card-title">🎭 Custom Avatar Builder</div>
-          <div class="status s-wait" id="avb-status"><span class="sdot"></span> Ready</div>
+          <div class="status-pill sp-wait" id="st-avatar-builder"><span class="sdot"></span> Ready</div>
         </div>
         <div class="card-body">
-          <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Describe your ideal video presenter. AI generates a portrait preview, HeyGen production brief, and personalises your scripts to match their speaking style.</p>
+          <p style="font-size:13px;color:var(--t2);margin-bottom:14px">Describe your ideal video presenter. Get a portrait preview, HeyGen production brief, and scripts personalised to their voice.</p>
           <div style="display:flex;flex-direction:column;gap:10px">
-            <div class="fld">
-              <label>Describe your ideal avatar</label>
-              <textarea class="inp" id="av-desc" rows="3" placeholder="e.g. A confident 28-year-old South Asian woman with long dark hair, wearing a casual white top. Warm, relatable smile. Speaks like a trusted friend."></textarea>
-            </div>
+            <div class="fld"><label class="fld-lbl">Describe your ideal avatar</label><textarea class="inp" id="av-desc" rows="3" placeholder="e.g. A confident 28-year-old South Asian woman, warm smile, casual white top. Speaks like a trusted friend, lots of personality."></textarea></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-              <div class="fld">
-                <label>Personality</label>
-                <input type="text" class="inp" id="av-personality" placeholder="e.g. Casual, uses slang, very relatable">
-              </div>
-              <div class="fld">
-                <label>Signature phrase</label>
-                <input type="text" class="inp" id="av-phrase" placeholder="e.g. Okay so hear me out...">
-              </div>
+              <div class="fld"><label class="fld-lbl">Personality</label><input type="text" class="inp" id="av-personality" placeholder="e.g. Casual, uses slang"></div>
+              <div class="fld"><label class="fld-lbl">Catchphrase</label><input type="text" class="inp" id="av-phrase" placeholder="e.g. Okay so hear me out..."></div>
             </div>
-            <button class="act hi" id="btn-avb" onclick="buildAvatar()" style="width:100%;justify-content:center;padding:12px;font-size:13px">✨ Generate My Avatar Profile</button>
+            <button class="act hi" id="btn-avbuilder" onclick="buildAvatar()" style="width:100%;justify-content:center;padding:12px">✨ Generate Avatar Profile</button>
           </div>
         </div>
       </div>
-      <div class="card" id="avb-portrait-card" style="display:none">
-        <div class="card-head"><div class="card-title">🖼 Portrait Preview</div></div>
+      <div class="card" id="av-profile-card" style="display:none">
+        <div class="card-head"><div class="card-title">🖼 Portrait Preview + Brief</div></div>
         <div class="card-body">
-          <div style="display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:start">
+          <div style="display:grid;grid-template-columns:100px 1fr;gap:20px;align-items:start">
             <div style="text-align:center">
-              <img class="av-portrait" id="avb-img" src="" alt="Avatar">
-              <div id="avb-name" style="font-family:var(--display);font-size:13px;font-weight:700;margin-top:9px"></div>
+              <img class="av-portrait" id="av-portrait-img" src="" alt="Avatar">
+              <div id="av-portrait-name" style="font-family:var(--dsp);font-size:12px;font-weight:700;margin-top:8px"></div>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <div class="av-detail-box">
-                <div class="av-detail-lbl">Personality</div>
-                <div id="avb-personality" style="font-size:12.5px;color:rgba(242,240,255,0.8);line-height:1.6"></div>
-              </div>
-              <div class="av-detail-box">
-                <div class="av-detail-lbl">Voice recommendation</div>
-                <div id="avb-voice" style="font-size:12.5px;color:rgba(242,240,255,0.8);line-height:1.6"></div>
-              </div>
-              <div class="av-detail-box" style="background:rgba(45,212,160,0.04);border-color:rgba(45,212,160,0.14)">
-                <div class="av-detail-lbl" style="color:var(--green)">Why this works</div>
-                <div id="avb-why" style="font-size:12.5px;color:rgba(242,240,255,0.8);line-height:1.6"></div>
-              </div>
+              <div class="av-detail-box"><div class="av-dl">Personality</div><div class="av-dc" id="avb-personality"></div></div>
+              <div class="av-detail-box"><div class="av-dl">Voice rec.</div><div class="av-dc" id="avb-voice"></div></div>
+              <div class="av-detail-box" style="background:rgba(45,212,160,0.04);border-color:rgba(45,212,160,0.14)"><div class="av-dl" style="color:var(--grn)">Why it works</div><div class="av-dc" id="avb-why"></div></div>
             </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+            <div class="av-detail-box"><div class="av-dl" style="display:flex;justify-content:space-between">HeyGen prompt <button class="hook-copy" onclick="copyById('avb-heygen')">Copy</button></div><div class="av-dc" id="avb-heygen"></div></div>
+            <div class="av-detail-box"><div class="av-dl" style="display:flex;justify-content:space-between">D-ID prompt <button class="hook-copy" onclick="copyById('avb-did')">Copy</button></div><div class="av-dc" id="avb-did"></div></div>
+          </div>
+          <div id="avb-tips-box" style="background:rgba(255,77,28,0.04);border:1px solid rgba(255,77,28,0.14);border-radius:10px;padding:13px;margin-top:10px">
+            <div class="av-dl" style="color:var(--acc2)">Tips for best results</div>
+            <div id="avb-tips"></div>
           </div>
         </div>
       </div>
-      <div class="card" id="avb-brief-card" style="display:none">
-        <div class="card-head"><div class="card-title">📋 Production Brief</div></div>
+      <div class="card" id="av-personalise-card" style="display:none">
+        <div class="card-head"><div class="card-title">✍️ Personalise Script to Avatar Voice</div></div>
         <div class="card-body">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-            <div class="av-detail-box">
-              <div class="av-detail-lbl" style="display:flex;align-items:center;justify-content:space-between">HeyGen Prompt <button class="hook-copy" onclick="copyById('avb-heygen')">Copy</button></div>
-              <div id="avb-heygen" style="font-size:12px;color:rgba(242,240,255,0.75);line-height:1.6"></div>
-            </div>
-            <div class="av-detail-box">
-              <div class="av-detail-lbl" style="display:flex;align-items:center;justify-content:space-between">D-ID Prompt <button class="hook-copy" onclick="copyById('avb-did')">Copy</button></div>
-              <div id="avb-did" style="font-size:12px;color:rgba(242,240,255,0.75);line-height:1.6"></div>
-            </div>
-          </div>
-          <div id="avb-tips" style="background:rgba(255,77,28,0.04);border:1px solid rgba(255,77,28,0.14);border-radius:10px;padding:13px">
-            <div class="av-detail-lbl" style="color:var(--accent2);margin-bottom:8px">Tips for best results</div>
-            <div id="avb-tips-list"></div>
-          </div>
-        </div>
-      </div>
-      <div class="card" id="avb-personalise-card" style="display:none">
-        <div class="card-head"><div class="card-title">✍️ Personalise Script</div></div>
-        <div class="card-body">
-          <p style="font-size:13px;color:var(--text2);margin-bottom:12px">Rewrite your current script so it sounds exactly like your custom avatar would say it.</p>
-          <div class="av-detail-box" style="margin-bottom:12px">
-            <div class="av-detail-lbl">Current Script</div>
-            <div id="avb-current-script" style="font-size:12.5px;color:rgba(242,240,255,0.6);line-height:1.6">No script yet. Go to the Script tab first.</div>
-          </div>
-          <button class="act hi" id="btn-personalise" onclick="personaliseScript()" style="width:100%;justify-content:center;padding:12px;margin-bottom:12px">🎭 Rewrite in My Avatar Voice</button>
+          <div class="av-detail-box" style="margin-bottom:12px"><div class="av-dl">Current Script</div><div class="av-dc" id="avb-current-script">No script yet.</div></div>
+          <button class="act hi" id="btn-personalise" onclick="personaliseScript()" style="width:100%;justify-content:center;padding:12px;margin-bottom:12px">🎭 Rewrite in Avatar Voice</button>
           <div id="avb-output" style="display:none">
-            <div class="av-detail-lbl">Personalised Script</div>
-            <div id="avb-output-text" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,77,28,0.18);border-radius:9px;padding:13px;font-size:13px;color:rgba(242,240,255,0.85);line-height:1.8;white-space:pre-wrap;margin-bottom:10px"></div>
-            <div class="acts">
-              <button class="act" onclick="copyText(document.getElementById('avb-output-text').textContent)">📋 Copy</button>
-              <button class="act hi" onclick="usePersonalisedScript()">Use this script</button>
-            </div>
+            <div class="av-detail-box"><div class="av-dl">Personalised Script</div><div class="av-dc" id="avb-out-text" style="white-space:pre-wrap;font-size:13px;line-height:1.8"></div></div>
+            <div class="acts"><button class="act" onclick="copyText(document.getElementById('avb-out-text').textContent)">📋 Copy</button><button class="act hi" onclick="usePersonalisedScript()">Use this script</button></div>
           </div>
         </div>
       </div>
@@ -696,14 +742,11 @@ textarea.inp{resize:vertical;min-height:68px}
       <div class="card">
         <div class="card-head">
           <div class="card-title">📚 Creative Library</div>
+          <button class="act hi" onclick="saveToLibrary()">💾 Save current script</button>
         </div>
         <div class="card-body">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-            <p style="font-size:13px;color:var(--text2)">Save your best scripts for future reference.</p>
-            <button class="act hi" onclick="saveToLibrary()">💾 Save current script</button>
-          </div>
+          <div id="library-empty" class="empty-state">No saved scripts yet. Generate and save your best scripts here.</div>
           <div id="library-grid"></div>
-          <div id="library-empty"><p style="text-align:center;padding:32px 0;color:var(--text2);font-size:13px">No saved scripts yet. Generate a script and save it here.</p></div>
         </div>
       </div>
     </div>
@@ -715,7 +758,8 @@ textarea.inp{resize:vertical;min-height:68px}
 <audio id="audio-el"></audio>
 
 <script>
-var S = {style:'testimonial',platform:'TikTok',tone:'casual',duration:'30'};
+// STATE
+var S = { style:'testimonial', platform:'TikTok', tone:'casual', duration:'30' };
 var currentScript = '';
 var selectedVoiceId = 'cgSgspJ2msm6clMCkdW9';
 var selectedAvatarId = 'Daisy-inskirt-20220818';
@@ -724,629 +768,765 @@ var varCount = 5;
 var captions = [];
 var audioData = null;
 var isEditing = false;
-var shopifyIntelData = null;
+var shopifyData = null;
 var avatarProfile = null;
+var i2vBase64 = null;
+var i2vType = null;
+var i2vBrief = null;
+var currentVideoUrl = null;
 var library = [];
+var _vars = [];
+var sceneDurations = { hook: 5, main: 20, cta: 5 };
 
 try { library = JSON.parse(localStorage.getItem('zuvlix_lib') || '[]'); } catch(e) {}
-try {
-  var saved = localStorage.getItem('zuvlix_avatar');
-  if (saved) { avatarProfile = JSON.parse(saved); }
-} catch(e) {}
+try { avatarProfile = JSON.parse(localStorage.getItem('zuvlix_avatar') || 'null'); } catch(e) {}
 
+// VOICES DATA
+var voices = [
+  { id:'cgSgspJ2msm6clMCkdW9', name:'Sarah', tag:'Warm', seed:'sarah', bg:'b6e3f4' },
+  { id:'onwK4e9ZLuTAKqWW03F9', name:'Daniel', tag:'Casual', seed:'daniel', bg:'c0aede' },
+  { id:'XB0fDUnXU5powFXDhCwa', name:'Charlotte', tag:'Young', seed:'charlotte', bg:'ffd5dc' },
+  { id:'TX3LPaxmHKxFdv7VOQHJ', name:'Liam', tag:'Pro', seed:'liam', bg:'d1f4d1' },
+  { id:'pFZP5JQG7iQjIQuC4Bku', name:'Lily', tag:'Playful', seed:'lily', bg:'ffd5dc' },
+  { id:'cjVigY5qzO86Huf0OWal', name:'Eric', tag:'Deep', seed:'eric', bg:'b6e3f4' },
+  { id:'nPczCjzI2devNBz1zQrb', name:'Rachel', tag:'Calm', seed:'rachel', bg:'ffd5dc' },
+  { id:'D38z5RcWu1voky8WS1ja', name:'Wayne', tag:'Friendly', seed:'wayne', bg:'c0aede' },
+  { id:'bVMeCyTHy58xNoL34h3p', name:'Jessica', tag:'Vibrant', seed:'jessica', bg:'ffd5dc' }
+];
+
+var avatars = [
+  { id:'Daisy-inskirt-20220818', name:'Sarah', style:'Lifestyle', seed:'sarah', bg:'b6e3f4' },
+  { id:'josh_lite3_20230714', name:'Marcus', style:'Casual', seed:'marcus', bg:'c0aede' },
+  { id:'angela-inblackskirt-20220820', name:'Jessica', style:'Professional', seed:'jessica', bg:'ffd5dc' },
+  { id:'Eric_public_pro2_20230608', name:'Tyler', style:'Gen Z', seed:'tyler', bg:'d1f4d1' },
+  { id:'Daisy-inblackdress-20220818', name:'Priya', style:'Beauty', seed:'priya', bg:'ffd5dc' },
+  { id:'Anna_public_3_20240108', name:'Emma', style:'Lifestyle', seed:'emma', bg:'ffd5dc' },
+  { id:'Noah-insuit-20230918', name:'Noah', style:'Premium', seed:'noah', bg:'c0aede' },
+  { id:'Lily-inlightblue-20230201', name:'Lily', style:'Young', seed:'lily', bg:'b6e3f4' }
+];
+
+function renderVoices() {
+  var g = document.getElementById('voice-grid');
+  if (!g) return;
+  g.innerHTML = '';
+  voices.forEach(function(v) {
+    var d = document.createElement('div');
+    d.className = 'voice-card' + (v.id === selectedVoiceId ? ' on' : '');
+    d.setAttribute('onclick', 'selVoice(this,"' + v.id + '")');
+    d.innerHTML = '<img class="v-img" src="https://api.dicebear.com/9.x/personas/svg?seed=' + v.seed + '&backgroundColor=' + v.bg + '&radius=50" alt="' + v.name + '"><div class="v-name">' + v.name + '</div><div class="v-tag">' + v.tag + '</div>';
+    g.appendChild(d);
+  });
+}
+
+function renderAvatarLib() {
+  var g = document.getElementById('avatar-lib-grid');
+  if (!g) return;
+  g.innerHTML = '';
+  avatars.forEach(function(av) {
+    var d = document.createElement('div');
+    d.className = 'av-lib-card' + (av.id === selectedAvatarId ? ' on' : '');
+    d.setAttribute('onclick', 'selAvatar(this,"' + av.id + '")');
+    d.innerHTML = '<img class="av-lib-img" src="https://api.dicebear.com/9.x/personas/svg?seed=' + av.seed + '&backgroundColor=' + av.bg + '&radius=50" alt="' + av.name + '"><div class="av-lib-name">' + av.name + '</div><div class="av-lib-style">' + av.style + '</div>';
+    g.appendChild(d);
+  });
+}
+
+renderVoices();
+renderAvatarLib();
+renderLibrary();
+
+// CORE HELPERS
 function api(action, extra) {
-  var payload = Object.assign({action: action}, extra || {});
+  var payload = Object.assign({ action: action }, extra || {});
   return fetch('/api/ai', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
-  }).then(function(r) {
-    return r.json();
-  }).then(function(d) {
+  }).then(function(r) { return r.json(); }).then(function(d) {
     if (d.error) throw new Error(d.error);
     return d;
   });
 }
 
 function showTab(name) {
-  var tabs = document.querySelectorAll('.tab');
-  var panels = document.querySelectorAll('.panel');
-  tabs.forEach(function(t) { t.classList.remove('on'); });
-  panels.forEach(function(p) { p.classList.remove('on'); });
-  var t = document.getElementById('tab-' + name);
-  var p = document.getElementById('panel-' + name);
-  if (t) t.classList.add('on');
-  if (p) p.classList.add('on');
+  document.querySelectorAll('.tab-btn').forEach(function(t) { t.classList.remove('on'); });
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('on'); });
+  var tb = document.getElementById('tab-' + name);
+  var pn = document.getElementById('panel-' + name);
+  if (tb) tb.classList.add('on');
+  if (pn) pn.classList.add('on');
 }
 
-function pickChip(groupId, el, val) {
+function setChip(groupId, el, val) {
   var g = document.getElementById(groupId);
   if (!g) return;
   g.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('on'); });
   el.classList.add('on');
-  if (groupId === 'style-group') S.style = val;
-  else if (groupId === 'plat-group') S.platform = val;
-  else if (groupId === 'tone-group') S.tone = val;
-  else if (groupId === 'dur-group') S.duration = val;
+  if (groupId === 'style-chips') S.style = val;
+  else if (groupId === 'plat-chips') S.platform = val;
+  else if (groupId === 'tone-chips') S.tone = val;
+  else if (groupId === 'dur-chips') S.duration = val;
 }
 
 function setStatus(id, type, txt) {
-  var el = document.getElementById(id + '-status');
+  var el = document.getElementById('st-' + id);
   if (!el) return;
-  el.className = 'status s-' + type;
-  var pulse = type === 'load' ? ' pulse' : '';
-  el.innerHTML = '<span class="sdot' + pulse + '"></span> ' + txt;
+  el.className = 'status-pill sp-' + type;
+  var pu = type === 'load' ? ' pu' : '';
+  el.innerHTML = '<span class="sdot' + pu + '"></span> ' + txt;
 }
 
-function showToast(msg) {
+function toast(msg) {
   var t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(function() { t.classList.remove('show'); }, 2500);
 }
 
-function setHookCount(el, n) {
-  ['hc20','hc30','hc50'].forEach(function(id) {
-    var e = document.getElementById(id);
-    if (e) e.classList.remove('on');
+function copyText(txt) {
+  navigator.clipboard.writeText(txt).then(function() { toast('Copied!'); });
+}
+
+function copyById(id) {
+  var el = document.getElementById(id);
+  if (el) copyText(el.textContent);
+}
+
+function fmtTime(s) { return Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0'); }
+
+function enableScriptActions() {
+  ['act-regen','act-edit','act-copy','act-score','act-hooks','act-save'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.disabled = false;
   });
-  el.classList.add('on');
-  hookCount = n;
 }
 
-function setVarCount(el, n) {
-  ['vc5','vc10','vc20'].forEach(function(id) {
-    var e = document.getElementById(id);
-    if (e) e.classList.remove('on');
+function disableScriptActions() {
+  ['act-regen','act-edit','act-copy','act-score','act-hooks','act-save'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.disabled = true;
   });
-  el.classList.add('on');
-  varCount = n;
 }
 
-function selVoice(el, id) {
-  document.querySelectorAll('.voice-grid .voice-card').forEach(function(v) { v.classList.remove('on'); });
-  el.classList.add('on');
-  selectedVoiceId = id;
+function setGenBtn(loading) {
+  var btn = document.getElementById('gen-btn');
+  var ico = document.getElementById('gen-ico');
+  var txt = document.getElementById('gen-txt');
+  btn.disabled = loading;
+  ico.innerHTML = loading ? '<span class="spin"></span>' : '✨';
+  txt.textContent = loading ? 'Writing script...' : (currentScript ? 'Regenerate Script' : 'Generate Script');
 }
 
-function selAvatar(el, id) {
-  document.querySelectorAll('.avatar-grid .voice-card').forEach(function(v) { v.classList.remove('on'); });
-  el.classList.add('on');
-  selectedAvatarId = id;
-}
-
-function handleLogo(inp) {
-  if (inp.files && inp.files[0]) {
-    document.getElementById('logo-lbl').textContent = inp.files[0].name;
-    document.getElementById('logo-ico').textContent = '✓';
-    showToast('Logo uploaded!');
-  }
-}
-
+// SCRAPE
 function scrapeURL() {
   var url = document.getElementById('purl').value.trim();
   if (!url) return;
   var btn = document.getElementById('scrape-btn');
   var note = document.getElementById('scrape-note');
-  btn.disabled = true;
-  btn.textContent = '...';
+  btn.disabled = true; btn.textContent = '...';
   note.textContent = 'Analysing page...';
-  note.style.color = 'var(--accent2)';
-  api('scrape', {url: url}).then(function(d) {
-    var r = d.result;
+  note.style.color = 'var(--acc2)';
+  api('scrape', { url: url }).then(function(d) {
+    var r = d.result || {};
     if (r.name) document.getElementById('pname').value = r.name;
     if (r.description) {
-      var benefits = r.benefits ? '\n\nKey benefits: ' + r.benefits.join(', ') : '';
-      document.getElementById('pdesc').value = r.description + benefits;
+      var extra = r.benefits ? '\n\nKey benefits: ' + r.benefits.join(', ') : '';
+      document.getElementById('pdesc').value = r.description + extra;
     }
-    note.textContent = 'Product details filled in!';
-    note.style.color = 'var(--green)';
-    showToast('Product auto-filled!');
-  }).catch(function(e) {
-    note.textContent = 'Could not scrape. Fill in manually.';
+    note.textContent = 'Auto-filled!';
+    note.style.color = 'var(--grn)';
+    toast('Product auto-filled!');
+  }).catch(function() {
+    note.textContent = 'Could not scrape — fill in manually';
     note.style.color = '#f87171';
-  }).finally(function() {
-    btn.disabled = false;
-    btn.textContent = 'Auto-fill';
-  });
+  }).finally(function() { btn.disabled = false; btn.textContent = 'Scrape'; });
 }
 
+// GENERATE SCRIPT
 function generateScript() {
   var pname = document.getElementById('pname').value.trim();
   var pdesc = document.getElementById('pdesc').value.trim();
-  if (!pname) {
-    document.getElementById('pname').style.borderColor = '#f87171';
-    document.getElementById('pname').focus();
-    setTimeout(function() { document.getElementById('pname').style.borderColor = ''; }, 2000);
-    showToast('Please enter a product name');
-    return;
-  }
-  if (!pdesc) {
-    document.getElementById('pdesc').style.borderColor = '#f87171';
-    document.getElementById('pdesc').focus();
-    setTimeout(function() { document.getElementById('pdesc').style.borderColor = ''; }, 2000);
-    showToast('Please enter a description');
-    return;
-  }
-  var btn = document.getElementById('gen-btn');
-  btn.disabled = true;
-  document.getElementById('gen-ico').innerHTML = '<span class="spin"></span>';
-  document.getElementById('gen-txt').textContent = 'Writing...';
-  setStatus('script', 'load', 'Writing with Claude...');
+  if (!pname) { document.getElementById('pname').style.borderColor = '#f87171'; document.getElementById('pname').focus(); setTimeout(function() { document.getElementById('pname').style.borderColor = ''; }, 2000); toast('Product name required'); return; }
+  if (!pdesc) { document.getElementById('pdesc').style.borderColor = '#f87171'; document.getElementById('pdesc').focus(); setTimeout(function() { document.getElementById('pdesc').style.borderColor = ''; }, 2000); toast('Description required'); return; }
+  setGenBtn(true); setStatus('script', 'load', 'Writing...');
+  disableScriptActions();
   var out = document.getElementById('script-out');
-  out.innerHTML = '<span style="color:rgba(242,240,255,0.3)">Claude AI is crafting your script...</span>';
-  ['btn-regen','btn-edit','btn-copy','btn-score','btn-save'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.disabled = true;
-  });
-  api('script', {
-    product: pname,
-    description: pdesc,
-    style: S.style,
-    platform: S.platform,
-    tone: S.tone,
-    duration: S.duration,
-    url: document.getElementById('purl').value || ''
-  }).then(function(d) {
-    var raw = d.script || '';
-    currentScript = raw
-      .replace(/\*\*\[HOOK\]\*\*/g,'[HOOK]')
-      .replace(/\*\*\[MAIN\]\*\*/g,'[MAIN]')
-      .replace(/\*\*\[CTA\]\*\*/g,'[CTA]')
-      .replace(/^---+$/gm,'')
-      .replace(/\*\*/g,'')
-      .replace(/\n{3,}/g,'\n\n')
-      .trim();
-    out.innerHTML = '';
+  out.innerHTML = '<span style="color:rgba(242,240,255,0.3)">Claude AI writing your script...</span>';
+  api('script', { product: pname, description: pdesc, style: S.style, platform: S.platform, tone: S.tone, duration: S.duration, url: document.getElementById('purl').value || '' }).then(function(d) {
+    var raw = (d.script || '').replace(/\*\*/g, '').replace(/^---+$/gm, '').replace(/\n{3,}/g, '\n\n').trim();
+    currentScript = raw;
+    document.getElementById('script-ta').value = currentScript;
     var i = 0;
     var iv = setInterval(function() {
-      if (i < currentScript.length) {
-        out.innerHTML = currentScript.slice(0, i += 3).replace(/\n/g,'<br>') + '<span class="tcur"></span>';
-        i++;
-      } else {
-        out.innerHTML = currentScript.replace(/\n/g,'<br>');
-        clearInterval(iv);
-      }
+      if (i >= currentScript.length) { out.innerHTML = currentScript.replace(/\n/g, '<br>'); clearInterval(iv); return; }
+      out.innerHTML = currentScript.slice(0, i += 4).replace(/\n/g, '<br>') + '<span class="tcur"></span>';
     }, 12);
-    document.getElementById('script-edit').value = currentScript;
     setStatus('script', 'done', 'Script ready');
-    ['btn-regen','btn-edit','btn-copy','btn-score','btn-save'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) el.disabled = false;
-    });
+    enableScriptActions();
+    document.getElementById('avb-current-script').textContent = currentScript.slice(0, 180) + (currentScript.length > 180 ? '...' : '');
   }).catch(function(e) {
     out.innerHTML = '<span style="color:#f87171">Error: ' + e.message + '</span>';
     setStatus('script', 'err', 'Error');
-    showToast('Error: ' + e.message);
-  }).finally(function() {
-    btn.disabled = false;
-    document.getElementById('gen-ico').textContent = '✨';
-    document.getElementById('gen-txt').textContent = 'Regenerate Script';
-  });
+    toast('Error: ' + e.message);
+  }).finally(function() { setGenBtn(false); });
 }
 
 function toggleEdit() {
   isEditing = !isEditing;
   var out = document.getElementById('script-out');
-  var edit = document.getElementById('script-edit');
-  var btn = document.getElementById('btn-edit');
-  if (isEditing) {
-    out.style.display = 'none';
-    edit.style.display = 'block';
-    edit.value = currentScript;
-    edit.focus();
-    btn.textContent = 'Save';
-  } else {
-    currentScript = edit.value;
-    out.innerHTML = currentScript.replace(/\n/g,'<br>');
-    out.style.display = 'block';
-    edit.style.display = 'none';
-    btn.textContent = 'Edit';
+  var ta = document.getElementById('script-ta');
+  var btn = document.getElementById('act-edit');
+  if (isEditing) { out.style.display = 'none'; ta.style.display = 'block'; ta.value = currentScript; ta.focus(); btn.textContent = '✓ Save'; }
+  else { currentScript = ta.value; out.innerHTML = currentScript.replace(/\n/g, '<br>'); out.style.display = 'block'; ta.style.display = 'none'; btn.textContent = '✏️ Edit'; }
+}
+
+function copyScript() { copyText(isEditing ? document.getElementById('script-ta').value : currentScript); }
+
+// TIMELINE
+function splitToTimeline() {
+  if (!currentScript) { toast('Generate a script first'); return; }
+  var lines = currentScript.split('\n').filter(function(l) { return l.trim(); });
+  var hookLines = [], mainLines = [], ctaLines = [];
+  var mode = 'main';
+  lines.forEach(function(l) {
+    var lower = l.toLowerCase();
+    if (lower.includes('[hook]') || lower.includes('hook:')) mode = 'hook';
+    else if (lower.includes('[main]') || lower.includes('main:')) mode = 'main';
+    else if (lower.includes('[cta]') || lower.includes('cta:') || lower.includes('call to action')) mode = 'cta';
+    var clean = l.replace(/\[HOOK\]|\[MAIN\]|\[CTA\]|HOOK:|MAIN:|CTA:/gi, '').trim();
+    if (!clean) return;
+    if (mode === 'hook') hookLines.push(clean);
+    else if (mode === 'cta') ctaLines.push(clean);
+    else mainLines.push(clean);
+  });
+  if (!hookLines.length && !ctaLines.length) {
+    var total = lines.length;
+    hookLines = lines.slice(0, 1);
+    ctaLines = lines.slice(-1);
+    mainLines = lines.slice(1, -1);
   }
+  renderTimeline(hookLines.join('\n'), mainLines.join('\n'), ctaLines.join('\n'));
+  toast('Script split into scenes!');
 }
 
-function copyScript() {
-  var txt = isEditing ? document.getElementById('script-edit').value : currentScript;
-  navigator.clipboard.writeText(txt).then(function() { showToast('Script copied!'); });
+function renderTimeline(hookTxt, mainTxt, ctaTxt) {
+  var wrap = document.getElementById('timeline-scenes');
+  wrap.innerHTML = '';
+  var scenes = [
+    { type: 'hook', label: 'HOOK', txt: hookTxt || 'Opening hook goes here...', durKey: 'hook', color: 'var(--acc2)' },
+    { type: 'main', label: 'MAIN', txt: mainTxt || 'Main content goes here...', durKey: 'main', color: 'var(--pur)' },
+    { type: 'cta', label: 'CTA', txt: ctaTxt || 'Call to action goes here...', durKey: 'cta', color: 'var(--grn)' }
+  ];
+  scenes.forEach(function(sc) {
+    var card = document.createElement('div');
+    card.className = 'scene-card';
+    card.id = 'scene-' + sc.type;
+    card.innerHTML = '<div class="scene-head"><span class="scene-label ' + sc.type + '">' + sc.label + '</span><span style="font-size:11px;color:var(--t2);font-family:var(--mono)" id="dur-label-' + sc.type + '">' + sceneDurations[sc.durKey] + 's</span></div>' +
+      '<div class="scene-body"><textarea class="scene-ta" id="scene-ta-' + sc.type + '" rows="3">' + sc.txt + '</textarea>' +
+      '<div class="scene-footer"><div class="duration-row"><span>Duration</span><input type="range" min="2" max="30" value="' + sceneDurations[sc.durKey] + '" oninput="setSceneDur(\'' + sc.durKey + '\',this.value)"><span class="dur-val" id="dur-val-' + sc.type + '">' + sceneDurations[sc.durKey] + 's</span></div>' +
+      '<div class="acts" style="margin-top:0"><button class="act" onclick="regenScene(\'' + sc.type + '\')">↺ Regen</button><button class="act" onclick="copyText(document.getElementById(\'scene-ta-' + sc.type + '\').value)">📋</button></div>' +
+      '</div></div>';
+    wrap.appendChild(card);
+  });
+  updateTimelineBar();
 }
 
-function copyText(txt) {
-  navigator.clipboard.writeText(txt).then(function() { showToast('Copied!'); });
+function setSceneDur(key, val) {
+  sceneDurations[key] = parseInt(val);
+  var el1 = document.getElementById('dur-label-' + key);
+  var el2 = document.getElementById('dur-val-' + key);
+  if (el1) el1.textContent = val + 's';
+  if (el2) el2.textContent = val + 's';
+  updateTimelineBar();
 }
 
-function copyById(id) {
-  var el = document.getElementById(id);
-  if (el) navigator.clipboard.writeText(el.textContent).then(function() { showToast('Copied!'); });
+function updateTimelineBar() {
+  var total = sceneDurations.hook + sceneDurations.main + sceneDurations.cta;
+  var h = document.getElementById('tbar-hook');
+  var m = document.getElementById('tbar-main');
+  var c = document.getElementById('tbar-cta');
+  if (h) h.style.flex = sceneDurations.hook;
+  if (m) m.style.flex = sceneDurations.main;
+  if (c) c.style.flex = sceneDurations.cta;
+}
+
+function regenScene(type) {
+  var pname = document.getElementById('pname').value.trim() || 'this product';
+  var pdesc = document.getElementById('pdesc').value.trim() || 'great product';
+  var btn = document.querySelector('#scene-' + type + ' .acts .act');
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+  api('timeline_scene', { scene_type: type, product: pname, description: pdesc, platform: S.platform }).then(function(d) {
+    var ta = document.getElementById('scene-ta-' + type);
+    if (ta) ta.value = d.text || '';
+    toast('Scene regenerated!');
+  }).catch(function(e) { toast('Error: ' + e.message); }).finally(function() { if (btn) { btn.disabled = false; btn.textContent = '↺ Regen'; } });
+}
+
+function combineScenes() {
+  var hookTa = document.getElementById('scene-ta-hook');
+  var mainTa = document.getElementById('scene-ta-main');
+  var ctaTa = document.getElementById('scene-ta-cta');
+  if (!hookTa) { toast('Split script into scenes first'); return; }
+  currentScript = '[HOOK]\n' + hookTa.value + '\n\n[MAIN]\n' + mainTa.value + '\n\n[CTA]\n' + ctaTa.value;
+  document.getElementById('script-out').innerHTML = currentScript.replace(/\n/g, '<br>');
+  document.getElementById('script-ta').value = currentScript;
+  enableScriptActions();
+  showTab('script');
+  toast('Scenes combined into script!');
+}
+
+// HOOKS
+function setHookCount(el, n) {
+  ['hc20','hc30','hc50'].forEach(function(id) { var e = document.getElementById(id); if (e) e.classList.remove('on'); });
+  el.classList.add('on');
+  hookCount = n;
 }
 
 function generateHooks() {
   var pname = document.getElementById('pname').value.trim();
-  if (!pname) { showToast('Fill in product name first'); return; }
+  if (!pname) { toast('Fill in product name first'); return; }
   var pdesc = document.getElementById('pdesc').value.trim();
   setStatus('hooks', 'load', 'Generating...');
   document.getElementById('btn-hooks').disabled = true;
-  document.getElementById('hooks-grid').innerHTML = '<p style="text-align:center;padding:24px;color:var(--text2)"><span class="spin"></span> Generating ' + hookCount + ' hooks...</p>';
-  api('hooks', {product: pname, description: pdesc || 'great product', count: hookCount}).then(function(d) {
+  document.getElementById('hooks-out').innerHTML = '<div class="empty-state"><span class="spin"></span> Generating ' + hookCount + ' hooks...</div>';
+  api('hooks', { product: pname, description: pdesc || 'great product', count: hookCount }).then(function(d) {
     var hooks = d.hooks || [];
-    var html = '';
-    hooks.forEach(function(h, i) {
-      var safe = h.replace(/'/g,"&#39;").replace(/"/g,'&quot;');
-      html += '<div class="hook-item"><span class="hook-n">' + String(i+1).padStart(2,'0') + '</span><span class="hook-txt">' + h + '</span><button class="hook-copy" onclick="copyText(\'' + safe + '\')">Copy</button></div>';
-    });
-    document.getElementById('hooks-grid').innerHTML = html;
-    setStatus('hooks', 'done', hooks.length + ' hooks ready');
+    document.getElementById('hooks-out').innerHTML = hooks.map(function(h, i) {
+      var safe = h.replace(/'/g, "&#39;").replace(/"/g, '&quot;');
+      return '<div class="hook-row"><span class="hook-num">' + String(i + 1).padStart(2, '0') + '</span><span class="hook-txt">' + h + '</span><button class="hook-copy" onclick="copyText(\'' + safe.replace(/\\/g, '\\\\') + '\')">Copy</button></div>';
+    }).join('');
+    setStatus('hooks', 'done', hooks.length + ' hooks');
   }).catch(function(e) {
-    document.getElementById('hooks-grid').innerHTML = '<p style="color:#f87171;padding:16px">Error: ' + e.message + '</p>';
+    document.getElementById('hooks-out').innerHTML = '<div style="color:#f87171;padding:16px">Error: ' + e.message + '</div>';
     setStatus('hooks', 'err', 'Error');
-  }).finally(function() {
-    document.getElementById('btn-hooks').disabled = false;
-  });
+  }).finally(function() { document.getElementById('btn-hooks').disabled = false; });
+}
+
+// VARIATIONS
+function setVarCount(el, n) {
+  ['vc5','vc10','vc20'].forEach(function(id) { var e = document.getElementById(id); if (e) e.classList.remove('on'); });
+  el.classList.add('on');
+  varCount = n;
 }
 
 function generateVariations() {
   var pname = document.getElementById('pname').value.trim();
-  if (!pname) { showToast('Fill in product name first'); return; }
+  if (!pname) { toast('Fill in product name first'); return; }
   var pdesc = document.getElementById('pdesc').value.trim();
-  setStatus('var', 'load', 'Generating...');
+  setStatus('variations', 'load', 'Generating...');
   document.getElementById('btn-vars').disabled = true;
-  document.getElementById('var-grid').innerHTML = '<p style="text-align:center;padding:24px;color:var(--text2)"><span class="spin"></span> Generating variations...</p>';
-  api('variations', {product: pname, description: pdesc || 'great product', count: varCount, style: S.style, platform: S.platform}).then(function(d) {
-    var vars = d.variations || [];
-    window._vars = vars;
-    var html = '';
-    vars.forEach(function(v, i) {
-      var safeHook = (v.hook||'').replace(/'/g,"&#39;");
-      var safeCta = (v.cta||'').replace(/'/g,"&#39;");
-      html += '<div class="var-item"><div class="var-head"><span class="var-title">' + (v.title||'Variation '+(i+1)) + '</span><span class="var-badge">' + (v.angle||'') + '</span></div>';
-      html += '<div class="var-hook">"' + (v.hook||'') + '"</div>';
-      html += '<div class="var-cta">CTA: ' + (v.cta||'') + '</div>';
-      html += '<div class="acts" style="margin-top:8px"><button class="act" onclick="useVariation(' + i + ')">Use this</button><button class="act" onclick="copyText(\'' + safeHook + ' ' + safeCta + '\')">Copy</button></div></div>';
-    });
-    document.getElementById('var-grid').innerHTML = html;
-    setStatus('var', 'done', vars.length + ' variations ready');
+  document.getElementById('variations-out').innerHTML = '<div class="empty-state"><span class="spin"></span> Generating ' + varCount + ' variations...</div>';
+  api('variations', { product: pname, description: pdesc || 'great product', count: varCount, style: S.style, platform: S.platform }).then(function(d) {
+    _vars = d.variations || [];
+    document.getElementById('variations-out').innerHTML = _vars.map(function(v, i) {
+      var safeHook = (v.hook || '').replace(/'/g, "&#39;");
+      return '<div class="var-card"><div class="var-head"><span class="var-title">' + (v.title || 'Variation ' + (i + 1)) + '</span><span class="var-angle">' + (v.angle || '') + '</span></div><div class="var-hook">"' + (v.hook || '') + '"</div><div class="var-cta">CTA: ' + (v.cta || '') + '</div><div class="acts"><button class="act" onclick="useVariation(' + i + ')">Use this</button><button class="act" onclick="copyText(\'' + safeHook + '\')" >Copy hook</button></div></div>';
+    }).join('');
+    setStatus('variations', 'done', _vars.length + ' variations');
   }).catch(function(e) {
-    document.getElementById('var-grid').innerHTML = '<p style="color:#f87171;padding:16px">Error: ' + e.message + '</p>';
-    setStatus('var', 'err', 'Error');
-  }).finally(function() {
-    document.getElementById('btn-vars').disabled = false;
-  });
+    document.getElementById('variations-out').innerHTML = '<div style="color:#f87171;padding:16px">Error: ' + e.message + '</div>';
+    setStatus('variations', 'err', 'Error');
+  }).finally(function() { document.getElementById('btn-vars').disabled = false; });
 }
 
 function useVariation(i) {
-  if (!window._vars || !window._vars[i]) return;
-  var v = window._vars[i];
+  var v = _vars[i];
+  if (!v) return;
   var existing = document.getElementById('pdesc').value;
   document.getElementById('pdesc').value = existing + '\n\nFocus angle: ' + v.angle + '. Hook: ' + v.hook;
   generateScript();
   showTab('script');
-  showToast('Using this variation...');
+  toast('Generating from this variation...');
 }
 
+// CAPTIONS
 function generateCaptions() {
-  if (!currentScript) { showToast('Generate your script first'); return; }
-  setStatus('cap', 'load', 'Generating...');
+  if (!currentScript) { toast('Generate script first'); return; }
+  setStatus('captions', 'load', 'Generating...');
   document.getElementById('btn-caps').disabled = true;
-  api('captions', {script: currentScript, platform: S.platform}).then(function(d) {
+  api('captions', { script: currentScript, platform: S.platform }).then(function(d) {
     captions = d.captions || [];
     renderCaptions();
-    setStatus('cap', 'done', 'Captions ready');
     startCapPreview();
-  }).catch(function(e) {
-    showToast('Error: ' + e.message);
-    setStatus('cap', 'err', 'Error');
-  }).finally(function() {
-    document.getElementById('btn-caps').disabled = false;
-  });
+    setStatus('captions', 'done', captions.length + ' captions');
+  }).catch(function(e) { toast('Error: ' + e.message); setStatus('captions', 'err', 'Error');
+  }).finally(function() { document.getElementById('btn-caps').disabled = false; });
 }
 
-function fmtTime(s) { return Math.floor(s/60) + ':' + String(Math.floor(s%60)).padStart(2,'0'); }
-
 function renderCaptions() {
-  var html = '';
-  captions.forEach(function(c, i) {
-    html += '<div class="cap-line" onclick="previewCap(' + i + ')"><span class="cap-time">' + fmtTime(c.start) + ' - ' + fmtTime(c.end) + '</span><span style="flex:1;font-size:12.5px;color:rgba(242,240,255,0.78)">' + c.text + '</span></div>';
-  });
-  document.getElementById('cap-list').innerHTML = html;
+  document.getElementById('captions-out').innerHTML = captions.map(function(c, i) {
+    return '<div class="cap-line" onclick="showCap(' + i + ')"><span class="cap-time">' + fmtTime(c.start) + ' - ' + fmtTime(c.end) + '</span><span style="flex:1;font-size:12.5px;color:rgba(242,240,255,0.78)">' + c.text + '</span></div>';
+  }).join('');
 }
 
 var capIdx = 0, capTimer = null;
 function startCapPreview() {
   if (capTimer) clearInterval(capTimer);
-  capIdx = 0; showCap();
-  capTimer = setInterval(function() { capIdx = (capIdx + 1) % captions.length; showCap(); }, 2500);
+  capIdx = 0; showCap(0);
+  if (captions.length > 1) capTimer = setInterval(function() { capIdx = (capIdx + 1) % captions.length; showCap(capIdx); }, 2500);
 }
-function showCap() { var el = document.getElementById('cap-display'); if (el && captions[capIdx]) el.textContent = captions[capIdx].text; }
-function previewCap(i) { capIdx = i; showCap(); }
+function showCap(i) { var el = document.getElementById('cap-preview-txt'); if (el && captions[i]) el.textContent = captions[i].text; }
 
 function fmtSrt(s) {
-  var h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = Math.floor(s%60), ms = Math.round((s%1)*1000);
+  var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = Math.floor(s % 60), ms = Math.round((s % 1) * 1000);
   return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0') + ',' + String(ms).padStart(3,'0');
 }
 
-function exportCaptions(fmt) {
-  if (!captions.length) { showToast('Generate captions first'); return; }
-  var content = fmt === 'srt' ? captions.map(function(c,i) { return (i+1) + '\n' + fmtSrt(c.start) + ' --> ' + fmtSrt(c.end) + '\n' + c.text + '\n'; }).join('\n') : captions.map(function(c) { return c.text; }).join('\n');
-  var blob = new Blob([content], {type:'text/plain'});
-  var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'captions.' + fmt; a.click();
-  showToast('Downloaded ' + fmt.toUpperCase());
+function exportSrt() {
+  if (!captions.length) { toast('Generate captions first'); return; }
+  var content = captions.map(function(c, i) { return (i + 1) + '\n' + fmtSrt(c.start) + ' --> ' + fmtSrt(c.end) + '\n' + c.text + '\n'; }).join('\n');
+  var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([content], {type:'text/plain'})); a.download = 'captions.srt'; a.click();
+  toast('SRT downloaded!');
 }
 
-function copyCaptions() { navigator.clipboard.writeText(captions.map(function(c){return c.text;}).join('\n')).then(function(){showToast('Captions copied!');}); }
+function exportTxt() {
+  if (!captions.length) { toast('Generate captions first'); return; }
+  var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([captions.map(function(c){return c.text;}).join('\n')], {type:'text/plain'})); a.download = 'captions.txt'; a.click();
+  toast('TXT downloaded!');
+}
 
+function copyCaps() { copyText(captions.map(function(c){return c.text;}).join('\n')); }
+
+// AD ENGINE
 function scoreAd() {
-  if (!currentScript) { showToast('Generate your script first'); return; }
+  if (!currentScript) { toast('Generate script first'); return; }
   var pname = document.getElementById('pname').value.trim() || 'this product';
   setStatus('score', 'load', 'Analysing...');
-  document.getElementById('btn-score-run').disabled = true;
+  document.getElementById('btn-score').disabled = true;
   document.getElementById('score-empty').style.display = 'none';
   document.getElementById('score-results').style.display = 'none';
-  api('score', {script: currentScript, product: pname, platform: S.platform}).then(function(d) {
+  api('score', { script: currentScript, product: pname, platform: S.platform }).then(function(d) {
     var sc = d.score || {};
     function cn(n) { return n >= 80 ? 'g' : n >= 65 ? 'o' : 'r'; }
     document.getElementById('score-overview').innerHTML =
-      '<div class="score-card"><div class="score-n ' + cn(sc.overall||0) + '">' + (sc.overall||0) + '</div><div class="score-lbl">Overall</div></div>' +
-      '<div class="score-card"><div class="score-n ' + cn(sc.hook_score||0) + '">' + (sc.hook_score||0) + '</div><div class="score-lbl">Hook Score</div></div>' +
-      '<div class="score-card"><div class="score-n g">' + (sc.ctr_prediction||'N/A') + '</div><div class="score-lbl">CTR Pred.</div></div>' +
-      '<div class="score-card"><div class="score-n g">' + (sc.roas_prediction||'N/A') + '</div><div class="score-lbl">ROAS Pred.</div></div>';
+      '<div class="score-box"><div class="score-n ' + cn(sc.overall||0) + '">' + (sc.overall||0) + '</div><div class="score-lbl">Overall</div></div>' +
+      '<div class="score-box"><div class="score-n ' + cn(sc.hook_score||0) + '">' + (sc.hook_score||0) + '</div><div class="score-lbl">Hook Score</div></div>' +
+      '<div class="score-box"><div class="score-n g">' + (sc.ctr_prediction||'N/A') + '</div><div class="score-lbl">CTR Pred.</div></div>' +
+      '<div class="score-box"><div class="score-n g">' + (sc.roas_prediction||'N/A') + '</div><div class="score-lbl">ROAS</div></div>';
     document.getElementById('score-bars').innerHTML =
-      '<div class="bar-row"><div class="bar-labels"><span>Hook</span><span>' + (sc.hook_score||0) + '/100</span></div><div class="bar"><div class="bar-fill" style="width:' + (sc.hook_score||0) + '%"></div></div></div>' +
+      '<div class="bar-row"><div class="bar-labels"><span>Hook strength</span><span>' + (sc.hook_score||0) + '/100</span></div><div class="bar"><div class="bar-fill" style="width:' + (sc.hook_score||0) + '%"></div></div></div>' +
       '<div class="bar-row"><div class="bar-labels"><span>Retention</span><span>' + (sc.retention_score||0) + '/100</span></div><div class="bar"><div class="bar-fill" style="width:' + (sc.retention_score||0) + '%"></div></div></div>';
-    var strengths = (sc.strengths||[]).map(function(s) { return '<div class="insight-item"><span class="i-dot" style="background:var(--green)"></span>' + s + '</div>'; }).join('');
-    var improvements = (sc.improvements||[]).map(function(s) { return '<div class="insight-item"><span class="i-dot" style="background:var(--gold)"></span>' + s + '</div>'; }).join('');
+    var strengths = (sc.strengths||[]).map(function(s) { return '<div class="insight-item"><span class="idot" style="background:var(--grn)"></span>' + s + '</div>'; }).join('');
+    var improvements = (sc.improvements||[]).map(function(s) { return '<div class="insight-item"><span class="idot" style="background:var(--gld)"></span>' + s + '</div>'; }).join('');
     document.getElementById('score-insights').innerHTML =
       '<div class="insight-box"><div class="insight-title">Strengths</div>' + strengths + '</div>' +
       '<div class="insight-box"><div class="insight-title">Improvements</div>' + improvements + '</div>' +
-      '<div class="insight-box"><div class="insight-title">Best Audience</div><div class="insight-item"><span class="i-dot" style="background:var(--accent2)"></span>' + (sc.best_audience||'') + '</div></div>' +
-      '<div class="insight-box"><div class="insight-title">Predicted Rank</div><div class="insight-item"><span class="i-dot" style="background:var(--cool,#8b7cf8)"></span>' + (sc.predicted_rank||'') + '</div></div>';
+      (sc.best_audience ? '<div class="insight-box"><div class="insight-title">Best Audience</div><div class="insight-item"><span class="idot" style="background:var(--acc2)"></span>' + sc.best_audience + '</div></div>' : '') +
+      (sc.predicted_rank ? '<div class="insight-box"><div class="insight-title">Predicted Rank</div><div class="insight-item"><span class="idot" style="background:var(--pur)"></span>' + sc.predicted_rank + '</div></div>' : '');
     document.getElementById('score-results').style.display = 'block';
     setStatus('score', 'done', 'Score: ' + (sc.overall||0) + '/100');
-  }).catch(function(e) {
-    showToast('Error: ' + e.message);
-    setStatus('score', 'err', 'Error');
-    document.getElementById('score-empty').style.display = 'block';
-  }).finally(function() {
-    document.getElementById('btn-score-run').disabled = false;
-  });
+  }).catch(function(e) { toast('Error: ' + e.message); setStatus('score', 'err', 'Error'); document.getElementById('score-empty').style.display = 'block';
+  }).finally(function() { document.getElementById('btn-score').disabled = false; });
+}
+
+// IMAGE TO VIDEO
+function handleI2VUpload(inp) {
+  if (!inp.files || !inp.files[0]) return;
+  var file = inp.files[0];
+  i2vType = file.type || 'image/jpeg';
+  document.getElementById('i2v-filename').textContent = file.name;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    i2vBase64 = e.target.result.split(',')[1];
+    document.getElementById('i2v-thumb').src = e.target.result;
+    document.getElementById('i2v-upload').style.display = 'none';
+    document.getElementById('i2v-preview').style.display = 'flex';
+    document.getElementById('i2v-result').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeI2V() {
+  i2vBase64 = null; i2vType = null;
+  document.getElementById('i2v-file').value = '';
+  document.getElementById('i2v-upload').style.display = 'block';
+  document.getElementById('i2v-preview').style.display = 'none';
+  document.getElementById('i2v-result').style.display = 'none';
+}
+
+function runImageToVideo() {
+  if (!i2vBase64) { toast('Upload an image first'); return; }
+  var btn = document.getElementById('btn-i2v');
+  btn.disabled = true; btn.textContent = 'Analysing with Claude Vision...';
+  setStatus('image', 'load', 'Claude Vision reading image...');
+  api('image_to_video', { imageBase64: i2vBase64, mediaType: i2vType }).then(function(d) {
+    i2vBrief = d.brief || {};
+    document.getElementById('i2v-product').textContent = i2vBrief.product || 'Product';
+    document.getElementById('i2v-desc').textContent = i2vBrief.description || '';
+    document.getElementById('i2v-script').textContent = i2vBrief.script || '';
+    var hooks = i2vBrief.hooks || [];
+    document.getElementById('i2v-hooks').innerHTML = hooks.slice(0, 6).map(function(h) {
+      var safe = h.replace(/'/g, "&#39;");
+      return '<div class="i2v-hook" onclick="copyText(decodeURIComponent(\'' + encodeURIComponent(h) + '\'))">' + h + '</div>';
+    }).join('');
+    document.getElementById('i2v-result').style.display = 'block';
+    setStatus('image', 'done', 'Brief ready');
+    toast('Image analysed!');
+  }).catch(function(e) { toast('Error: ' + e.message); setStatus('image', 'err', 'Error');
+  }).finally(function() { btn.disabled = false; btn.textContent = 'Analyse Image and Generate Brief'; });
+}
+
+function useI2VScript() {
+  if (!i2vBrief) return;
+  currentScript = i2vBrief.script || '';
+  if (i2vBrief.product) document.getElementById('pname').value = i2vBrief.product;
+  if (i2vBrief.description) document.getElementById('pdesc').value = i2vBrief.description;
+  document.getElementById('script-out').innerHTML = currentScript.replace(/\n/g, '<br>');
+  document.getElementById('script-ta').value = currentScript;
+  enableScriptActions();
+  showTab('script');
+  toast('Script applied!');
+}
+
+// VOICE
+function selVoice(el, id) {
+  document.querySelectorAll('.voice-card').forEach(function(v) { v.classList.remove('on'); });
+  el.classList.add('on');
+  selectedVoiceId = id;
 }
 
 function generateVoice() {
-  if (!currentScript) { showToast('Generate your script first'); return; }
-  setStatus('voice', 'load', 'Generating voice...');
+  if (!currentScript) { toast('Generate script first'); return; }
+  setStatus('voice', 'load', 'Generating...');
   document.getElementById('btn-voice').disabled = true;
-  document.getElementById('voice-note').textContent = 'Generating voiceover with ElevenLabs...';
-  api('voice', {text: currentScript, voice_id: selectedVoiceId}).then(function(d) {
+  document.getElementById('voice-note').textContent = 'Generating with ElevenLabs...';
+  api('voice', { text: currentScript, voice_id: selectedVoiceId }).then(function(d) {
     if (d.audio) {
       audioData = 'data:audio/mp3;base64,' + d.audio;
       var el = document.getElementById('audio-el');
       el.src = audioData;
-      document.getElementById('audio-player').style.display = 'flex';
-      document.getElementById('voice-note').textContent = 'Voiceover ready! Click play to listen.';
+      var ap = document.getElementById('audio-player');
+      ap.style.display = 'flex';
+      document.getElementById('voice-note').textContent = 'Voiceover ready!';
       setStatus('voice', 'done', 'Voice ready');
       el.addEventListener('timeupdate', function() {
-        var p = (el.currentTime / el.duration) * 100;
-        document.getElementById('audio-prog').style.width = p + '%';
-        document.getElementById('audio-time').textContent = fmtTime(el.currentTime) + ' / ' + fmtTime(el.duration);
+        var p = el.duration ? (el.currentTime / el.duration) * 100 : 0;
+        document.getElementById('audio-fill').style.width = p + '%';
+        document.getElementById('audio-time').textContent = fmtTime(el.currentTime) + ' / ' + fmtTime(el.duration || 0);
       });
+      toast('Voiceover ready!');
+    } else {
+      document.getElementById('voice-note').textContent = d.error || 'ElevenLabs key not configured';
+      setStatus('voice', 'err', 'Error');
     }
-  }).catch(function(e) {
-    document.getElementById('voice-note').textContent = 'Error: ' + e.message;
-    setStatus('voice', 'err', 'Error');
-  }).finally(function() {
-    document.getElementById('btn-voice').disabled = false;
-  });
+  }).catch(function(e) { document.getElementById('voice-note').textContent = 'Error: ' + e.message; setStatus('voice', 'err', 'Error');
+  }).finally(function() { document.getElementById('btn-voice').disabled = false; });
 }
 
 function toggleAudio() {
   var a = document.getElementById('audio-el');
   var b = document.getElementById('play-btn');
-  if (a.paused) { a.play(); b.textContent = '⏸'; } else { a.pause(); b.textContent = '▶'; }
+  if (a.paused) { a.play(); b.textContent = 'Pause'; } else { a.pause(); b.textContent = 'Play'; }
 }
 
 function downloadAudio() {
-  if (!audioData) return;
+  if (!audioData) { toast('Generate voiceover first'); return; }
   var a = document.createElement('a'); a.href = audioData; a.download = 'zuvlix-voice.mp3'; a.click();
-  showToast('Downloading...');
+  toast('Downloading MP3...');
 }
 
-function generateAvatar() {
-  if (!currentScript) { showToast('Generate your script first'); return; }
-  setStatus('avatar', 'load', 'Generating video...');
-  document.getElementById('btn-avatar').disabled = true;
-  document.getElementById('avatar-note').textContent = 'Sending to HeyGen... takes 2-4 minutes.';
-  api('avatar', {script: currentScript, avatar_id: selectedAvatarId}).then(function(d) {
+// AVATAR VIDEO
+function selAvatar(el, id) {
+  document.querySelectorAll('.av-lib-card').forEach(function(v) { v.classList.remove('on'); });
+  el.classList.add('on');
+  selectedAvatarId = id;
+}
+
+function generateAvatarVideo() {
+  if (!currentScript) { toast('Generate script first'); return; }
+  var btn = document.getElementById('btn-avatar');
+  btn.disabled = true;
+  setStatus('avatar', 'load', 'Sending to HeyGen...');
+  document.getElementById('avatar-note').textContent = 'Generating avatar video... 2-4 minutes.';
+  document.getElementById('video-progress-wrap').style.display = 'block';
+  var pct = 0;
+  var progTimer = setInterval(function() { pct = Math.min(pct + 2, 88); document.getElementById('video-progress-fill').style.width = pct + '%'; }, 2000);
+  api('avatar', { script: currentScript, avatar_id: selectedAvatarId }).then(function(d) {
     if (d.video_id) {
       document.getElementById('avatar-note').textContent = 'Rendering... checking every 15s.';
-      pollAvatar(d.video_id);
+      pollAvatar(d.video_id, progTimer, btn);
+    } else {
+      clearInterval(progTimer);
+      document.getElementById('avatar-note').textContent = (d.error || 'No video ID returned. Add HEYGEN_API_KEY to Render.');
+      setStatus('avatar', 'err', 'Error');
+      btn.disabled = false;
     }
   }).catch(function(e) {
+    clearInterval(progTimer);
     document.getElementById('avatar-note').textContent = 'Error: ' + e.message;
     setStatus('avatar', 'err', 'Error');
-    document.getElementById('btn-avatar').disabled = false;
+    btn.disabled = false;
   });
 }
 
-function pollAvatar(vid) {
-  api('avatar_status', {video_id: vid}).then(function(d) {
+function pollAvatar(vid, progTimer, btn) {
+  api('avatar_status', { video_id: vid }).then(function(d) {
     if (d.status === 'completed' && d.video_url) {
-      document.getElementById('result-video').src = d.video_url;
-      document.getElementById('video-result').style.display = 'block';
+      clearInterval(progTimer);
+      document.getElementById('video-progress-fill').style.width = '100%';
+      document.getElementById('video-wrap').innerHTML = '<video src="' + d.video_url + '" controls style="width:100%;height:100%;object-fit:cover;border-radius:12px"></video>';
+      currentVideoUrl = d.video_url;
       document.getElementById('avatar-note').textContent = 'Video ready!';
+      document.getElementById('video-acts').style.display = 'flex';
       setStatus('avatar', 'done', 'Video ready');
-      document.getElementById('btn-avatar').disabled = false;
-      showToast('Your video is ready!');
+      btn.disabled = false;
+      toast('Your avatar video is ready!');
     } else if (d.status === 'failed') {
-      document.getElementById('avatar-note').textContent = 'Video failed. Please try again.';
+      clearInterval(progTimer);
+      document.getElementById('avatar-note').textContent = 'Video generation failed. Please try again.';
       setStatus('avatar', 'err', 'Failed');
-      document.getElementById('btn-avatar').disabled = false;
+      btn.disabled = false;
     } else {
-      setTimeout(function() { pollAvatar(vid); }, 15000);
+      setTimeout(function() { pollAvatar(vid, progTimer, btn); }, 15000);
     }
-  }).catch(function() {
-    setTimeout(function() { pollAvatar(vid); }, 15000);
-  });
+  }).catch(function() { setTimeout(function() { pollAvatar(vid, progTimer, btn); }, 15000); });
 }
 
+function downloadVideo() {
+  if (!currentVideoUrl) { toast('No video yet'); return; }
+  var a = document.createElement('a'); a.href = currentVideoUrl; a.download = 'zuvlix-video.mp4'; a.click();
+  toast('Downloading...');
+}
+
+function shareVideo() {
+  if (!currentVideoUrl) { toast('No video yet'); return; }
+  if (navigator.share) { navigator.share({ url: currentVideoUrl, title: 'My Zuvlix video' }); }
+  else { copyText(currentVideoUrl); toast('Video URL copied!'); }
+}
+
+// SHOPIFY INTEL
 function runShopifyIntel() {
   var url = document.getElementById('shopify-url').value.trim();
   var pname = document.getElementById('pname').value.trim();
   var pdesc = document.getElementById('pdesc').value.trim();
-  if (!url && !pname) { showToast('Enter a URL or fill in product details'); return; }
+  if (!url && !pname) { toast('Enter a product URL or fill in product details'); return; }
   setStatus('shopify', 'load', 'Analysing...');
   document.getElementById('btn-shopify').disabled = true;
   document.getElementById('shopify-empty').style.display = 'none';
   document.getElementById('shopify-results').style.display = 'none';
-  api('shopify_intel', {url: url, product: pname || 'unknown', description: pdesc || 'unknown'}).then(function(d) {
-    shopifyIntelData = d.intel || {};
-    var si = shopifyIntelData;
-    var sections = [
-      {title:'Best Ad Angles',key:'best_angles',color:'var(--accent2)'},
-      {title:'Target Audiences',key:'target_audiences',color:'var(--green)'},
-      {title:'Pain Points',key:'pain_points',color:'var(--gold)'},
-      {title:'Emotional Triggers',key:'emotional_triggers',color:'#8b7cf8'}
+  api('shopify_intel', { url: url, product: pname || 'unknown', description: pdesc || 'unknown' }).then(function(d) {
+    shopifyData = d.intel || {};
+    var cols = [
+      { key:'best_angles', title:'Best Ad Angles', color:'var(--acc2)' },
+      { key:'target_audiences', title:'Target Audiences', color:'var(--grn)' },
+      { key:'pain_points', title:'Pain Points', color:'var(--gld)' },
+      { key:'emotional_triggers', title:'Emotional Triggers', color:'var(--pur)' }
     ];
-    var html = '';
-    sections.forEach(function(sec) {
-      html += '<div class="intel-box"><div class="intel-title" style="color:' + sec.color + '">' + sec.title + '</div>';
-      (si[sec.key]||[]).forEach(function(item) { html += '<div class="intel-item"><span style="color:' + sec.color + '">›</span>' + item + '</div>'; });
-      html += '</div>';
-    });
-    document.getElementById('shopify-grid').innerHTML = html;
-    document.getElementById('shopify-hook').textContent = si.killer_hook_formula || '';
+    document.getElementById('shopify-intel-grid').innerHTML = cols.map(function(col) {
+      return '<div class="intel-box"><div class="intel-title" style="color:' + col.color + '">' + col.title + '</div>' +
+        (shopifyData[col.key]||[]).map(function(item) { return '<div class="intel-item"><span style="color:' + col.color + '">› </span>' + item + '</div>'; }).join('') + '</div>';
+    }).join('');
+    document.getElementById('shopify-hook').textContent = shopifyData.killer_hook_formula || '';
     document.getElementById('shopify-results').style.display = 'block';
     setStatus('shopify', 'done', 'Intel ready');
-  }).catch(function(e) {
-    showToast('Error: ' + e.message);
-    setStatus('shopify', 'err', 'Error');
-    document.getElementById('shopify-empty').style.display = 'block';
-  }).finally(function() {
-    document.getElementById('btn-shopify').disabled = false;
-  });
+  }).catch(function(e) { toast('Error: ' + e.message); setStatus('shopify', 'err', 'Error'); document.getElementById('shopify-empty').style.display = 'block';
+  }).finally(function() { document.getElementById('btn-shopify').disabled = false; });
 }
 
 function applyShopifyIntel() {
-  if (!shopifyIntelData) return;
-  var si = shopifyIntelData;
+  if (!shopifyData) return;
   var existing = document.getElementById('pdesc').value;
-  if (si.target_audiences && si.target_audiences[0]) {
-    document.getElementById('pdesc').value = existing + '\n\nTarget: ' + si.target_audiences[0] + '\nPain point: ' + (si.pain_points && si.pain_points[0] ? si.pain_points[0] : '') + '\nBest angle: ' + (si.best_angles && si.best_angles[0] ? si.best_angles[0] : '');
-  }
+  var extra = '';
+  if (shopifyData.target_audiences && shopifyData.target_audiences[0]) extra += '\nTarget: ' + shopifyData.target_audiences[0];
+  if (shopifyData.pain_points && shopifyData.pain_points[0]) extra += '\nPain point: ' + shopifyData.pain_points[0];
+  if (shopifyData.best_angles && shopifyData.best_angles[0]) extra += '\nBest angle: ' + shopifyData.best_angles[0];
+  document.getElementById('pdesc').value = existing + extra;
   generateScript();
   showTab('script');
-  showToast('Applied intel - generating script...');
+  toast('Applied intel — generating script...');
 }
 
+// COMPETITOR INTEL
 function runCompetitorIntel() {
-  var compUrl = document.getElementById('comp-url').value.trim();
+  var comp = document.getElementById('comp-input').value.trim();
   var pname = document.getElementById('pname').value.trim();
-  if (!compUrl) { showToast('Enter competitor brand or URL'); return; }
-  if (!pname) { showToast('Fill in your product name first'); return; }
-  var pdesc = document.getElementById('pdesc').value.trim();
-  setStatus('comp', 'load', 'Analysing...');
+  if (!comp) { toast('Enter competitor brand or URL'); return; }
+  if (!pname) { toast('Fill in your product name first'); return; }
+  setStatus('competitor', 'load', 'Analysing...');
   document.getElementById('btn-comp').disabled = true;
   document.getElementById('comp-empty').style.display = 'none';
   document.getElementById('comp-results').style.display = 'none';
-  api('competitor_intel', {competitor_url: compUrl, product: pname, description: pdesc || 'great product'}).then(function(d) {
+  api('competitor_intel', { competitor_url: comp, product: pname, description: document.getElementById('pdesc').value || 'great product' }).then(function(d) {
     var ci = d.intel || {};
-    var sections = [
-      {title:'Their Likely Angles',key:'likely_competitor_angles',color:'#8b7cf8'},
-      {title:'Gaps to Exploit',key:'gaps_we_can_exploit',color:'var(--green)'},
-      {title:'Hooks That Beat Them',key:'differentiation_hooks',color:'var(--accent2)'},
-      {title:'Angles to Avoid',key:'ad_angles_to_avoid',color:'#f87171'}
+    var cols = [
+      { key:'likely_competitor_angles', title:'Their Angles', color:'var(--pur)' },
+      { key:'gaps_we_can_exploit', title:'Gaps to Exploit', color:'var(--grn)' },
+      { key:'differentiation_hooks', title:'Hooks That Beat Them', color:'var(--acc2)' },
+      { key:'ad_angles_to_avoid', title:'Angles to Avoid', color:'#f87171' }
     ];
-    var html = '';
-    sections.forEach(function(sec) {
-      html += '<div class="intel-box"><div class="intel-title" style="color:' + sec.color + '">' + sec.title + '</div>';
-      (ci[sec.key]||[]).forEach(function(item) { html += '<div class="intel-item"><span style="color:' + sec.color + '">›</span>' + item + '</div>'; });
-      html += '</div>';
-    });
-    document.getElementById('comp-grid').innerHTML = html;
+    document.getElementById('comp-intel-grid').innerHTML = cols.map(function(col) {
+      return '<div class="intel-box"><div class="intel-title" style="color:' + col.color + '">' + col.title + '</div>' +
+        (ci[col.key]||[]).map(function(item) { return '<div class="intel-item"><span style="color:' + col.color + '">› </span>' + item + '</div>'; }).join('') + '</div>';
+    }).join('');
     document.getElementById('comp-strategy').textContent = ci.best_counter_strategy || '';
     document.getElementById('comp-results').style.display = 'block';
-    setStatus('comp', 'done', 'Intel ready');
-  }).catch(function(e) {
-    showToast('Error: ' + e.message);
-    setStatus('comp', 'err', 'Error');
-    document.getElementById('comp-empty').style.display = 'block';
-  }).finally(function() {
-    document.getElementById('btn-comp').disabled = false;
-  });
+    setStatus('competitor', 'done', 'Intel ready');
+  }).catch(function(e) { toast('Error: ' + e.message); setStatus('competitor', 'err', 'Error'); document.getElementById('comp-empty').style.display = 'block';
+  }).finally(function() { document.getElementById('btn-comp').disabled = false; });
 }
 
+// AVATAR BUILDER
 function buildAvatar() {
   var desc = document.getElementById('av-desc').value.trim();
-  if (!desc) { showToast('Please describe your ideal avatar'); return; }
+  if (!desc) { toast('Describe your ideal avatar first'); return; }
   var personality = document.getElementById('av-personality').value.trim();
   var phrase = document.getElementById('av-phrase').value.trim();
-  setStatus('avb', 'load', 'Building avatar...');
-  document.getElementById('btn-avb').disabled = true;
-  document.getElementById('btn-avb').textContent = 'Building...';
-  var briefPromise = api('avatar_brief', {description: desc, platform: S.platform, style: S.style});
-  var portraitPromise = api('avatar_portrait', {description: desc});
-  Promise.all([briefPromise, portraitPromise]).then(function(results) {
+  setStatus('avatar-builder', 'load', 'Building...');
+  document.getElementById('btn-avbuilder').disabled = true;
+  document.getElementById('btn-avbuilder').textContent = 'Building avatar...';
+  var briefP = api('avatar_brief', { description: desc, platform: S.platform, style: S.style });
+  var portP = api('avatar_portrait', { description: desc });
+  Promise.all([briefP, portP]).then(function(results) {
     var brief = results[0].brief || {};
-    var portrait = results[1].portrait || {};
-    var seed = desc.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,12) || 'custom';
+    var seed = desc.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12) || 'custom';
     var imgUrl = 'https://api.dicebear.com/9.x/personas/svg?seed=' + seed + '&backgroundColor=b6e3f4&radius=50';
-    document.getElementById('avb-img').src = imgUrl;
-    document.getElementById('avb-name').textContent = desc.split(',')[0].trim().slice(0,30);
+    document.getElementById('av-portrait-img').src = imgUrl;
+    document.getElementById('av-portrait-name').textContent = desc.split(',')[0].trim().slice(0, 28);
     document.getElementById('avb-personality').textContent = brief.personality || personality || 'Authentic and relatable';
-    document.getElementById('avb-voice').textContent = brief.voice_recommendation || 'Choose a warm, conversational voice';
-    document.getElementById('avb-why').textContent = brief.why_it_works || 'This avatar will resonate with your target audience';
-    document.getElementById('avb-portrait-card').style.display = 'block';
+    document.getElementById('avb-voice').textContent = brief.voice_recommendation || '';
+    document.getElementById('avb-why').textContent = brief.why_it_works || '';
     document.getElementById('avb-heygen').textContent = brief.heygen_prompt || '';
     document.getElementById('avb-did').textContent = brief.did_prompt || '';
     var tips = brief.tips || [];
-    document.getElementById('avb-tips-list').innerHTML = tips.map(function(t) { return '<div class="av-tips-item"><span style="color:var(--accent2)">›</span>' + t + '</div>'; }).join('');
-    document.getElementById('avb-brief-card').style.display = 'block';
-    var scriptPreview = currentScript ? currentScript.slice(0,180) + '...' : 'No script yet. Go to the Script tab first.';
-    document.getElementById('avb-current-script').textContent = scriptPreview;
-    document.getElementById('avb-personalise-card').style.display = 'block';
-    avatarProfile = {description: desc, personality: personality || brief.personality || 'Casual and authentic', speaking_style: brief.voice_recommendation || 'Natural', catchphrase: phrase, portrait_url: imgUrl};
+    document.getElementById('avb-tips').innerHTML = tips.map(function(t) { return '<div style="font-size:12px;color:rgba(242,240,255,0.72);margin-bottom:5px;display:flex;gap:6px"><span style="color:var(--acc2)">›</span>' + t + '</div>'; }).join('');
+    document.getElementById('av-profile-card').style.display = 'block';
+    document.getElementById('avb-current-script').textContent = currentScript ? currentScript.slice(0, 200) + '...' : 'No script yet — go to Script tab first.';
+    document.getElementById('av-personalise-card').style.display = 'block';
+    avatarProfile = { description: desc, personality: personality || brief.personality || 'Casual', speaking_style: brief.voice_recommendation || 'Natural', catchphrase: phrase, portrait_url: imgUrl };
     try { localStorage.setItem('zuvlix_avatar', JSON.stringify(avatarProfile)); } catch(e) {}
-    setStatus('avb', 'done', 'Avatar created!');
-    showToast('Your avatar profile is ready!');
-  }).catch(function(e) {
-    showToast('Error: ' + e.message);
-    setStatus('avb', 'err', 'Error');
-  }).finally(function() {
-    document.getElementById('btn-avb').disabled = false;
-    document.getElementById('btn-avb').textContent = 'Regenerate Avatar Profile';
-  });
+    setStatus('avatar-builder', 'done', 'Avatar created!');
+    toast('Avatar profile ready!');
+  }).catch(function(e) { toast('Error: ' + e.message); setStatus('avatar-builder', 'err', 'Error');
+  }).finally(function() { document.getElementById('btn-avbuilder').disabled = false; document.getElementById('btn-avbuilder').textContent = 'Generate Avatar Profile'; });
 }
 
 function personaliseScript() {
-  if (!currentScript) { showToast('Generate a script first'); return; }
-  if (!avatarProfile) { showToast('Create your avatar profile first'); return; }
-  document.getElementById('btn-personalise').disabled = true;
-  document.getElementById('btn-personalise').textContent = 'Rewriting...';
-  api('personalise_script', {script: currentScript, avatar_profile: avatarProfile}).then(function(d) {
-    document.getElementById('avb-output-text').textContent = d.script || '';
+  if (!currentScript) { toast('Generate a script first'); return; }
+  if (!avatarProfile) { toast('Create your avatar profile first'); return; }
+  var btn = document.getElementById('btn-personalise');
+  btn.disabled = true; btn.textContent = 'Rewriting in avatar voice...';
+  api('personalise_script', { script: currentScript, avatar_profile: avatarProfile }).then(function(d) {
+    document.getElementById('avb-out-text').textContent = d.script || '';
     document.getElementById('avb-output').style.display = 'block';
-    showToast('Script personalised!');
-  }).catch(function(e) {
-    showToast('Error: ' + e.message);
-  }).finally(function() {
-    document.getElementById('btn-personalise').disabled = false;
-    document.getElementById('btn-personalise').textContent = 'Rewrite in My Avatar Voice';
-  });
+    toast('Script personalised!');
+  }).catch(function(e) { toast('Error: ' + e.message);
+  }).finally(function() { btn.disabled = false; btn.textContent = 'Rewrite in Avatar Voice'; });
 }
 
 function usePersonalisedScript() {
-  var txt = document.getElementById('avb-output-text').textContent;
+  var txt = document.getElementById('avb-out-text').textContent;
   if (!txt) return;
   currentScript = txt;
-  document.getElementById('script-out').innerHTML = currentScript.replace(/\n/g,'<br>');
-  document.getElementById('script-edit').value = currentScript;
-  ['btn-regen','btn-edit','btn-copy','btn-score','btn-save'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.disabled = false;
-  });
+  document.getElementById('script-out').innerHTML = currentScript.replace(/\n/g, '<br>');
+  document.getElementById('script-ta').value = currentScript;
+  enableScriptActions();
   showTab('script');
-  showToast('Using personalised script!');
+  toast('Using personalised script!');
 }
 
+// LIBRARY
 function saveToLibrary() {
-  if (!currentScript) { showToast('Generate a script first'); return; }
+  if (!currentScript) { toast('Generate a script first'); return; }
   var item = {
     id: Date.now(),
     product: document.getElementById('pname').value || 'Unknown',
@@ -1359,41 +1539,57 @@ function saveToLibrary() {
   if (library.length > 50) library.pop();
   try { localStorage.setItem('zuvlix_lib', JSON.stringify(library)); } catch(e) {}
   renderLibrary();
-  showToast('Saved to library!');
+  toast('Saved to library!');
 }
 
 function renderLibrary() {
   var grid = document.getElementById('library-grid');
   var empty = document.getElementById('library-empty');
-  if (!library.length) { grid.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
+  if (!grid) return;
+  if (!library.length) {
+    if (empty) empty.style.display = 'block';
+    grid.innerHTML = '';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
   grid.innerHTML = library.map(function(item) {
-    return '<div class="lib-item"><div class="lib-head"><div><div class="lib-title">' + item.product + '</div><div class="lib-meta">' + item.style + ' · ' + item.platform + ' · ' + item.date + '</div></div><div class="acts"><button class="act" onclick="loadFromLibrary(' + item.id + ')">Load</button><button class="act" onclick="deleteFromLibrary(' + item.id + ')">Delete</button></div></div><div class="lib-preview">' + item.script.replace(/\n/g,' ').slice(0,200) + '...</div></div>';
+    return '<div class="lib-card"><div class="lib-head"><div><div class="lib-title">' + item.product + '</div><div class="lib-meta">' + item.style + ' · ' + item.platform + ' · ' + item.date + '</div></div>' +
+      '<div class="acts"><button class="act" onclick="loadLibScript(' + item.id + ')">Load</button><button class="act" onclick="deleteLibScript(' + item.id + ')">Delete</button></div></div>' +
+      '<div class="lib-preview">' + item.script.replace(/\n/g, ' ').slice(0, 200) + '...</div></div>';
   }).join('');
 }
 
-function loadFromLibrary(id) {
+function loadLibScript(id) {
   var item = library.filter(function(i) { return i.id === id; })[0];
   if (!item) return;
   currentScript = item.script;
-  document.getElementById('script-out').innerHTML = currentScript.replace(/\n/g,'<br>');
-  document.getElementById('script-edit').value = currentScript;
-  ['btn-regen','btn-edit','btn-copy','btn-score','btn-save'].forEach(function(i) {
-    var el = document.getElementById(i);
-    if (el) el.disabled = false;
-  });
+  document.getElementById('script-out').innerHTML = currentScript.replace(/\n/g, '<br>');
+  document.getElementById('script-ta').value = currentScript;
+  enableScriptActions();
   showTab('script');
-  showToast('Script loaded!');
+  toast('Script loaded!');
 }
 
-function deleteFromLibrary(id) {
+function deleteLibScript(id) {
   library = library.filter(function(i) { return i.id !== id; });
   try { localStorage.setItem('zuvlix_lib', JSON.stringify(library)); } catch(e) {}
   renderLibrary();
-  showToast('Deleted');
+  toast('Deleted');
 }
 
-renderLibrary();
+// MISC
+function handleLogo(inp) {
+  if (inp.files && inp.files[0]) {
+    document.getElementById('logo-lbl').textContent = inp.files[0].name;
+    document.getElementById('logo-ico').textContent = '✓';
+    toast('Logo uploaded!');
+  }
+}
+
+function copyById(id) {
+  var el = document.getElementById(id);
+  if (el) copyText(el.textContent);
+}
 </script>
 </body>
 </html>
