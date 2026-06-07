@@ -112,15 +112,15 @@ section{position:relative;z-index:1}
 .stat-l{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:2px;font-family:var(--M)}
 
 /* VIDEO GALLERY */
-.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:56px}
-.gallery-card{border-radius:18px;overflow:hidden;cursor:none;position:relative;aspect-ratio:9/16;background:#0d0d16;border:1px solid var(--brd);transition:transform 0.4s cubic-bezier(0.23,1,0.32,1),box-shadow 0.4s,border-color 0.3s}
-.gallery-card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 30px 80px rgba(0,0,0,0.5),0 0 0 1px rgba(255,77,28,0.2);border-color:rgba(255,77,28,0.3)}
-.gallery-card video{width:100%;height:100%;object-fit:cover;display:block;opacity:0.85;transition:opacity 0.3s}
-.gallery-card:hover video{opacity:1}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:56px;align-items:start}
+.gallery-card{border-radius:18px;overflow:hidden;cursor:pointer;position:relative;background:#0d0d16;border:1px solid var(--brd);transition:transform 0.4s cubic-bezier(0.23,1,0.32,1),box-shadow 0.4s,border-color 0.3s}
+.gallery-card:hover{transform:translateY(-6px) scale(1.01);box-shadow:0 24px 60px rgba(0,0,0,0.5),0 0 0 1px rgba(255,77,28,0.2);border-color:rgba(255,77,28,0.3)}
+.gallery-card iframe{filter:brightness(0.7) saturate(0.8);transition:filter 0.3s}
+.gallery-card:hover iframe{filter:brightness(0.85) saturate(1)}
 .gallery-card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(4,4,10,0.95) 0%,rgba(4,4,10,0.3) 40%,transparent 70%);display:flex;flex-direction:column;justify-content:flex-end;padding:18px}
 .gc-tag{position:absolute;top:14px;left:14px;background:var(--acc);color:#fff;border-radius:100px;padding:4px 12px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-family:var(--M)}
-.gc-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,0.12);backdrop-filter:blur(10px);border:1.5px solid rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.25s;opacity:0.9}
-.gallery-card:hover .gc-play{background:var(--acc);border-color:var(--acc);opacity:1;transform:translate(-50%,-50%) scale(1.1)}
+.gc-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,0.2);border-radius:100px;padding:10px 20px;font-size:12px;font-weight:700;font-family:var(--D);color:#fff;letter-spacing:0.5px;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.25s;white-space:nowrap}
+.gallery-card:hover .gc-play{background:var(--acc);border-color:var(--acc);transform:translate(-50%,-50%) scale(1.05)}
 .gc-script{margin-bottom:8px;display:none}
 .gallery-card:hover .gc-script{display:block}
 .gc-hook{font-size:11px;font-weight:700;color:#fff;margin-bottom:4px;line-height:1.4;border-left:2px solid var(--acc);padding-left:8px}
@@ -362,7 +362,7 @@ footer{position:relative;z-index:1;background:rgba(255,255,255,0.01);border-top:
       <div class="h3c-bar"><div class="h3c-bar-fill" style="background:var(--blu)"></div></div>
     </div>
   </div>
-  <div class="hero-badge"><span class="hero-badge-dot"></span>Full platform · All features live · No beta</div>
+  <div class="hero-badge"><span class="hero-badge-dot"></span>Early access · Building in public · Radically transparent</div>
   <h1 class="hero-headline">
     <span class="line1">PRODUCT TO</span>
     <span class="line2">VIDEO AD</span>
@@ -425,73 +425,124 @@ footer{position:relative;z-index:1;background:rgba(255,255,255,0.01);border-top:
 <section class="sec" id="gallery">
   <div class="container">
     <div class="center" style="display:flex;flex-direction:column">
-      <div class="sec-tag">Real output examples</div>
-      <h2 class="sec-h2">THIS IS WHAT<br><em>ZUVLIX MAKES</em></h2>
-      <p class="sec-sub">Real UGC-style video ads produced with Zuvlix in under 2 minutes each.</p>
+      <div class="sec-tag">Output examples — click to play</div>
+      <h2 class="sec-h2">REAL OUTPUT<em>EXAMPLES</em></h2>
+      <p class="sec-sub">These are the types of UGC ad scripts and briefs Zuvlix generates — shown with real video examples of the format. Click any card to see the full generated script.</p>
     </div>
-    <div class="gallery-grid">
-      <div class="gallery-card" onclick="playGallery(this,0)">
-        <video id="gv0" src="https://videos.pexels.com/video-files/3571264/3571264-uhd_1440_2560_25fps.mp4" loop muted playsinline></video>
-        <div class="gallery-card-overlay">
-          <div class="gc-tag">TikTok · 30s</div>
-          <div class="gc-play">▶</div>
-          <div class="gc-script"><div class="gc-hook">"I tried every serum — nothing worked until this."</div><div class="gc-cta">Link in bio — code GLOW for 20% off</div></div>
-          <div class="gc-label">Skincare Testimonial</div>
-          <div class="gc-meta">Testimonial style · Claude AI generated</div>
+
+    <!-- SCRIPT SHOWCASE — shows actual generated outputs -->
+    <div style="margin-top:50px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px" id="output-gallery">
+
+      <!-- Card 1 -->
+      <div class="gallery-card" id="gc0" onclick="showScript(0)" style="aspect-ratio:auto;min-height:340px">
+        <div style="position:relative;width:100%;padding-top:177%;background:linear-gradient(160deg,#0d0d1f,#1a0a0a);overflow:hidden">
+          <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;pointer-events:none" src="https://www.youtube.com/embed/dHGSQkzDaJY?autoplay=0&controls=0&mute=1&loop=1&playlist=dHGSQkzDaJY&modestbranding=1" allow="autoplay;encrypted-media" allowfullscreen loading="lazy" title="UGC example"></iframe>
+          <div class="gallery-card-overlay">
+            <div class="gc-tag">TikTok · Testimonial · 30s</div>
+            <div class="gc-play" id="gplay0">📋 View Script</div>
+            <div class="gc-script"><div class="gc-hook">"I tried every serum — nothing worked until this."</div><div class="gc-cta">Link in bio · Code GLOW for 20% off</div></div>
+            <div class="gc-label">Skincare Testimonial</div>
+            <div class="gc-meta">Claude AI generated · ElevenLabs voice ready</div>
+          </div>
         </div>
       </div>
-      <div class="gallery-card" onclick="playGallery(this,1)">
-        <video id="gv1" src="https://videos.pexels.com/video-files/4065450/4065450-uhd_1440_2732_24fps.mp4" loop muted playsinline></video>
-        <div class="gallery-card-overlay">
-          <div class="gc-tag">Reels · 15s</div>
-          <div class="gc-play">▶</div>
-          <div class="gc-script"><div class="gc-hook">"POV: your morning routine just got a 10x upgrade"</div><div class="gc-cta">Free shipping this week — shop now</div></div>
-          <div class="gc-label">Fitness Unboxing</div>
-          <div class="gc-meta">Unboxing style · Claude AI generated</div>
+
+      <!-- Card 2 -->
+      <div class="gallery-card" id="gc1" onclick="showScript(1)" style="aspect-ratio:auto;min-height:340px">
+        <div style="position:relative;width:100%;padding-top:177%;background:linear-gradient(160deg,#0a1a0d,#0a0d1a);overflow:hidden">
+          <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;pointer-events:none" src="https://www.youtube.com/embed/kffacxfA7G4?autoplay=0&controls=0&mute=1&loop=1&playlist=kffacxfA7G4&modestbranding=1" allow="autoplay;encrypted-media" allowfullscreen loading="lazy" title="UGC fitness example"></iframe>
+          <div class="gallery-card-overlay">
+            <div class="gc-tag">Reels · Unboxing · 15s</div>
+            <div class="gc-play" id="gplay1">📋 View Script</div>
+            <div class="gc-script"><div class="gc-hook">"POV: your morning routine just got a 10x upgrade"</div><div class="gc-cta">Free shipping this week only — shop now</div></div>
+            <div class="gc-label">Fitness Product</div>
+            <div class="gc-meta">Claude AI generated · Hook score: strong</div>
+          </div>
         </div>
       </div>
-      <div class="gallery-card" onclick="playGallery(this,2)">
-        <video id="gv2" src="https://videos.pexels.com/video-files/8629464/8629464-hd_1080_1920_24fps.mp4" loop muted playsinline></video>
-        <div class="gallery-card-overlay">
-          <div class="gc-tag">YouTube · 60s</div>
-          <div class="gc-play">▶</div>
-          <div class="gc-script"><div class="gc-hook">"3 things I wish I knew before starting meal prep"</div><div class="gc-cta">Recipe + where to buy — link below</div></div>
-          <div class="gc-label">Food Brand Tutorial</div>
-          <div class="gc-meta">Tutorial style · Claude AI generated</div>
+
+      <!-- Card 3 -->
+      <div class="gallery-card" id="gc2" onclick="showScript(2)" style="aspect-ratio:auto;min-height:340px">
+        <div style="position:relative;width:100%;padding-top:177%;background:linear-gradient(160deg,#1a0f0a,#0a0a1a);overflow:hidden">
+          <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;pointer-events:none" src="https://www.youtube.com/embed/N96a-McrRZ0?autoplay=0&controls=0&mute=1&loop=1&playlist=N96a-McrRZ0&modestbranding=1" allow="autoplay;encrypted-media" allowfullscreen loading="lazy" title="UGC food example"></iframe>
+          <div class="gallery-card-overlay">
+            <div class="gc-tag">YouTube Shorts · Tutorial · 60s</div>
+            <div class="gc-play" id="gplay2">📋 View Script</div>
+            <div class="gc-script"><div class="gc-hook">"3 things I wish I knew before starting meal prep"</div><div class="gc-cta">Recipe + where to buy — link below</div></div>
+            <div class="gc-label">Food Brand</div>
+            <div class="gc-meta">Claude AI generated · Variation 3 of 10</div>
+          </div>
         </div>
       </div>
-      <div class="gallery-card" onclick="playGallery(this,3)">
-        <video id="gv3" src="https://videos.pexels.com/video-files/7015021/7015021-hd_1080_1920_25fps.mp4" loop muted playsinline></video>
-        <div class="gallery-card-overlay">
-          <div class="gc-tag">Meta Ads · 30s</div>
-          <div class="gc-play">▶</div>
-          <div class="gc-script"><div class="gc-hook">"Stop buying cheap wireless earbuds. Learned this hard way."</div><div class="gc-cta">Grab yours before they sell out</div></div>
-          <div class="gc-label">Tech Product Review</div>
-          <div class="gc-meta">Problem/solution style · Claude AI generated</div>
+
+    </div>
+
+    <!-- SCRIPT DETAIL PANEL — shows expanded generated script -->
+    <div id="script-detail-panel" style="display:none;margin-top:16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,77,28,0.2);border-radius:22px;padding:32px 36px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <div style="font-family:var(--M);font-size:9px;color:var(--acc2);letter-spacing:2px;margin-bottom:6px" id="sdp-label">GENERATED SCRIPT — SKINCARE TESTIMONIAL · TIKTOK</div>
+          <div style="font-family:var(--D);font-size:18px;font-weight:800" id="sdp-title">AquaGlow Face Serum</div>
+        </div>
+        <button onclick="document.getElementById('script-detail-panel').style.display='none'" style="background:rgba(255,255,255,0.06);border:1px solid var(--brd);border-radius:100px;color:var(--t2);padding:7px 16px;font-size:12px;cursor:pointer;font-family:var(--D)">Close ×</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+        <div style="background:rgba(255,77,28,0.06);border:1px solid rgba(255,77,28,0.14);border-radius:12px;padding:14px">
+          <div style="font-family:var(--M);font-size:9px;color:var(--acc2);letter-spacing:2px;margin-bottom:8px">HOOK (0–3 sec)</div>
+          <div style="font-size:14px;color:var(--text);line-height:1.6;font-style:italic" id="sdp-hook">"I tried every serum on the market — nothing worked until this."</div>
+        </div>
+        <div style="background:rgba(124,92,252,0.06);border:1px solid rgba(124,92,252,0.14);border-radius:12px;padding:14px">
+          <div style="font-family:var(--M);font-size:9px;color:var(--pur);letter-spacing:2px;margin-bottom:8px">MAIN (3–25 sec)</div>
+          <div style="font-size:13px;color:rgba(240,238,255,0.8);line-height:1.65" id="sdp-main">AquaGlow changed my skin in literally two weeks. The dark spots I've had for years? Gone. My skin has this glow now that I used to spend $80 on facials trying to get. The vitamin C is actually stable — not the kind that oxidises after two weeks. I use it every morning before SPF.</div>
+        </div>
+        <div style="background:rgba(45,212,160,0.06);border:1px solid rgba(45,212,160,0.14);border-radius:12px;padding:14px">
+          <div style="font-family:var(--M);font-size:9px;color:var(--grn);letter-spacing:2px;margin-bottom:8px">CTA (last 5 sec)</div>
+          <div style="font-size:14px;color:var(--text);line-height:1.6;font-style:italic" id="sdp-cta">"Link in my bio — use code GLOW for 20% off your first order. Honestly, just try it."</div>
         </div>
       </div>
-      <div class="gallery-card" onclick="playGallery(this,4)">
-        <video id="gv4" src="https://videos.pexels.com/video-files/8471817/8471817-hd_1080_1920_25fps.mp4" loop muted playsinline></video>
-        <div class="gallery-card-overlay">
-          <div class="gc-tag">TikTok · 30s</div>
-          <div class="gc-play">▶</div>
-          <div class="gc-script"><div class="gc-hook">"The supplement that finally got me sleeping 8 hours"</div><div class="gc-cta">First bottle 30% off — link in bio</div></div>
-          <div class="gc-label">Wellness Testimonial</div>
-          <div class="gc-meta">Lifestyle style · Claude AI generated</div>
-        </div>
-      </div>
-      <div class="gallery-card" onclick="playGallery(this,5)">
-        <video id="gv5" src="https://videos.pexels.com/video-files/6953367/6953367-hd_1080_1920_30fps.mp4" loop muted playsinline></video>
-        <div class="gallery-card-overlay">
-          <div class="gc-tag">Reels · 30s</div>
-          <div class="gc-play">▶</div>
-          <div class="gc-script"><div class="gc-hook">"I replaced my 7-step routine with just this one thing"</div><div class="gc-cta">Try risk-free — 30-day money back</div></div>
-          <div class="gc-label">Beauty Lifestyle</div>
-          <div class="gc-meta">Testimonial style · Claude AI generated</div>
-        </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div style="background:rgba(255,255,255,0.04);border:1px solid var(--brd);border-radius:100px;padding:5px 14px;font-size:11px;font-family:var(--M);color:var(--t2)" id="sdp-style">Testimonial style</div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid var(--brd);border-radius:100px;padding:5px 14px;font-size:11px;font-family:var(--M);color:var(--t2)" id="sdp-plat">TikTok platform</div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid var(--brd);border-radius:100px;padding:5px 14px;font-size:11px;font-family:var(--M);color:var(--t2)">~75 words · 30 seconds</div>
+        <div style="background:rgba(45,212,160,0.08);border:1px solid rgba(45,212,160,0.18);border-radius:100px;padding:5px 14px;font-size:11px;font-family:var(--M);color:var(--grn)">Claude AI generated</div>
+        <a href="/app.html" style="margin-left:auto;background:var(--acc);color:#fff;border:none;border-radius:100px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--D);text-decoration:none">Generate yours →</a>
       </div>
     </div>
-    <div class="gallery-more" onclick="window.location.href='/app.html'">Create your own ad like these in 60 seconds <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+
+    <!-- BEFORE/AFTER OUTPUT COMPARISON -->
+    <div style="margin-top:24px;background:rgba(255,255,255,0.02);border:1px solid var(--brd);border-radius:22px;padding:32px 36px">
+      <div style="font-family:var(--M);font-size:9px;color:var(--acc2);letter-spacing:2px;margin-bottom:16px">FULL WORKFLOW OUTPUT — TECH PRODUCT · META ADS</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--brd);border-radius:12px;padding:14px">
+          <div style="font-size:9px;font-family:var(--M);color:var(--t3);letter-spacing:1px;margin-bottom:8px">STEP 1 — URL INPUT</div>
+          <div style="font-size:12px;color:var(--t2);font-family:var(--M);word-break:break-all">audiogear.com/products/bt-pro-40</div>
+          <div style="margin-top:8px;font-size:11px;color:var(--t3)">Auto-filled: product name, price, benefits, audience ↓</div>
+        </div>
+        <div style="background:rgba(255,77,28,0.04);border:1px solid rgba(255,77,28,0.14);border-radius:12px;padding:14px">
+          <div style="font-size:9px;font-family:var(--M);color:var(--acc2);letter-spacing:1px;margin-bottom:8px">STEP 2 — HOOK (from 50 generated)</div>
+          <div style="font-size:13px;color:var(--text);font-style:italic;line-height:1.5">"Stop buying cheap wireless earbuds. I learned this the hard way."</div>
+          <div style="margin-top:8px;font-size:10px;color:var(--t3)">Selected from batch of 50 · took 8 seconds</div>
+        </div>
+        <div style="background:rgba(124,92,252,0.04);border:1px solid rgba(124,92,252,0.14);border-radius:12px;padding:14px">
+          <div style="font-size:9px;font-family:var(--M);color:var(--pur);letter-spacing:1px;margin-bottom:8px">STEP 3 — FULL SCRIPT</div>
+          <div style="font-size:12px;color:rgba(240,238,255,0.75);line-height:1.6">"...These sound like a $300 pair. Cost $49. The ANC actually works. I've been on 6 flights with these and I haven't touched my AirPods since."</div>
+        </div>
+        <div style="background:rgba(45,212,160,0.04);border:1px solid rgba(45,212,160,0.14);border-radius:12px;padding:14px">
+          <div style="font-size:9px;font-family:var(--M);color:var(--grn);letter-spacing:1px;margin-bottom:8px">STEP 4 — AD ENGINE</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--t2)">Hook strength</span><span style="color:var(--grn);font-weight:700">91/100</span></div>
+            <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:100px;overflow:hidden"><div style="height:100%;width:91%;background:var(--grn);border-radius:100px"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px"><span style="color:var(--t2)">CTR estimate*</span><span style="color:var(--gld);font-weight:700">~3.4%</span></div>
+            <div style="font-size:9px;color:var(--t3);margin-top:4px;font-family:var(--M)">*Directional estimate. See methodology.</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;text-align:center">
+        <a href="/app.html" style="background:var(--acc);color:#fff;border:none;border-radius:100px;padding:9px 26px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--D);text-decoration:none;display:inline-flex;align-items:center;gap:8px">Try this with your product <span>→</span></a>
+      </div>
+    </div>
+
+    <div class="gallery-more" onclick="window.location.href='/app.html'">Generate your own ad like these in 60 seconds <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
   </div>
 </section>
 
@@ -571,9 +622,22 @@ footer{position:relative;z-index:1;background:rgba(255,255,255,0.01);border-top:
 <section class="sec" id="features">
   <div class="container">
     <div class="center" style="display:flex;flex-direction:column">
-      <div class="sec-tag">Everything you need</div>
-      <h2 class="sec-h2">BUILT TO<br><em>DOMINATE</em></h2>
-      <p class="sec-sub">Every tool a brand or agency needs to win at video advertising — in one platform.</p>
+      <div class="sec-tag">The intelligence layer</div>
+      <h2 class="sec-h2">THE MOAT IS<em>INTELLIGENCE</em></h2>
+      <p class="sec-sub">Video generation is a commodity. Anyone can make a video. The real edge is knowing which hook will win, which angle will convert, and what your competitor's weakness is — <em style="color:var(--acc2);font-style:normal">before</em> you spend on production.</p>
+    </div>
+
+    <!-- MOAT POSITIONING CALLOUT -->
+    <div style="margin-top:28px;background:linear-gradient(135deg,rgba(124,92,252,0.08),rgba(45,212,160,0.04));border:1px solid rgba(124,92,252,0.18);border-radius:18px;padding:22px 28px;display:flex;align-items:flex-start;gap:20px">
+      <div style="font-size:28px;flex-shrink:0">🏆</div>
+      <div>
+        <div style="font-family:var(--D);font-size:14px;font-weight:700;margin-bottom:8px">Why intelligence beats video generation</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;font-size:13px;color:var(--t2);line-height:1.6">
+          <div><strong style="color:var(--text);display:block;margin-bottom:4px">❌ Easy to copy</strong>Video generation, voice cloning, avatar rendering. Every competitor will add these. They're features, not moats.</div>
+          <div><strong style="color:var(--text);display:block;margin-bottom:4px">✅ Hard to copy</strong>Knowing which hook pattern converts in your specific niche. Accumulated campaign intelligence. A scoring model that learns from real outcomes.</div>
+          <div><strong style="color:var(--text);display:block;margin-bottom:4px">🚀 The roadmap</strong>Performance feedback loop — upload real CTR/ROAS results, AI learns what wins in your category, future scripts get progressively smarter for your brand.</div>
+        </div>
+      </div>
     </div>
     <div class="features-bento">
       <div class="feat feat-large"><div class="feat-glow"></div><span class="feat-ico">🏆</span><div class="feat-title">Winning Ad Engine — Score Before You Spend</div><div class="feat-desc">Score your script before production. Hook strength, CTR prediction, ROAS estimate, retention score, and specific improvements. Creatify doesn't have this. No other tool has this. Know your ad will win before you spend a dollar on production.</div><div class="feat-badge">LIVE · KEY DIFFERENTIATOR</div></div>
@@ -663,7 +727,14 @@ footer{position:relative;z-index:1;background:rgba(255,255,255,0.01);border-top:
         </div>
       </div>
     </div>
-    <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--t3);font-family:var(--M)">Have results to share? <a href="mailto:hello@zuvlix.com" style="color:var(--acc2);text-decoration:none">Email Rupal →</a> We'll turn them into a proper case study.</div>
+    <div style="margin-top:20px;background:rgba(255,255,255,0.02);border:1px solid var(--brd);border-radius:14px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div>
+        <div style="font-family:var(--M);font-size:9px;color:var(--t3);letter-spacing:2px;margin-bottom:5px">WE WANT YOUR DATA</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text)">Have real ad results from Zuvlix-generated scripts?</div>
+        <div style="font-size:13px;color:var(--t2);margin-top:4px">Share your CTR, ROAS, or CPA numbers and we will build a proper verified case study from your campaign. Your results help improve scoring accuracy for every user.</div>
+      </div>
+      <a href="mailto:hello@zuvlix.com?subject=Zuvlix%20Case%20Study%20Results" style="background:var(--acc);color:#fff;border:none;border-radius:100px;padding:10px 24px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--D);text-decoration:none;white-space:nowrap;flex-shrink:0">Share my results →</a>
+    </div>
 
   </div>
 </section>
@@ -698,7 +769,7 @@ footer{position:relative;z-index:1;background:rgba(255,255,255,0.01);border-top:
           <img class="founder-av" src="https://api.dicebear.com/9.x/personas/svg?seed=rupal&backgroundColor=ffd5dc&radius=50" alt="Rupal Goyal">
           <div class="founder-label">FOUNDER &amp; CEO</div>
         </div>
-        <div class="f-float f-float-1"><div class="f-num">500+</div><div class="f-lbl">Ads Created</div></div>
+        <div class="f-float f-float-1"><div class="f-num">60s</div><div class="f-lbl">Script to Brief</div></div>
         <div class="f-float f-float-2"><div class="f-num">60s</div><div class="f-lbl">To First Video</div></div>
         <div class="f-float f-float-3"><div class="f-num">$0</div><div class="f-lbl">To Start</div></div>
       </div>
@@ -720,9 +791,10 @@ footer{position:relative;z-index:1;background:rgba(255,255,255,0.01);border-top:
           <a href="mailto:hello@zuvlix.com" class="btn btn-glass">Email me directly</a>
         </div>
         <div class="founder-promises">
-          <div class="fp"><span class="fp-ico">🔍</span>No fake metrics or inflated promises — radically transparent</div>
-          <div class="fp"><span class="fp-ico">📩</span>I read every piece of feedback personally</div>
-          <div class="fp"><span class="fp-ico">🚀</span>New features shipped every single week</div>
+          <div class="fp"><span class="fp-ico">🔍</span>Radically transparent — I show the scoring methodology, not just the scores</div>
+          <div class="fp"><span class="fp-ico">📩</span>I read every message personally — email hello@zuvlix.com</div>
+          <div class="fp"><span class="fp-ico">🚀</span>Phase 2 in progress: performance feedback loop, Shopify integration, team workspaces</div>
+          <div class="fp"><span class="fp-ico">📊</span>Send me your real ad results — I will build verified case studies from your data</div>
         </div>
       </div>
     </div>
@@ -847,7 +919,7 @@ footer{position:relative;z-index:1;background:rgba(255,255,255,0.01);border-top:
     <div class="center" style="display:flex;flex-direction:column">
       <div class="sec-tag">Simple pricing</div>
       <h2 class="sec-h2">NO CREDITS.<em>NO TRICKS.</em></h2>
-      <p class="sec-sub">Flat monthly pricing. No credits that expire, no hidden costs, no gotchas.</p>
+      <p class="sec-sub">Flat monthly pricing. No credits that expire, no hidden costs, no gotchas. Early adopters on Growth plan are locked in at this price permanently as we ship Phase 2 intelligence features.</p>
     </div>
     <div class="pricing-grid">
       <div class="price-card">
@@ -960,6 +1032,51 @@ footer{position:relative;z-index:1;background:rgba(255,255,255,0.01);border-top:
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
+var _scripts = [
+  {
+    label: 'GENERATED SCRIPT — SKINCARE TESTIMONIAL · TIKTOK',
+    title: 'AquaGlow Face Serum',
+    hook: '"I tried every serum on the market — nothing worked until this."',
+    main: 'AquaGlow changed my skin in literally two weeks. The dark spots I've had for years? Gone. My skin has this glow now that I used to spend $80 on facials trying to get. The vitamin C is actually stable — not the kind that oxidises after two weeks. I use it every morning before SPF.',
+    cta: '"Link in my bio — use code GLOW for 20% off your first order. Honestly, just try it."',
+    style: 'Testimonial style', plat: 'TikTok platform'
+  },
+  {
+    label: 'GENERATED SCRIPT — FITNESS PRODUCT · REELS',
+    title: 'PowerUp Pre-Workout',
+    hook: '"POV: your morning routine just got a 10x upgrade"',
+    main: 'I was sceptical about pre-workout — always felt jittery and crashed by 10am. PowerUp is different. Clean energy in about 8 minutes, no crash, no jitters. I've been training at 6am every day for 3 weeks now. That's not me. That's never been me.',
+    cta: '"Free shipping this week only — link in my bio. Go before it runs out."',
+    style: 'Unboxing style', plat: 'Instagram Reels'
+  },
+  {
+    label: 'GENERATED SCRIPT — FOOD BRAND · YOUTUBE SHORTS',
+    title: 'ChefSauce Hot Sauce',
+    hook: '"3 things I wish I knew before starting meal prep"',
+    main: 'Number one: buy a good hot sauce and actually use it. I spent two years eating bland chicken and rice and wondering why I couldn't stick to the plan. ChefSauce made every single meal taste like a restaurant. If the food is good, you don't cheat.',
+    cta: '"Grab ChefSauce — recipe card and link in the description below."',
+    style: 'Tutorial style', plat: 'YouTube Shorts'
+  }
+];
+
+function showScript(i) {
+  var s = _scripts[i];
+  document.getElementById('sdp-label').textContent = s.label;
+  document.getElementById('sdp-title').textContent = s.title;
+  document.getElementById('sdp-hook').textContent = s.hook;
+  document.getElementById('sdp-main').textContent = s.main;
+  document.getElementById('sdp-cta').textContent = s.cta;
+  document.getElementById('sdp-style').textContent = s.style;
+  document.getElementById('sdp-plat').textContent = s.plat;
+  document.getElementById('script-detail-panel').style.display = 'block';
+  document.getElementById('script-detail-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  // Highlight active card
+  [0,1,2].forEach(function(j) {
+    var gc = document.getElementById('gc' + j);
+    if (gc) gc.style.borderColor = j === i ? 'rgba(255,77,28,0.5)' : '';
+  });
+}
+
 // ═══════════════════════════════════════════
 // THREE.JS 3D BACKGROUND
 // ═══════════════════════════════════════════
@@ -1174,20 +1291,7 @@ renderAvatars();
 // ═══════════════════════════════════════════
 // VIDEO GALLERY
 // ═══════════════════════════════════════════
-var gpIdx = -1;
-function playGallery(card, i) {
-  if (gpIdx !== -1 && gpIdx !== i) {
-    var pv = document.getElementById('gv' + gpIdx);
-    if (pv) { pv.pause(); pv.currentTime = 0; }
-    var pb = document.querySelector('.gallery-card:nth-child(' + (gpIdx + 1) + ') .gc-play');
-    if (pb) pb.textContent = '▶';
-  }
-  var v = document.getElementById('gv' + i);
-  if (!v) return;
-  var btn = card.querySelector('.gc-play');
-  if (v.paused) { v.play().catch(function(){}); if (btn) btn.textContent = '⏸'; gpIdx = i; }
-  else { v.pause(); if (btn) btn.textContent = '▶'; gpIdx = -1; }
-}
+// video playback replaced by showScript()
 
 // ═══════════════════════════════════════════
 // DEMO
