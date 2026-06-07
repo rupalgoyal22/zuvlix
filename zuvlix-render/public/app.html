@@ -19,21 +19,21 @@
   --r6:6px;--r10:10px;--r14:14px;--r20:20px;--r28:28px;
   --D:'Syne',sans-serif;--S:'Inter',sans-serif;--M:'DM Mono',monospace;
 }
-html{-webkit-font-smoothing:antialiased;color-scheme:dark}
-body{background:var(--bg);color:var(--text);font-family:var(--S);font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden;cursor:default}
+html{-webkit-font-smoothing:antialiased;color-scheme:dark;background:var(--bg)}
+body{background:transparent;color:var(--text);font-family:var(--S);font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden;cursor:default}
 
 /* ── DEEP SPACE BACKGROUND ── */
 body::before{
   content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(ellipse 900px 600px at 0% 0%,rgba(124,92,252,0.06),transparent),
-    radial-gradient(ellipse 700px 500px at 100% 0%,rgba(255,77,28,0.05),transparent),
-    radial-gradient(ellipse 600px 400px at 50% 100%,rgba(45,212,160,0.04),transparent),
-    radial-gradient(ellipse 400px 300px at 20% 60%,rgba(79,145,255,0.04),transparent)
+    radial-gradient(ellipse 900px 600px at 0% 0%,rgba(124,92,252,0.05),transparent),
+    radial-gradient(ellipse 700px 500px at 100% 0%,rgba(255,77,28,0.04),transparent),
+    radial-gradient(ellipse 600px 400px at 50% 100%,rgba(45,212,160,0.03),transparent),
+    radial-gradient(ellipse 400px 300px at 20% 60%,rgba(79,145,255,0.03),transparent)
 }
 
 /* ── 3D CANVAS ── */
-#canvas3d{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.65}
+#canvas3d{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.7}
 
 /* ── TOPBAR ── */
 .topbar{position:fixed;top:0;left:0;right:0;z-index:200;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;
@@ -53,7 +53,7 @@ body::before{
 .tb-primary:hover{box-shadow:0 4px 22px rgba(255,77,28,0.45);transform:translateY(-1px)}
 
 /* ── LAYOUT ── */
-.layout{padding-top:60px;display:grid;grid-template-columns:280px 1fr;min-height:100vh;position:relative;z-index:1}
+.layout{padding-top:60px;display:grid;grid-template-columns:280px 1fr;min-height:100vh;position:relative;z-index:1;isolation:isolate}
 
 /* ── SIDEBAR ── */
 .sidebar{
@@ -688,12 +688,48 @@ textarea.inp{resize:vertical;min-height:72px;line-height:1.55}
         </div>
         <div class="card-body">
           <p style="font-size:13px;color:var(--t2);margin-bottom:14px">Score your script before production. CTR prediction, ROAS estimate, hook strength, and specific improvements.</p>
-          <button class="act hi" id="btn-score" onclick="scoreAd()" style="margin-bottom:16px">🏆 Analyse My Ad</button>
+          <div class="acts" style="margin-bottom:16px;margin-top:0">
+            <button class="act hi" id="btn-score" onclick="scoreAd()">🏆 Analyse My Ad</button>
+          </div>
           <div id="score-empty" class="empty-state"><div class="empty-state-ico">🏆</div>Generate your script first, then analyse it for CTR prediction, ROAS estimate, and hook strength.</div>
           <div id="score-results" style="display:none">
             <div class="score-grid" id="score-overview"></div>
             <div id="score-bars"></div>
             <div class="insight-grid" id="score-insights"></div>
+
+            <!-- GENERATE WITH IMPROVEMENTS BUTTON -->
+            <div id="score-improve-wrap" style="margin-top:18px;background:linear-gradient(135deg,rgba(45,212,160,0.07),rgba(124,92,252,0.05));border:1px solid rgba(45,212,160,0.2);border-radius:16px;padding:20px 22px">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+                <div style="flex:1;min-width:220px">
+                  <div style="font-family:var(--D);font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px">
+                    <span style="font-size:16px">⚡</span> Generate with Improvements
+                  </div>
+                  <div style="font-size:12px;color:var(--t2);line-height:1.6" id="score-improve-preview">Claude will rewrite your script applying every improvement above — targeting a 95–100 score.</div>
+                </div>
+                <button id="btn-improve" onclick="generateWithImprovements()" style="background:linear-gradient(135deg,var(--grn),#1a9e75);color:#0a2e22;border:none;border-radius:10px;padding:12px 20px;font-family:var(--D);font-size:13px;font-weight:800;cursor:default;white-space:nowrap;box-shadow:0 4px 20px rgba(45,212,160,0.25);transition:all 0.2s;flex-shrink:0">
+                  ⚡ Improve to 95–100
+                </button>
+              </div>
+
+              <!-- IMPROVED SCRIPT OUTPUT (hidden until generated) -->
+              <div id="improved-script-wrap" style="display:none;margin-top:16px;border-top:1px solid rgba(45,212,160,0.15);padding-top:16px">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div style="font-family:var(--D);font-size:12px;font-weight:700;color:var(--grn)">Improved Script</div>
+                    <div id="improved-score-badge" style="background:rgba(45,212,160,0.12);border:1px solid rgba(45,212,160,0.25);color:var(--grn);border-radius:100px;padding:2px 10px;font-size:10px;font-weight:700;font-family:var(--M)">Re-scoring...</div>
+                  </div>
+                  <div style="display:flex;gap:6px">
+                    <button class="act" onclick="copyText(document.getElementById('improved-script-text').textContent)" style="margin-top:0">📋 Copy</button>
+                    <button class="act hi" onclick="useImprovedScript()" style="margin-top:0">✓ Use this script</button>
+                  </div>
+                </div>
+                <div id="improved-script-text" style="background:rgba(0,0,0,0.25);border:1px solid rgba(45,212,160,0.15);border-radius:10px;padding:14px 16px;font-size:13.5px;color:rgba(238,238,255,0.88);line-height:1.85;white-space:pre-wrap;font-family:var(--S)"></div>
+                <div id="improved-score-row" style="display:none;margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                  <div id="improved-score-cards" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -919,70 +955,152 @@ textarea.inp{resize:vertical;min-height:72px;line-height:1.55}
 
 
 <script>
-// ══ LIGHTWEIGHT PARTICLE CANVAS (no Three.js, 60fps) ══
+// ══ PARTICLE + GEOMETRY CANVAS ══
 (function() {
   var canvas = document.getElementById('canvas3d');
   if (!canvas) return;
   var ctx = canvas.getContext('2d');
-  var W, H, particles = [];
+  var W = 0, H = 0;
+  var particles = [], lines = [], shapes = [];
+  var mx = -999, my = -999;
+
   function resize() {
     W = canvas.width = window.innerWidth;
     H = canvas.height = window.innerHeight;
+    // Re-scatter particles within viewport
+    particles.forEach(function(p) {
+      if (p.x > W) p.x = Math.random() * W;
+      if (p.y > H) p.y = Math.random() * H;
+    });
   }
   resize();
   window.addEventListener('resize', resize);
-  var palette = ['rgba(255,77,28,', 'rgba(124,92,252,', 'rgba(45,212,160,', 'rgba(79,145,255,'];
-  for (var i = 0; i < 80; i++) {
+
+  // Particles — 70 dots spread across actual viewport
+  var palette = [
+    { r:255, g:77,  b:28  },  // orange-acc
+    { r:124, g:92,  b:252 },  // purple
+    { r:45,  g:212, b:160 },  // green
+    { r:79,  g:145, b:255 }   // blue
+  ];
+  for (var i = 0; i < 70; i++) {
+    var col = palette[i % palette.length];
     particles.push({
-      x: Math.random() * 2000,
-      y: Math.random() * 2000,
-      vx: (Math.random() - 0.5) * 0.35,
-      vy: (Math.random() - 0.5) * 0.35,
-      r: Math.random() * 1.8 + 0.4,
-      c: palette[i % palette.length],
-      a: 0.3 + Math.random() * 0.3
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 1.6 + 0.5,
+      col: col,
+      a: 0.25 + Math.random() * 0.35
     });
   }
-  var mx = W / 2, my = H / 2;
+
+  // Floating wireframe shapes — hexagons, triangles, diamonds
+  var shapeDefs = [
+    { sides: 6, x: 0.12, y: 0.18, size: 55, speed: 0.003, col: {r:255,g:77,b:28},  a:0.08 },
+    { sides: 3, x: 0.88, y: 0.25, size: 40, speed: 0.005, col: {r:124,g:92,b:252}, a:0.07 },
+    { sides: 4, x: 0.08, y: 0.70, size: 48, speed: 0.004, col: {r:45,g:212,b:160}, a:0.07 },
+    { sides: 6, x: 0.92, y: 0.75, size: 52, speed: 0.003, col: {r:79,g:145,b:255}, a:0.08 },
+    { sides: 3, x: 0.50, y: 0.08, size: 35, speed: 0.006, col: {r:255,g:77,b:28},  a:0.06 },
+    { sides: 4, x: 0.78, y: 0.50, size: 30, speed: 0.007, col: {r:124,g:92,b:252}, a:0.06 },
+    { sides: 6, x: 0.25, y: 0.88, size: 42, speed: 0.004, col: {r:45,g:212,b:160}, a:0.07 }
+  ];
+  shapeDefs.forEach(function(sd) {
+    shapes.push({
+      def: sd,
+      angle: Math.random() * Math.PI * 2,
+      floatAngle: Math.random() * Math.PI * 2,
+      floatSpeed: 0.008 + Math.random() * 0.006,
+      floatAmp: 20 + Math.random() * 30
+    });
+  });
+
   document.addEventListener('mousemove', function(e) { mx = e.clientX; my = e.clientY; });
+
+  function drawPolygon(cx, cy, r, sides, angle) {
+    ctx.beginPath();
+    for (var i = 0; i <= sides; i++) {
+      var a = angle + (i / sides) * Math.PI * 2;
+      if (i === 0) ctx.moveTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+      else ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+    }
+    ctx.closePath();
+  }
+
+  var frame = 0;
   function draw() {
+    frame++;
     ctx.clearRect(0, 0, W, H);
+
+    // Draw shapes
+    shapes.forEach(function(sh) {
+      var sd = sh.def;
+      sh.angle += sd.speed;
+      sh.floatAngle += sh.floatSpeed;
+      var cx = sd.x * W;
+      var cy = sd.y * H + Math.sin(sh.floatAngle) * sh.floatAmp;
+      var col = sd.col;
+      ctx.save();
+      drawPolygon(cx, cy, sd.size, sd.sides, sh.angle);
+      ctx.strokeStyle = 'rgba(' + col.r + ',' + col.g + ',' + col.b + ',' + sd.a + ')';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      // Inner smaller shape
+      drawPolygon(cx, cy, sd.size * 0.55, sd.sides, -sh.angle * 0.7);
+      ctx.strokeStyle = 'rgba(' + col.r + ',' + col.g + ',' + col.b + ',' + (sd.a * 0.6) + ')';
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    // Draw particles
     particles.forEach(function(p) {
-      // Gentle mouse repulsion
+      // Mouse repulsion
       var dx = p.x - mx, dy = p.y - my;
       var dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 120) { p.vx += dx / dist * 0.015; p.vy += dy / dist * 0.015; }
-      // Speed limit
-      var speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-      if (speed > 0.8) { p.vx *= 0.96; p.vy *= 0.96; }
+      if (dist < 100 && dist > 0) {
+        p.vx += (dx / dist) * 0.018;
+        p.vy += (dy / dist) * 0.018;
+      }
+      // Speed cap
+      var spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      if (spd > 0.9) { p.vx *= 0.95; p.vy *= 0.95; }
+      // Slow drift back to normal speed
+      if (spd < 0.05) { p.vx += (Math.random() - 0.5) * 0.02; p.vy += (Math.random() - 0.5) * 0.02; }
       p.x += p.vx; p.y += p.vy;
       if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
       if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      var col = p.col;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = p.c + p.a + ')';
+      ctx.fillStyle = 'rgba(' + col.r + ',' + col.g + ',' + col.b + ',' + p.a + ')';
       ctx.fill();
     });
-    // Draw subtle connection lines
+
+    // Draw connection lines between nearby particles
     for (var i = 0; i < particles.length; i++) {
       for (var j = i + 1; j < particles.length; j++) {
         var dx = particles[i].x - particles[j].x;
         var dy = particles[i].y - particles[j].y;
         var d = Math.sqrt(dx * dx + dy * dy);
-        if (d < 90) {
+        if (d < 85) {
+          var alpha = (1 - d / 85) * 0.09;
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = 'rgba(255,77,28,' + (0.08 * (1 - d / 90)) + ')';
+          ctx.strokeStyle = 'rgba(255,77,28,' + alpha + ')';
           ctx.lineWidth = 0.5;
           ctx.stroke();
         }
       }
     }
+
     requestAnimationFrame(draw);
   }
   draw();
 })();
+
 
 // ══════════════════════════════════════════
 // SCROLL REVEAL
@@ -1008,6 +1126,7 @@ document.querySelectorAll('.card').forEach(function(el) {
 
 // STATE
 var S = { style:'testimonial', platform:'TikTok', tone:'casual', duration:'30' };
+var lastScore = null; // stores last score result for improve function
 var currentScript = '';
 var selectedVoiceId = 'cgSgspJ2msm6clMCkdW9';
 var selectedAvatarId = 'Daisy-inskirt-20220818';
@@ -1443,8 +1562,10 @@ function scoreAd() {
   document.getElementById('btn-score').disabled = true;
   document.getElementById('score-empty').style.display = 'none';
   document.getElementById('score-results').style.display = 'none';
+  document.getElementById('improved-script-wrap').style.display = 'none';
   api('score', { script: currentScript, product: pname, platform: S.platform }).then(function(d) {
     var sc = d.score || {};
+    lastScore = sc;
     function cn(n) { return n >= 80 ? 'g' : n >= 65 ? 'o' : 'r'; }
     document.getElementById('score-overview').innerHTML =
       '<div class="score-box"><div class="score-n ' + cn(sc.overall||0) + '">' + (sc.overall||0) + '</div><div class="score-lbl">Overall</div></div>' +
@@ -1463,9 +1584,157 @@ function scoreAd() {
       (sc.predicted_rank ? '<div class="insight-box"><div class="insight-title">Predicted Rank</div><div class="insight-item"><span class="idot" style="background:var(--pur)"></span>' + sc.predicted_rank + '</div></div>' : '');
     document.getElementById('score-results').style.display = 'block';
     setStatus('score', 'done', 'Score: ' + (sc.overall||0) + '/100');
+    // Update the improve button preview text
+    var impCount = (sc.improvements||[]).length;
+    if (impCount > 0) {
+      document.getElementById('score-improve-preview').textContent =
+        'Applying ' + impCount + ' improvement' + (impCount > 1 ? 's' : '') + ': ' +
+        (sc.improvements||[]).slice(0,2).join('; ').slice(0,120) + (impCount > 2 ? '...' : '');
+    }
   }).catch(function(e) { toast('Error: ' + e.message); setStatus('score', 'err', 'Error'); document.getElementById('score-empty').style.display = 'block';
   }).finally(function() { document.getElementById('btn-score').disabled = false; });
 }
+
+// GENERATE WITH IMPROVEMENTS
+function generateWithImprovements() {
+  if (!currentScript) { toast('Generate and score a script first'); return; }
+  if (!lastScore) { toast('Click Analyse My Ad first'); return; }
+  var pname = document.getElementById('pname').value.trim() || 'this product';
+  var pdesc = document.getElementById('pdesc').value.trim() || '';
+  var improvements = (lastScore.improvements || []);
+  var strengths = (lastScore.strengths || []);
+  var bestAudience = lastScore.best_audience || '';
+  if (!improvements.length) { toast('No improvements found — your script is already strong!'); return; }
+
+  var btn = document.getElementById('btn-improve');
+  btn.disabled = true;
+  btn.textContent = 'Rewriting...';
+  btn.style.opacity = '0.7';
+
+  var improveWrap = document.getElementById('improved-script-wrap');
+  improveWrap.style.display = 'none';
+  document.getElementById('improved-score-badge').textContent = 'Generating...';
+
+  // Build a rich prompt that uses the score feedback
+  var improvementList = improvements.map(function(imp, i) { return (i+1) + '. ' + imp; }).join('
+');
+  var strengthList = strengths.join(', ');
+  var prompt = 'You are an expert UGC ad copywriter. Rewrite this script to achieve a 95-100 quality score by applying ALL the improvements listed below.
+
+' +
+    'ORIGINAL SCRIPT:
+' + currentScript + '
+
+' +
+    'WHAT TO KEEP (strengths to preserve):
+' + strengthList + '
+
+' +
+    'IMPROVEMENTS TO APPLY (apply every single one):
+' + improvementList + '
+
+' +
+    'TARGET AUDIENCE: ' + bestAudience + '
+' +
+    'Product: ' + pname + '
+' +
+    'Platform: ' + S.platform + '
+' +
+    'Style: ' + S.style + '
+
+' +
+    'RULES FOR A 95-100 SCORE:
+' +
+    '- Hook must be visually specific, pattern-interrupting, and create immediate curiosity
+' +
+    '- Include concrete social proof or specific numbers where possible
+' +
+    '- CTA must have urgency, specificity, and a reason to act NOW
+' +
+    '- Every sentence must earn its place — cut anything vague
+' +
+    '- Sound like a real person, not a marketer
+
+' +
+    'Format:
+[HOOK] ...
+[MAIN] ...
+[CTA] ...
+
+No markdown. No asterisks. No hashtags.';
+
+  fetch('/api/ai', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'script', product: pname, description: pdesc + '
+
+IMPROVEMENT INSTRUCTIONS:
+' + improvementList + '
+
+AUDIENCE: ' + bestAudience, style: S.style, platform: S.platform, tone: S.tone, duration: S.duration, _improve_prompt: prompt })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.error) throw new Error(d.error);
+    var improved = (d.script || '').replace(/\*\*/g, '').replace(/
+{3,}/g, '
+
+').trim();
+    window._improvedScript = improved;
+
+    // Show the improved script with typewriter
+    improveWrap.style.display = 'block';
+    var txtEl = document.getElementById('improved-script-text');
+    txtEl.innerHTML = '';
+    var i = 0;
+    var iv = setInterval(function() {
+      if (i >= improved.length) { txtEl.textContent = improved; clearInterval(iv); } else { txtEl.textContent = improved.slice(0, i += 5); }
+    }, 12);
+
+    // Now auto-score the improved script
+    document.getElementById('improved-score-badge').textContent = 'Scoring...';
+    return fetch('/api/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'score', script: improved, product: pname, platform: S.platform })
+    }).then(function(r) { return r.json(); });
+  })
+  .then(function(d) {
+    if (!d || !d.score) return;
+    var sc = d.score;
+    function cn(n) { return n >= 90 ? 'g' : n >= 75 ? 'o' : 'r'; }
+    document.getElementById('improved-score-badge').innerHTML =
+      '<span style="color:var(--grn);font-weight:800">' + (sc.overall||0) + '/100</span> overall &nbsp;·&nbsp; ' +
+      'Hook: ' + (sc.hook_score||0) + ' &nbsp;·&nbsp; CTR: ' + (sc.ctr_prediction||'N/A');
+    var row = document.getElementById('improved-score-row');
+    if (row) row.style.display = 'flex';
+    toast('Improved script ready — score: ' + (sc.overall||0) + '/100');
+  })
+  .catch(function(e) {
+    toast('Error: ' + e.message);
+    document.getElementById('improved-score-badge').textContent = 'Error';
+  })
+  .finally(function() {
+    btn.disabled = false;
+    btn.textContent = '⚡ Improve to 95–100';
+    btn.style.opacity = '1';
+  });
+}
+
+function useImprovedScript() {
+  var improved = window._improvedScript;
+  if (!improved) return;
+  currentScript = improved;
+  document.getElementById('script-out').innerHTML = currentScript.replace(/
+/g, '<br>');
+  document.getElementById('script-ta').value = currentScript;
+  enableScriptActions();
+  showTab('script');
+  toast('Improved script applied!');
+  // Auto-re-score after a moment
+  setTimeout(function() { showTab('score'); scoreAd(); }, 400);
+}
+
 
 // IMAGE TO VIDEO
 function handleI2VUpload(inp) {
