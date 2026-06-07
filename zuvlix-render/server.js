@@ -78,6 +78,17 @@ app.post('/api/ai', async (req, res) => {
     // SCRIPT
     if (action === 'script') {
       const { product, description, style, platform, tone, duration } = req.body;
+
+      // If this is an "improve with feedback" call, use a specialised prompt
+      if (description && description.includes('IMPROVEMENT INSTRUCTIONS:')) {
+        const text = await claude(
+          `You are an expert UGC ad copywriter targeting a 95-100 quality score.\n\nProduct: ${product}\nContext: ${description}\nPlatform: ${platform || 'TikTok'}\nTone: ${tone || 'casual'}\n\nWrite a ${parseInt(duration)||30}-second script that applies EVERY improvement instruction above.\n\nRules for a 95-100 score:\n- Hook must be visually specific, pattern-interrupting, creates immediate curiosity\n- Include concrete specifics (numbers, timeframes, sensory details)\n- CTA must have urgency and a specific reason to act NOW\n- Every sentence earns its place — zero vagueness\n- Sound like a real enthusiastic person sharing a genuine discovery\n- No hashtags, no markdown, no asterisks\n\nFormat:\n[HOOK] ...\n[MAIN] ...\n[CTA] ...`,
+          'World-class UGC ad copywriter. You write scripts that consistently score 95-100. Natural speech only.',
+          1100
+        );
+        return res.json({ script: text });
+      }
+
       const styleMap = {
         testimonial: 'personal testimonial — speak as if you personally used and love this product',
         unboxing: 'unboxing — excited first impression opening for the first time',
