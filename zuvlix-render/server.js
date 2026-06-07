@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const Anthropic = require('@anthropic-ai/sdk');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,214 +7,328 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-async function claude(prompt, system, json) {
-  const msg = await client.messages.create({
-    model: 'claude-opus-4-5',
-    max_tokens: 2000,
-    system: system || 'You are an expert UGC ad creator and direct response copywriter.',
-    messages: [{ role: 'user', content: prompt }]
+// ── CLAUDE via raw fetch (no SDK needed) ──
+async function claude(prompt, system, maxTokens) {
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) throw new Error('ANTHROPIC_API_KEY not set in Render environment');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: maxTokens || 1200,
+      system: system || 'You are an expert UGC ad creator and direct response copywriter.',
+      messages: [{ role: 'user', content: prompt }]
+    })
   });
-  const text = msg.content[0].text;
-  if (json) {
-    try {
-      const clean = text.replace(/```json|```/g, '').trim();
-      const start = clean.indexOf('{');
-      const end = clean.lastIndexOf('}');
-      return JSON.parse(clean.slice(start, end + 1));
-    } catch (e) {
-      return { raw: text };
-    }
-  }
-  return text;
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+  return data.content.map(b => b.text || '').join('');
 }
 
-app.post('/api/ai', async (req, res) => {
-  try {
-    const { action } = req.body;
+// ── CLAUDE with image (vision) ──
+async function claudeVision(imageBase64, mediaType, textPrompt) {
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) throw new Error('ANTHROPIC_API_KEY not set');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1200,
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'image', source: { type: 'base64', media_type: mediaType || 'image/jpeg', data: imageBase64 } },
+          { type: 'text', text: textPrompt }
+        ]
+      }]
+    })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.content.map(b => b.text || '').join('');
+}
 
+// ── JSON parser ──
+function parseJSON(text) {
+  const clean = text.replace(/```json\n?|```\n?/g, '').trim();
+  const start = Math.min(
+    clean.indexOf('[') === -1 ? Infinity : clean.indexOf('['),
+    clean.indexOf('{') === -1 ? Infinity : clean.indexOf('{')
+  );
+  const end = Math.max(clean.lastIndexOf(']'), clean.lastIndexOf('}'));
+  if (start === Infinity || end === -1) throw new Error('No JSON found');
+  return JSON.parse(clean.slice(start, end + 1));
+}
+
+// ── MAIN API ──
+app.post('/api/ai', async (req, res) => {
+  const { action } = req.body;
+  try {
+
+    // SCRIPT
     if (action === 'script') {
-      const { product, description, style, platform, tone, duration, url } = req.body;
+      const { product, description, style, platform, tone, duration } = req.body;
+      const styleMap = {
+        testimonial: 'personal testimonial — speak as if you personally used and love this product',
+        unboxing: 'unboxing — excited first impression opening for the first time',
+        tutorial: 'tutorial — step-by-step how to get best results',
+        lifestyle: 'lifestyle — aspirational, showing how it fits a beautiful life',
+        problem: 'problem/solution — open with a pain point, reveal product as the answer'
+      };
+      const dur = parseInt(duration) || 30;
       const text = await claude(
-        `Write a ${duration || 30}-second ${style || 'testimonial'} UGC video script for ${platform || 'TikTok'} for: "${product}"\n\nProduct: ${description}\n\nTone: ${tone || 'casual'}\n\nFormat:\n[HOOK] - Scroll-stopping opening (first 3 seconds)\n[MAIN] - Main content with benefits\n[CTA] - Clear call to action\n\nWrite naturally, conversationally. Sound like a real person, not an ad. Include specific details.`,
-        'You are an expert UGC ad copywriter. Write scripts that sound authentic and human.'
+        `Write a ${dur}-second ${styleMap[style] || styleMap.testimonial} UGC video script for ${platform || 'TikTok'}.\n\nProduct: ${product}\nDescription: ${description}\nTone: ${tone || 'casual'}\n\nRules:\n- Sound like a real human, not an ad\n- Scroll-stopping hook in first 3 seconds\n- Clear CTA at the end\n- No hashtags, no markdown, no asterisks\n\nFormat (plain labels only):\n[HOOK] opening line\n[MAIN] main content\n[CTA] call to action`,
+        'Expert UGC copywriter. Natural human speech only.',
+        900
       );
       return res.json({ script: text });
     }
 
+    // HOOKS
     if (action === 'hooks') {
       const { product, description, count } = req.body;
-      const n = Math.min(count || 20, 50);
-      const data = await claude(
-        `Generate ${n} unique scroll-stopping opening hooks for this product:\n\nProduct: ${product}\nDescription: ${description}\n\nInclude: confession hooks, question hooks, bold claim hooks, POV hooks, controversy hooks, before/after hooks, secret hooks, number hooks.\n\nReturn JSON: {"hooks": ["hook1","hook2",...]}`,
-        'Expert UGC hook writer. JSON only.', true
+      const n = Math.min(parseInt(count) || 20, 50);
+      const text = await claude(
+        `Generate exactly ${n} unique scroll-stopping UGC hooks for this product.\n\nProduct: ${product}\nDescription: ${description || 'great product'}\n\nRules:\n- Max 15 words each\n- Mix of: confession, question, bold claim, POV, number, controversy\n- Pure curiosity or shock\n\nReturn ONLY valid JSON array: ["hook1","hook2",...]`,
+        'Hook writer. Return JSON array only, no other text.',
+        Math.min(n * 55 + 200, 2500)
       );
-      return res.json({ hooks: data.hooks || [] });
+      return res.json({ hooks: parseJSON(text) });
     }
 
+    // VARIATIONS
     if (action === 'variations') {
       const { product, description, count, style, platform } = req.body;
-      const n = Math.min(count || 5, 20);
-      const data = await claude(
-        `Generate ${n} ad variations for: "${product}" - ${description}\nPlatform: ${platform}\nStyle: ${style}\n\nEach variation needs: title, angle, hook, cta.\nReturn JSON: {"variations":[{"title":"","angle":"","hook":"","cta":""},...]}`,
-        'Expert ad strategist. JSON only.', true
+      const n = Math.min(parseInt(count) || 5, 20);
+      const text = await claude(
+        `Generate ${n} different UGC ad variations for:\nProduct: ${product}\nDescription: ${description || ''}\nStyle: ${style}\nPlatform: ${platform}\n\nReturn ONLY valid JSON array:\n[{"title":"","angle":"","hook":"","emotion":"","cta":""},...]`,
+        'Ad strategist. Return JSON only.',
+        Math.min(n * 130 + 200, 3000)
       );
-      return res.json({ variations: data.variations || [] });
+      return res.json({ variations: parseJSON(text) });
     }
 
+    // CAPTIONS
     if (action === 'captions') {
       const { script, platform } = req.body;
-      const data = await claude(
-        `Create timed captions for this ${platform} video script:\n\n${script}\n\nBreak into 3-6 word segments with timestamps. Return JSON: {"captions":[{"start":0,"end":3,"text":""},...]}`,
-        'Caption generator. JSON only.', true
+      const text = await claude(
+        `Create timed captions for this ${platform || 'TikTok'} video script.\n\nScript:\n${script}\n\nRules:\n- Max 6 words per caption\n- 2-3 seconds each\n\nReturn ONLY valid JSON:\n[{"text":"","start":0,"end":2.5},...]`,
+        'Caption creator. Return JSON only.',
+        900
       );
-      return res.json({ captions: data.captions || [] });
+      return res.json({ captions: parseJSON(text) });
     }
 
+    // SCORE
     if (action === 'score') {
       const { script, product, platform } = req.body;
-      const data = await claude(
-        `Score this ${platform} UGC ad script for "${product}":\n\n${script}\n\nReturn JSON: {"overall":85,"hook_score":78,"retention_score":82,"ctr_prediction":"3.2%","roas_prediction":"2.8x","strengths":["..."],"improvements":["..."],"best_audience":"...","predicted_rank":"Top 20%"}`,
-        'Expert performance marketer. JSON only.', true
+      const text = await claude(
+        `Analyse this UGC ad script critically.\n\nProduct: ${product || 'this product'}\nPlatform: ${platform || 'TikTok'}\nScript:\n${script}\n\nReturn ONLY valid JSON:\n{"overall":74,"hook_score":71,"retention_score":78,"clarity_score":80,"ctr_prediction":"2.8%","roas_prediction":"2.4x","strengths":["s1","s2","s3"],"improvements":["i1","i2","i3"],"best_audience":"","predicted_rank":"Top 25%"}`,
+        'Performance marketer. Return JSON only.',
+        900
       );
-      return res.json({ score: data });
+      return res.json({ score: parseJSON(text) });
     }
 
+    // SCRAPE
     if (action === 'scrape') {
       const { url } = req.body;
-      const data = await claude(
-        `Pretend you scraped this product URL: ${url}\nGenerate realistic product data based on the URL.\nReturn JSON: {"name":"Product Name","description":"Brief description","benefits":["benefit1","benefit2","benefit3"],"price":"$XX","audience":"Target audience"}`,
-        'Product researcher. JSON only.', true
+      let pageText = 'URL: ' + url;
+      try {
+        const r = await fetch(url, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Zuvlix/1.0)' },
+          signal: AbortSignal.timeout(8000)
+        });
+        const html = await r.text();
+        pageText = html
+          .replace(/<script[\s\S]*?<\/script>/gi, '')
+          .replace(/<style[\s\S]*?<\/style>/gi, '')
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/\s+/g, ' ')
+          .slice(0, 5000);
+      } catch (e) { /* use URL only */ }
+      const text = await claude(
+        `Extract product info from this page. Return ONLY valid JSON:\n{"name":"","description":"","benefits":[],"audience":"","price":"","tone_suggestion":"casual"}\n\nPage content:\n${pageText}`,
+        'Product researcher. Return JSON only.',
+        600
       );
-      return res.json({ result: data });
+      return res.json({ result: parseJSON(text) });
     }
 
+    // SHOPIFY INTEL
     if (action === 'shopify_intel') {
       const { url, product, description } = req.body;
-      const data = await claude(
-        `Generate Shopify/eCommerce ad intelligence for:\nURL: ${url}\nProduct: ${product}\nDescription: ${description}\n\nReturn JSON: {"best_angles":["..."],"target_audiences":["..."],"pain_points":["..."],"emotional_triggers":["..."],"killer_hook_formula":"..."}`,
-        'eCommerce strategist. JSON only.', true
+      const text = await claude(
+        `Generate deep ad intelligence for this product.\n\nURL: ${url || 'not provided'}\nProduct: ${product}\nDescription: ${description}\n\nReturn ONLY valid JSON:\n{"best_angles":[],"target_audiences":[],"pain_points":[],"emotional_triggers":[],"competitor_weaknesses":[],"best_platforms":[],"killer_hook_formula":""}`,
+        'eCommerce strategist. Return JSON only.',
+        1100
       );
-      return res.json({ intel: data });
+      return res.json({ intel: parseJSON(text) });
     }
 
+    // COMPETITOR INTEL
     if (action === 'competitor_intel') {
       const { competitor_url, product, description } = req.body;
-      const data = await claude(
-        `Generate competitor intelligence for brand "${competitor_url}" vs our product "${product}" - ${description}\n\nReturn JSON: {"likely_competitor_angles":["..."],"gaps_we_can_exploit":["..."],"differentiation_hooks":["..."],"ad_angles_to_avoid":["..."],"best_counter_strategy":"..."}`,
-        'Competitive intelligence expert. JSON only.', true
+      const text = await claude(
+        `Analyse competitor strategy vs our product.\n\nOur product: ${product}\nOur description: ${description}\nCompetitor: ${competitor_url}\n\nReturn ONLY valid JSON:\n{"likely_competitor_angles":[],"gaps_we_can_exploit":[],"differentiation_hooks":[],"winning_angles_for_us":[],"ad_angles_to_avoid":[],"best_counter_strategy":""}`,
+        'Competitive intelligence expert. Return JSON only.',
+        1000
       );
-      return res.json({ intel: data });
+      return res.json({ intel: parseJSON(text) });
     }
 
+    // AVATAR BRIEF
     if (action === 'avatar_brief') {
       const { description, platform, style } = req.body;
-      const data = await claude(
-        `Create an AI video avatar profile for: "${description}"\nPlatform: ${platform}, Style: ${style}\n\nReturn JSON: {"personality":"...","voice_recommendation":"...","why_it_works":"...","heygen_prompt":"...","did_prompt":"...","tips":["...","...","..."]}`,
-        'AI avatar creator. JSON only.', true
+      const text = await claude(
+        `Create AI video avatar profile for: "${description}"\nPlatform: ${platform}\nStyle: ${style}\n\nReturn ONLY valid JSON:\n{"personality":"","voice_recommendation":"","why_it_works":"","heygen_prompt":"","did_prompt":"","tips":["","",""]}`,
+        'AI avatar creator. Return JSON only.',
+        900
       );
-      return res.json({ brief: data });
+      return res.json({ brief: parseJSON(text) });
     }
 
+    // AVATAR PORTRAIT
     if (action === 'avatar_portrait') {
-      const { description } = req.body;
-      return res.json({ portrait: { seed: description.slice(0, 10) } });
+      const seed = (req.body.description || 'custom').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12) || 'custom';
+      return res.json({ portrait: { seed, avatar_url: `https://api.dicebear.com/9.x/personas/svg?seed=${seed}&backgroundColor=b6e3f4&radius=50` } });
     }
 
+    // PERSONALISE SCRIPT
     if (action === 'personalise_script') {
       const { script, avatar_profile } = req.body;
+      if (!script) return res.json({ script: '' });
+      const ap = avatar_profile || {};
       const text = await claude(
-        `Rewrite this script in the voice of this avatar:\nAvatar: ${JSON.stringify(avatar_profile)}\nScript: ${script}\n\nKeep the same message but adapt the language, phrasing, personality, and catchphrases to match this specific presenter.`,
-        'Script personalisation expert.'
+        `Rewrite this UGC script in the voice of a specific avatar.\n\nAvatar description: ${ap.description || ''}\nPersonality: ${ap.personality || 'casual'}\nSpeaking style: ${ap.speaking_style || 'natural'}\nCatchphrase: ${ap.catchphrase || 'none'}\n\nOriginal script:\n${script}\n\nKeep the same structure and CTA. Adapt the language, tone, and personality. No markdown.`,
+        'Script personalisation expert.',
+        800
       );
       return res.json({ script: text });
     }
 
+    // URL TO VIDEO
     if (action === 'url_to_video') {
       const { url } = req.body;
-      const data = await claude(
-        `A user pasted this product URL: ${url}\nGenerate a complete video brief as if you scraped it.\nReturn JSON: {"product":"Name","description":"...","benefits":["..."],"best_angle":"testimonial","script":"[HOOK]...\n[MAIN]...\n[CTA]...","hooks":["hook1","hook2","hook3"],"recommended_voice":"Sarah","recommended_duration":"30"}`,
-        'UGC video strategist. JSON only.', true
+      let pageText = 'URL: ' + url;
+      try {
+        const r = await fetch(url, {
+          headers: { 'User-Agent': 'Mozilla/5.0' },
+          signal: AbortSignal.timeout(8000)
+        });
+        const html = await r.text();
+        pageText = html
+          .replace(/<script[\s\S]*?<\/script>/gi, '')
+          .replace(/<style[\s\S]*?<\/style>/gi, '')
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/\s+/g, ' ')
+          .slice(0, 4000);
+      } catch (e) { /* use URL only */ }
+      const text = await claude(
+        `You scraped a product page. Generate a complete video brief.\n\nPage: ${pageText}\n\nReturn ONLY valid JSON:\n{"product":"","description":"","script":"[HOOK] ...\\n[MAIN] ...\\n[CTA] ...","hooks":["","",""],"recommended_voice":"Sarah","recommended_duration":"30"}`,
+        'UGC video strategist. Return JSON only.',
+        1200
       );
-      return res.json({ brief: data });
+      return res.json({ brief: parseJSON(text) });
     }
 
+    // IMAGE TO VIDEO
     if (action === 'image_to_video') {
       const { imageBase64, mediaType } = req.body;
-      const msg = await client.messages.create({
-        model: 'claude-opus-4-5',
-        max_tokens: 1500,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image', source: { type: 'base64', media_type: mediaType || 'image/jpeg', data: imageBase64 } },
-            { type: 'text', text: 'This is a product image. Describe the product and generate a complete UGC video brief. Return JSON: {"product":"Name","description":"...","key_features":["..."],"script":"[HOOK]...\n[MAIN]...\n[CTA]...","hooks":["hook1","hook2","hook3","hook4","hook5"],"angle":"testimonial","tone":"casual"}' }
-          ]
-        }]
-      });
-      try {
-        const text = msg.content[0].text;
-        const clean = text.replace(/```json|```/g, '').trim();
-        const start = clean.indexOf('{');
-        const end = clean.lastIndexOf('}');
-        return res.json({ brief: JSON.parse(clean.slice(start, end + 1)) });
-      } catch (e) {
-        return res.json({ brief: { product: 'Product', description: 'AI-identified product', script: msg.content[0].text } });
-      }
+      if (!imageBase64) return res.status(400).json({ error: 'No image provided' });
+      const text = await claudeVision(
+        imageBase64,
+        mediaType || 'image/jpeg',
+        'This is a product image. Identify what it is and generate a complete UGC video brief.\n\nReturn ONLY valid JSON:\n{"product":"","description":"","key_features":[],"script":"[HOOK] ...\\n[MAIN] ...\\n[CTA] ...","hooks":["","","","",""],"angle":"testimonial","tone":"casual"}'
+      );
+      return res.json({ brief: parseJSON(text) });
     }
 
+    // TIMELINE SCENE
+    if (action === 'timeline_scene') {
+      const { scene_type, product, description, platform } = req.body;
+      const sceneDesc = {
+        hook: 'a scroll-stopping opening hook (0-3 seconds, 1 punchy sentence)',
+        main: 'the main content showing benefits (3-25 seconds, 2-3 sentences)',
+        cta: 'a clear call to action (last 5 seconds, 1 short sentence)'
+      };
+      const text = await claude(
+        `Write ${sceneDesc[scene_type] || 'a scene'} for a ${platform || 'TikTok'} UGC video about "${product}" (${description}).\n\nWrite ONLY the scene text. No labels, no markdown. Conversational tone.`,
+        'UGC script writer.',
+        300
+      );
+      return res.json({ text: text.trim() });
+    }
+
+    // VOICE — ElevenLabs
     if (action === 'voice') {
-      const { text, voice_id } = req.body;
-      if (!process.env.ELEVENLABS_API_KEY) return res.json({ error: 'ElevenLabs key not set' });
-      const resp = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`, {
+      const key = process.env.ELEVENLABS_API_KEY;
+      if (!key) return res.status(400).json({ error: 'ElevenLabs API key not set. Add ELEVENLABS_API_KEY in Render environment.' });
+      const voice_id = req.body.voice_id || 'cgSgspJ2msm6clMCkdW9';
+      const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`, {
         method: 'POST',
-        headers: { 'xi-api-key': process.env.ELEVENLABS_API_KEY, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, model_id: 'eleven_turbo_v2_5', voice_settings: { stability: 0.5, similarity_boost: 0.75 } })
+        headers: { 'Content-Type': 'application/json', 'xi-api-key': key },
+        body: JSON.stringify({
+          text: req.body.text,
+          model_id: 'eleven_turbo_v2_5',
+          voice_settings: { stability: 0.5, similarity_boost: 0.75 }
+        })
       });
-      if (!resp.ok) {
-        const err = await resp.text();
-        return res.json({ error: 'ElevenLabs: ' + err.slice(0, 100) });
+      if (!r.ok) {
+        const err = await r.text();
+        return res.status(400).json({ error: 'ElevenLabs error: ' + err.slice(0, 200) });
       }
-      const buf = await resp.arrayBuffer();
+      const buf = await r.arrayBuffer();
       return res.json({ audio: Buffer.from(buf).toString('base64') });
     }
 
+    // AVATAR VIDEO — HeyGen
     if (action === 'avatar') {
-      const { script, avatar_id } = req.body;
-      if (!process.env.HEYGEN_API_KEY) return res.json({ error: 'HeyGen key not configured' });
-      const resp = await fetch('https://api.heygen.com/v2/video/generate', {
+      const key = process.env.HEYGEN_API_KEY;
+      if (!key) return res.status(400).json({ error: 'HeyGen API key not set. Add HEYGEN_API_KEY in Render environment variables.' });
+      const r = await fetch('https://api.heygen.com/v2/video/generate', {
         method: 'POST',
-        headers: { 'X-Api-Key': process.env.HEYGEN_API_KEY, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ video_inputs: [{ character: { type: 'avatar', avatar_id, scale: 1 }, voice: { type: 'text', input_text: script, voice_id: 'en-US-JennyNeural' }, background: { type: 'color', value: '#FAFAFA' } }], dimension: { width: 1080, height: 1920 } })
+        headers: { 'Content-Type': 'application/json', 'X-Api-Key': key },
+        body: JSON.stringify({
+          video_inputs: [{
+            character: { type: 'avatar', avatar_id: req.body.avatar_id || 'Daisy-inskirt-20220818', scale: 1.0 },
+            voice: { type: 'text', input_text: req.body.script, voice_id: 'en-US-JennyNeural' },
+            background: { type: 'color', value: '#FAFAFA' }
+          }],
+          dimension: { width: 1080, height: 1920 }
+        })
       });
-      const d = await resp.json();
+      const d = await r.json();
+      if (d.error) throw new Error(d.error.message || JSON.stringify(d.error));
       return res.json({ video_id: d.data && d.data.video_id });
     }
 
+    // AVATAR STATUS
     if (action === 'avatar_status') {
-      const { video_id } = req.body;
-      if (!process.env.HEYGEN_API_KEY) return res.json({ status: 'no_key' });
-      const resp = await fetch('https://api.heygen.com/v1/video_status.get?video_id=' + video_id, {
-        headers: { 'X-Api-Key': process.env.HEYGEN_API_KEY }
+      const key = process.env.HEYGEN_API_KEY;
+      if (!key) return res.status(400).json({ error: 'HeyGen not configured' });
+      const r = await fetch('https://api.heygen.com/v1/video_status.get?video_id=' + req.body.video_id, {
+        headers: { 'X-Api-Key': key }
       });
-      const d = await resp.json();
+      const d = await r.json();
       return res.json({ status: d.data && d.data.status, video_url: d.data && d.data.video_url });
     }
 
-    if (action === 'timeline_scene') {
-      const { scene_type, product, description, platform } = req.body;
-      const text = await claude(
-        `Write a ${scene_type} scene for a ${platform} UGC video about "${product}" (${description}).\n\nScene type: ${scene_type === 'hook' ? 'Scroll-stopping opening (0-3 seconds)' : scene_type === 'main' ? 'Main content showing benefits (3-25 seconds)' : 'Call to action (last 5 seconds)'}\n\nWrite 1-3 sentences only, conversational tone.`,
-        'UGC script writer. Write only the scene text, no labels.'
-      );
-      return res.json({ text });
-    }
-
     return res.status(400).json({ error: 'Unknown action: ' + action });
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
+    console.error('[API Error]', action, err.message);
+    return res.status(500).json({ error: err.message });
   }
 });
 
