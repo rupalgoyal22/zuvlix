@@ -3,996 +3,871 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zuvlix — AI UGC Video Creator</title>
-<meta name="description" content="Turn any product into an authentic UGC video ad. Script, voice, avatar — all in one AI platform.">
+<title>Zuvlix — AI UGC Video Platform</title>
+<meta name="description" content="Turn any product into a viral UGC video ad in 60 seconds. Script, voice, avatar, video — all in one platform. No actors. No waiting. No bullsh*t.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#050507;--bg2:#0a0a0f;--bg3:#0f0f18;--surface:#12121e;--surface2:#1a1a2a;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
-  --text:#f5f3ff;--text2:rgba(245,243,255,0.55);--text3:rgba(245,243,255,0.28);
-  --accent:#ff4d1c;--accent2:#ff7a52;--accent3:rgba(255,77,28,0.1);
-  --warm:#f0d5a8;--cool:#8b7cf8;--green:#2dd4a0;
-  --bebas:'Bebas Neue',sans-serif;
-  --body:'Bricolage Grotesque',sans-serif;
-  --mono:'DM Mono',monospace;
-  --r-sm:6px;--r-md:12px;--r-lg:18px;--r-xl:24px;--r-2xl:32px;
+  --bg:#050508;--s1:#0a0a12;--s2:#12121e;--s3:#1a1a28;
+  --text:#f5f3ff;--text2:rgba(245,243,255,0.55);--text3:rgba(245,243,255,0.25);
+  --accent:#ff4d1c;--accent2:#ff7a52;--warm:#f0d5a8;--cool:#8b7cf8;--green:#2dd4a0;--gold:#f5c842;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --display:'Bebas Neue',sans-serif;--body:'Bricolage Grotesque',sans-serif;--mono:'DM Mono',monospace;
 }
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;cursor:none}
-body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.6;overflow-x:hidden;min-height:100vh}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:15px;line-height:1.6;overflow-x:hidden}
 
-/* ── CUSTOM CURSOR ── */
-.cursor{position:fixed;width:8px;height:8px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width 0.2s,height 0.2s,background 0.2s;mix-blend-mode:exclusion}
-.cursor-ring{position:fixed;width:36px;height:36px;border:1.5px solid rgba(255,77,28,0.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform 0.12s,width 0.3s,height 0.3s,border-color 0.3s}
-.cursor.active{width:16px;height:16px}
-.cursor-ring.active{width:56px;height:56px;border-color:rgba(255,77,28,0.6)}
-
-/* ── NOISE OVERLAY ── */
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");opacity:0.4;pointer-events:none;z-index:0}
-
-/* ── CANVAS ── */
-#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
-
-/* ── NAV ── */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 48px;height:68px;display:flex;align-items:center;justify-content:space-between;transition:all 0.4s}
-.nav.scrolled{background:rgba(5,5,7,0.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
-.nav-logo{font-family:var(--bebas);font-size:26px;letter-spacing:2px;text-decoration:none;color:var(--text);display:flex;align-items:center;gap:3px}
-.nav-logo .logo-accent{color:var(--accent)}
-.nav-links{display:flex;gap:32px;list-style:none}
-.nav-links a{color:var(--text2);text-decoration:none;font-size:14px;font-weight:500;transition:color 0.2s;letter-spacing:0.3px}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(5,5,8,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:var(--display);font-size:22px;letter-spacing:2px;color:var(--text);text-decoration:none}
+.nav-logo em{color:var(--accent);font-style:normal}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:13px;font-weight:500;transition:color 0.2s}
 .nav-links a:hover{color:var(--text)}
-.nav-right{display:flex;align-items:center;gap:10px}
-.btn-nav{background:transparent;border:1px solid var(--border2);color:var(--text2);padding:8px 18px;border-radius:100px;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;transition:all 0.2s;display:inline-block;font-family:var(--body)}
-.btn-nav:hover{border-color:rgba(255,255,255,0.22);color:var(--text)}
-.btn-cta{background:var(--accent);border:none;color:white;padding:9px 22px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;transition:all 0.25s;display:inline-block;font-family:var(--body);letter-spacing:0.2px;position:relative;overflow:hidden}
-.btn-cta::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);opacity:0;transition:opacity 0.2s}
-.btn-cta:hover{background:#e63d0f;transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,77,28,0.35)}
-.btn-cta:hover::after{opacity:1}
+.nav-cta{display:flex;gap:10px;align-items:center}
+.btn{border-radius:100px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:var(--body);text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.25);color:var(--text)}
+.btn-primary{background:var(--accent);border:none;color:#fff;box-shadow:0 4px 20px rgba(255,77,28,0.3)}
+.btn-primary:hover{background:#e03d0a;box-shadow:0 6px 28px rgba(255,77,28,0.45);transform:translateY(-1px)}
+.btn-lg{padding:14px 32px;font-size:15px;border-radius:12px}
+.btn-xl{padding:18px 42px;font-size:16px;border-radius:14px;font-weight:800}
 
-/* ── HERO ── */
-.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 60px;z-index:1;overflow:hidden}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,77,28,0.08);border:1px solid rgba(255,77,28,0.2);border-radius:100px;padding:5px 16px;font-size:11px;font-weight:600;color:var(--accent2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:32px;opacity:0;animation:rise 0.7s 0.2s ease forwards}
-.hero-eyebrow-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pulse-dot 2s infinite}
-@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 0 rgba(255,77,28,0.5)}50%{box-shadow:0 0 0 6px rgba(255,77,28,0)}}
-.hero-h1{font-family:var(--bebas);font-size:clamp(72px,12vw,180px);line-height:0.88;letter-spacing:4px;position:relative;z-index:1;opacity:0;animation:rise 0.8s 0.3s ease forwards}
-.hero-h1 .line1{display:block;color:var(--text)}
-.hero-h1 .line2{display:block;color:transparent;-webkit-text-stroke:1.5px rgba(245,243,255,0.2);position:relative}
-.hero-h1 .line2 .fill-word{color:var(--accent);-webkit-text-stroke:0;position:relative}
-.hero-h1 .line2 .fill-word::after{content:'';position:absolute;bottom:4px;left:0;right:0;height:3px;background:var(--accent);border-radius:2px}
-.hero-sub{margin-top:28px;font-size:18px;color:var(--text2);max-width:440px;line-height:1.7;opacity:0;animation:rise 0.8s 0.45s ease forwards;position:relative;z-index:1}
-.hero-sub strong{color:rgba(245,243,255,0.85);font-weight:600}
-.hero-chips{display:flex;gap:8px;justify-content:center;margin-top:20px;flex-wrap:wrap;opacity:0;animation:rise 0.8s 0.5s ease forwards}
-.hero-chip{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:100px;padding:5px 14px;font-size:12px;color:var(--text3);font-family:var(--mono);display:flex;align-items:center;gap:6px}
-.hero-chip-dot{width:5px;height:5px;border-radius:50%}
-.hero-form{display:flex;gap:8px;margin-top:36px;justify-content:center;flex-wrap:wrap;opacity:0;animation:rise 0.8s 0.6s ease forwards;position:relative;z-index:1}
-.hero-input{padding:14px 22px;border-radius:100px;border:1px solid var(--border2);background:rgba(255,255,255,0.05);font-family:var(--body);font-size:15px;color:var(--text);width:270px;outline:none;transition:border-color 0.2s,background 0.2s;backdrop-filter:blur(10px)}
-.hero-input::placeholder{color:var(--text3)}
-.hero-input:focus{border-color:var(--accent);background:rgba(255,77,28,0.05)}
-.btn-hero{background:var(--accent);border:none;color:white;padding:14px 28px;border-radius:100px;font-family:var(--body);font-size:15px;font-weight:700;cursor:pointer;transition:all 0.25s;white-space:nowrap;letter-spacing:0.2px}
-.btn-hero:hover{background:#e63d0f;transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,77,28,0.4)}
-.hero-disclaimer{font-size:12px;color:var(--text3);margin-top:14px;opacity:0;animation:rise 0.8s 0.7s ease both;font-family:var(--mono)}
-.hero-disclaimer span{color:rgba(245,243,255,0.15);margin:0 8px}
-.signup-ok{display:none;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--green);margin-top:12px;justify-content:center}
-.signup-ok.show{display:flex}
+/* CANVAS */
+#canvas-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.6}
 
-/* ── HERO 3D ORB ── */
-.orb-container{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;pointer-events:none;z-index:0;opacity:0;animation:orb-appear 2s 0.5s ease forwards}
-@keyframes orb-appear{to{opacity:1}}
-#orb-canvas{width:100%;height:100%}
+/* HERO */
+.hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 40px 80px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,77,28,0.08);border:1px solid rgba(255,77,28,0.2);border-radius:100px;padding:6px 16px;font-size:11px;font-weight:700;color:var(--accent2);letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;font-family:var(--mono)}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse-green 2s infinite}
+.hero-h1{font-family:var(--display);font-size:clamp(64px,10vw,140px);line-height:0.92;letter-spacing:-1px;margin-bottom:24px}
+.hero-h1 em{color:var(--accent);font-style:normal;display:block}
+.hero-sub{font-size:clamp(16px,2vw,20px);color:var(--text2);max-width:560px;line-height:1.6;margin-bottom:36px;font-weight:400}
+.hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:50px}
+.hero-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-n{font-family:var(--display);font-size:36px;letter-spacing:-1px;color:var(--accent)}
+.stat-l{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-top:-4px;font-family:var(--mono)}
+.hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text3);font-size:10px;letter-spacing:2px;text-transform:uppercase;font-family:var(--mono)}
+.scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--accent),transparent);animation:scroll-line 2s ease-in-out infinite}
 
-/* ── SCROLL INDICATOR ── */
-.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:rise 1s 1.2s ease forwards;z-index:1}
-.scroll-hint span{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:2px;text-transform:uppercase;font-family:var(--mono)}
-.scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--border2),transparent);animation:scroll-pulse 2s infinite}
-@keyframes scroll-pulse{0%,100%{opacity:0.3}50%{opacity:1}}
+/* SECTION BASICS */
+.sec{position:relative;z-index:1;padding:100px 40px}
+.sec-tag{font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent2);margin-bottom:16px}
+.sec-h2{font-family:var(--display);font-size:clamp(42px,6vw,80px);line-height:0.94;letter-spacing:-0.5px;margin-bottom:20px}
+.sec-h2 em{color:var(--accent);font-style:normal}
+.sec-sub{font-size:17px;color:var(--text2);max-width:520px;line-height:1.7}
+.center{text-align:center;align-items:center}
+.container{max-width:1180px;margin:0 auto}
 
-/* ── ANIMATIONS ── */
-@keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+/* DIVIDER */
+.divider{position:relative;z-index:1;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
+
+/* VIDEO GALLERY */
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:50px}
+.gallery-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all 0.3s;position:relative;aspect-ratio:9/16}
+.gallery-card:hover{border-color:rgba(255,77,28,0.35);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,0.4)}
+.gallery-card video{width:100%;height:100%;object-fit:cover;display:block}
+.gallery-card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,transparent 50%);display:flex;flex-direction:column;justify-content:flex-end;padding:14px}
+.gallery-card-tag{position:absolute;top:10px;left:10px;background:var(--accent);color:#fff;border-radius:100px;padding:3px 10px;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;font-family:var(--mono)}
+.gallery-card-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;transition:all 0.2s}
+.gallery-card:hover .gallery-card-play{background:var(--accent);border-color:var(--accent)}
+.gallery-card-label{font-size:11px;font-weight:700;color:#fff;font-family:var(--body)}
+.gallery-card-meta{font-size:9px;color:rgba(255,255,255,0.55);margin-top:2px;font-family:var(--mono)}
+.gallery-show-more{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px;color:var(--text2);font-size:13px;cursor:pointer;transition:color 0.2s}
+.gallery-show-more:hover{color:var(--accent2)}
+
+/* DEMO SECTION */
+.demo-wrap{background:var(--s1);border:1px solid var(--border);border-radius:24px;overflow:hidden;margin-top:50px}
+.demo-tabs{display:flex;border-bottom:1px solid var(--border)}
+.demo-tab{flex:1;padding:16px;text-align:center;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;transition:all 0.2s;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;border-right:1px solid var(--border)}
+.demo-tab:last-child{border-right:none}
+.demo-tab.on{color:var(--accent2);background:rgba(255,77,28,0.05)}
+.demo-body{display:none;padding:32px}
+.demo-body.on{display:flex;flex-direction:column;gap:20px}
+.demo-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.demo-fld label{display:block;font-size:11px;color:var(--text2);margin-bottom:7px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase}
+.demo-inp{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:10px;padding:12px 15px;font-size:14px;color:var(--text);font-family:var(--body);outline:none;transition:border-color 0.2s}
+.demo-inp:focus{border-color:var(--accent)}
+.demo-inp::placeholder{color:var(--text3)}
+textarea.demo-inp{resize:none;min-height:80px}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);border-radius:100px;padding:6px 14px;font-size:12px;cursor:pointer;transition:all 0.2s;font-weight:600}
+.chip.on{background:rgba(255,77,28,0.12);border-color:rgba(255,77,28,0.3);color:var(--accent2)}
+.demo-generate{background:linear-gradient(135deg,var(--accent),#c93800);color:#fff;border:none;border-radius:12px;padding:16px 28px;font-size:15px;font-weight:800;cursor:pointer;width:100%;font-family:var(--body);display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 24px rgba(255,77,28,0.25);transition:all 0.2s}
+.demo-generate:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 10px 32px rgba(255,77,28,0.38)}
+.demo-generate:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.demo-output{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:12px;padding:20px;min-height:120px;font-size:14px;color:rgba(245,243,255,0.8);line-height:1.8;white-space:pre-wrap;display:flex;align-items:center;justify-content:center}
+.demo-output.has-content{align-items:flex-start}
+.demo-ph{color:var(--text3);font-style:italic;font-size:13px;text-align:center}
+.demo-image-upload{border:2px dashed var(--border2);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:all 0.2s}
+.demo-image-upload:hover{border-color:rgba(255,77,28,0.4);background:rgba(255,77,28,0.03)}
+.demo-image-upload input{display:none}
+.upload-ico{font-size:36px;margin-bottom:10px}
+.upload-lbl{font-size:14px;color:var(--text2)}
+.upload-sub{font-size:11px;color:var(--text3);margin-top:4px;font-family:var(--mono)}
+.img-preview-wrap{position:relative;display:inline-block}
+.img-preview{width:120px;height:120px;object-fit:cover;border-radius:10px;display:block}
+.img-preview-remove{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.url-input-row{display:flex;gap:8px}
+.url-input-row .demo-inp{flex:1}
+.url-go-btn{background:var(--accent);border:none;color:#fff;border-radius:10px;padding:12px 20px;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap;font-family:var(--body)}
+.url-go-btn:hover{background:#e03d0a}
+.url-go-btn:disabled{opacity:0.5;cursor:not-allowed}
+.demo-open-app{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--accent2);font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}
+.demo-open-app:hover{color:var(--accent)}
+.demo-hooks-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}
+.demo-hook-item{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-size:12px;color:rgba(245,243,255,0.7);line-height:1.5}
+
+/* HOW IT WORKS */
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:50px}
+.step-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:28px;position:relative;overflow:hidden;transition:all 0.3s}
+.step-card:hover{border-color:rgba(255,77,28,0.25);transform:translateY(-3px)}
+.step-n{font-family:var(--display);font-size:64px;color:rgba(255,77,28,0.08);position:absolute;top:-10px;right:16px;line-height:1}
+.step-ico{font-size:28px;margin-bottom:14px}
+.step-title{font-family:var(--body);font-size:16px;font-weight:800;margin-bottom:8px}
+.step-desc{font-size:13px;color:var(--text2);line-height:1.6}
+.step-time{display:inline-flex;align-items:center;gap:4px;background:rgba(45,212,160,0.1);border:1px solid rgba(45,212,160,0.2);color:var(--green);border-radius:100px;padding:3px 10px;font-size:10px;font-weight:700;margin-top:12px;font-family:var(--mono)}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:50px}
+.feat-card{background:var(--s1);border:1px solid var(--border);border-radius:18px;padding:26px;transition:all 0.3s}
+.feat-card:hover{border-color:rgba(255,77,28,0.2);background:var(--s2)}
+.feat-ico{font-size:26px;margin-bottom:14px}
+.feat-title{font-size:15px;font-weight:800;margin-bottom:8px}
+.feat-desc{font-size:13px;color:var(--text2);line-height:1.6}
+.feat-live{display:inline-flex;align-items:center;gap:4px;background:rgba(45,212,160,0.08);border:1px solid rgba(45,212,160,0.18);color:var(--green);border-radius:100px;padding:2px 9px;font-size:9px;font-weight:700;margin-top:10px;font-family:var(--mono)}
+.feat-live-dot{width:4px;height:4px;border-radius:50%;background:var(--green);animation:pulse-green 1.5s infinite}
+
+/* AVATAR GRID */
+.avatar-showcase{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:50px}
+.av-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:16px 12px;text-align:center;cursor:pointer;transition:all 0.2s}
+.av-card:hover{border-color:rgba(255,77,28,0.3);transform:translateY(-2px)}
+.av-card.sel{border-color:var(--accent);background:rgba(255,77,28,0.06)}
+.av-img{width:64px;height:64px;border-radius:50%;margin:0 auto 10px;display:block;border:2px solid var(--border2);transition:border-color 0.2s}
+.av-card.sel .av-img,.av-card:hover .av-img{border-color:var(--accent)}
+.av-name{font-size:11px;font-weight:800;letter-spacing:0.5px;font-family:var(--body)}
+.av-tag{font-size:9px;color:var(--text3);margin-top:2px;font-family:var(--mono)}
+.av-detail{background:var(--s1);border:1px solid var(--border);border-radius:18px;padding:28px;display:grid;grid-template-columns:80px 1fr;gap:20px;align-items:start;margin-top:20px}
+.av-detail-img{width:80px;height:80px;border-radius:50%;border:2px solid var(--accent);display:block}
+.av-detail-name{font-size:18px;font-weight:800;margin-bottom:4px}
+.av-detail-role{font-size:11px;color:var(--accent2);font-family:var(--mono);letter-spacing:1px;text-transform:uppercase}
+.av-detail-desc{font-size:13px;color:var(--text2);margin-top:10px;line-height:1.6}
+.av-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.av-tag-pill{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);border-radius:100px;padding:3px 10px;font-size:10px;font-family:var(--mono)}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:50px;max-width:900px;margin-left:auto;margin-right:auto}
+.price-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:30px;transition:all 0.3s;position:relative;overflow:hidden}
+.price-card.pop{border-color:rgba(255,77,28,0.35);background:rgba(255,77,28,0.04)}
+.price-card.pop::before{content:'MOST POPULAR';position:absolute;top:0;right:0;background:var(--accent);color:#fff;font-size:9px;font-weight:800;letter-spacing:2px;padding:5px 14px;font-family:var(--mono)}
+.price-name{font-family:var(--display);font-size:22px;letter-spacing:2px;margin-bottom:6px}
+.price-n{font-family:var(--display);font-size:52px;letter-spacing:-2px;line-height:1;margin:14px 0 4px}
+.price-n sup{font-size:22px;vertical-align:super;letter-spacing:0}
+.price-per{font-size:12px;color:var(--text2);margin-bottom:20px;font-family:var(--mono)}
+.price-btn{width:100%;padding:13px;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;font-family:var(--body);transition:all 0.2s;margin-bottom:22px}
+.price-btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text)}
+.price-btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.price-btn-solid{background:var(--accent);border:none;color:#fff}
+.price-btn-solid:hover{background:#e03d0a}
+.price-feat{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(245,243,255,0.75);margin-bottom:8px}
+.price-feat-ico{width:14px;height:14px;border-radius:50%;background:rgba(45,212,160,0.15);color:var(--green);font-size:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* COMPARISON TABLE */
+.compare-table{width:100%;border-collapse:collapse;margin-top:50px}
+.compare-table th,.compare-table td{padding:14px 20px;text-align:left;border-bottom:1px solid var(--border);font-size:13px}
+.compare-table th{font-family:var(--display);font-size:16px;letter-spacing:1px;color:var(--text2);background:var(--s1)}
+.compare-table th:first-child{border-radius:12px 0 0 0}
+.compare-table th:last-child{border-radius:0 12px 0 0}
+.compare-table tr:hover td{background:rgba(255,255,255,0.02)}
+.compare-table .our{color:var(--green);font-weight:700}
+.compare-table .their{color:var(--text3)}
+.compare-table .feature-name{font-weight:600;color:var(--text)}
+.compare-win{color:var(--accent);font-size:9px;font-family:var(--mono);font-weight:800;letter-spacing:1px;display:inline-block;margin-left:8px;background:rgba(255,77,28,0.1);border-radius:4px;padding:1px 5px}
+
+/* TESTIMONIALS */
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:50px}
+.testi-card{background:var(--s1);border:1px solid var(--border);border-radius:18px;padding:24px;transition:border-color 0.3s}
+.testi-card:hover{border-color:rgba(255,77,28,0.2)}
+.stars{color:var(--gold);font-size:13px;margin-bottom:12px;letter-spacing:2px}
+.testi-text{font-size:14px;color:rgba(245,243,255,0.8);line-height:1.7;margin-bottom:16px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-av{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--border2)}
+.testi-name{font-size:13px;font-weight:700}
+.testi-role{font-size:11px;color:var(--text3);font-family:var(--mono)}
+
+/* CTA SECTION */
+.cta-sec{background:linear-gradient(135deg,rgba(255,77,28,0.08),rgba(139,124,248,0.08));border:1px solid rgba(255,77,28,0.15);border-radius:28px;padding:70px 60px;text-align:center;margin:0 40px}
+
+/* FOOTER */
+footer{position:relative;z-index:1;background:var(--s1);border-top:1px solid var(--border);padding:50px 40px 30px}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-logo{font-family:var(--display);font-size:20px;letter-spacing:2px;color:var(--text);margin-bottom:10px}
+.footer-logo em{color:var(--accent);font-style:normal}
+.footer-desc{font-size:13px;color:var(--text2);line-height:1.6;max-width:220px}
+.footer-col-title{font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text3);margin-bottom:14px}
+.footer-link{display:block;font-size:13px;color:var(--text2);text-decoration:none;margin-bottom:9px;transition:color 0.2s}
+.footer-link:hover{color:var(--text)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:24px}
+.footer-copy{font-size:12px;color:var(--text3);font-family:var(--mono)}
+.footer-badges{display:flex;gap:14px}
+.footer-badge{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:100px;padding:4px 12px;font-size:10px;color:var(--text3);font-family:var(--mono)}
+
+/* TICKER */
+.ticker-wrap{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:10px 0;background:var(--s1)}
+.ticker{display:flex;gap:0;animation:ticker 30s linear infinite;white-space:nowrap}
+.ticker-item{display:inline-flex;align-items:center;gap:12px;padding:0 30px;font-family:var(--mono);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:2px}
+.ticker-item em{color:var(--accent);font-style:normal}
+
+/* ANIMATIONS */
+@keyframes pulse-green{0%{box-shadow:0 0 0 0 rgba(45,212,160,0.5)}100%{box-shadow:0 0 0 10px rgba(45,212,160,0)}}
+@keyframes scroll-line{0%,100%{opacity:0;transform:scaleY(0);transform-origin:top}40%,60%{opacity:1;transform:scaleY(1)}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.rev{opacity:0;transform:translateY(32px);transition:opacity 0.7s ease,transform 0.7s ease}
-.rev.in{opacity:1;transform:none}
-.d1{transition-delay:0.08s}.d2{transition-delay:0.16s}.d3{transition-delay:0.24s}.d4{transition-delay:0.32s}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.25);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite}
+.tcur{display:inline-block;width:2px;height:14px;background:var(--accent);animation:blink 0.8s infinite;vertical-align:middle;margin-left:1px}
 
-/* ── DEMO SECTION ── */
-.demo-wrap{position:relative;z-index:1;width:100%;max-width:920px;margin:0 auto;padding:0 24px;opacity:0;animation:rise 1s 0.9s ease forwards}
-.demo-label-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;justify-content:center}
-.demo-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:2px;text-transform:uppercase;font-family:var(--mono)}
-.demo-label-line{flex:1;max-width:80px;height:1px;background:var(--border)}
-.demo-window{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,0.02),0 60px 100px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.05)}
-.demo-bar{display:flex;align-items:center;padding:14px 18px;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border);gap:7px}
-.tbar-dot{width:10px;height:10px;border-radius:50%}
-.tbar-dot:nth-child(1){background:#ff5f56}.tbar-dot:nth-child(2){background:#febc2e}.tbar-dot:nth-child(3){background:#27c840}
-.tbar-url{flex:1;margin:0 14px;background:rgba(255,255,255,0.04);border-radius:6px;padding:4px 12px;font-size:11px;color:var(--text3);font-family:var(--mono);text-align:center}
-.demo-body{display:grid;grid-template-columns:1fr 1fr}
-.demo-left{padding:24px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:16px}
-.dlbl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:600;margin-bottom:5px;font-family:var(--mono)}
-.dinp{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 13px;font-size:12.5px;color:var(--text);font-family:var(--body);outline:none;width:100%;transition:border-color 0.2s}
-.dinp:focus{border-color:var(--accent)}
-.dinp::placeholder{color:var(--text3)}
-.dchips{display:flex;gap:5px;flex-wrap:wrap}
-.dchip{background:rgba(255,77,28,0.07);border:1px solid rgba(255,77,28,0.14);color:var(--accent2);border-radius:100px;padding:4px 12px;font-size:11px;cursor:pointer;transition:all 0.2s;user-select:none;font-weight:500;font-family:var(--body)}
-.dchip.on,.dchip:hover{background:var(--accent);color:white;border-color:var(--accent)}
-.demo-run-btn{background:var(--accent);color:white;border:none;border-radius:var(--r-sm);padding:11px;font-family:var(--body);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px}
-.demo-run-btn:hover:not(:disabled){background:#e63d0f;transform:scale(1.01)}
-.demo-run-btn:disabled{opacity:0.5;cursor:not-allowed}
-.demo-right{padding:24px;display:flex;flex-direction:column;gap:12px}
-.demo-out{background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px;font-size:12.5px;color:rgba(245,243,255,0.65);line-height:1.8;min-height:140px;transition:border-color 0.3s;font-family:var(--body)}
-.demo-out.live{border-color:rgba(255,77,28,0.2)}
-.cursor-blink{display:inline-block;width:2px;height:13px;background:var(--accent);animation:blink 0.8s infinite;vertical-align:middle;margin-left:1px}
-.spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.2);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite}
-.demo-status-row{display:flex;gap:6px;flex-wrap:wrap}
-.demo-status-pill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:10.5px;color:var(--text2);font-family:var(--mono)}
-.status-green{width:5px;height:5px;border-radius:50%;background:var(--green)}
-.demo-cta-strip{background:rgba(255,77,28,0.07);border:1px solid rgba(255,77,28,0.15);border-radius:var(--r-sm);padding:10px 14px;font-size:12px;color:var(--accent2);text-align:center}
-.demo-cta-strip a{color:var(--accent);font-weight:600;text-decoration:none}
-
-/* ── TICKER ── */
-.ticker-wrap{position:relative;z-index:1;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;padding:20px 0;background:rgba(255,255,255,0.01)}
-.ticker-lbl{text-align:center;font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;font-weight:600;font-family:var(--mono)}
-.ticker-track{display:flex;gap:48px;width:max-content;animation:ticker 24s linear infinite}
-.ticker-item{font-size:13px;font-weight:700;color:rgba(245,243,255,0.1);white-space:nowrap;letter-spacing:0.5px}
-
-/* ── SECTION SYSTEM ── */
-.sec{padding:100px 48px;max-width:1200px;margin:0 auto;position:relative;z-index:1}
-.sec-tag{display:inline-flex;align-items:center;gap:7px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;font-family:var(--mono)}
-.sec-tag::before{content:'';width:20px;height:1px;background:var(--accent)}
-.sec-h2{font-family:var(--bebas);font-size:clamp(48px,5vw,80px);line-height:0.9;letter-spacing:3px;max-width:600px}
-.sec-h2 em{color:var(--accent);font-style:normal}
-.sec-body{background:var(--bg2);border-top:1px solid var(--border)}
-.sec-alt{background:var(--bg);border-top:1px solid var(--border)}
-
-/* ── HONEST SECTION ── */
-.honest-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:52px}
-.honest-card{border:1px solid var(--border);border-radius:var(--r-xl);padding:32px;position:relative;overflow:hidden}
-.honest-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px}
-.honest-live{background:rgba(45,212,160,0.03)}
-.honest-live::before{background:linear-gradient(90deg,transparent,var(--green),transparent)}
-.honest-soon{background:rgba(255,77,28,0.03)}
-.honest-soon::before{background:linear-gradient(90deg,transparent,var(--accent),transparent)}
-.honest-head{display:flex;align-items:center;gap:10px;margin-bottom:22px}
-.honest-head-title{font-family:var(--bebas);font-size:22px;letter-spacing:1px}
-.hbadge{margin-left:auto;border-radius:100px;padding:3px 11px;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:var(--mono)}
-.hbl{background:rgba(45,212,160,0.12);color:var(--green)}
-.hbs{background:rgba(255,77,28,0.1);color:var(--accent2)}
-.honest-list{display:flex;flex-direction:column;gap:10px}
-.honest-item{display:flex;align-items:flex-start;gap:9px;font-size:13.5px;color:rgba(245,243,255,0.65);line-height:1.5}
-.hdot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px}
-
-/* ── STEPS ── */
-.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:56px;background:var(--border);border-radius:var(--r-xl);overflow:hidden}
-.step{background:var(--bg3);padding:44px 36px;position:relative;transition:background 0.3s}
-.step::before{content:attr(data-n);font-family:var(--bebas);font-size:80px;color:rgba(255,255,255,0.03);position:absolute;top:20px;right:20px;line-height:1;letter-spacing:2px}
-.step:hover{background:var(--surface)}
-.step-ico{font-size:28px;margin-bottom:18px}
-.step h3{font-family:var(--bebas);font-size:26px;letter-spacing:1.5px;margin-bottom:10px;color:var(--text)}
-.step p{font-size:13.5px;color:var(--text2);line-height:1.7}
-.step-time{display:inline-flex;align-items:center;gap:5px;margin-top:14px;background:rgba(255,77,28,0.08);border:1px solid rgba(255,77,28,0.18);border-radius:100px;padding:3px 11px;font-size:10px;color:var(--accent2);font-weight:600;font-family:var(--mono)}
-
-/* ── AVATAR GALLERY ── */
-.av-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:48px}
-.av-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 10px;text-align:center;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden}
-.av-item::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transition:transform 0.3s}
-.av-item:hover,.av-item.sel{border-color:rgba(255,77,28,0.3);transform:translateY(-4px)}
-.av-item.sel::before,.av-item:hover::before{transform:scaleX(1)}
-.av-img{width:58px;height:58px;border-radius:50%;margin:0 auto 10px;display:block;border:2px solid var(--border);transition:border-color 0.3s}
-.av-item:hover .av-img,.av-item.sel .av-img{border-color:var(--accent)}
-.av-name{font-size:12px;font-weight:700;margin-bottom:3px;font-family:var(--bebas);letter-spacing:1px;font-size:14px}
-.av-role{font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;font-family:var(--mono)}
-.av-item.sel .av-role{color:var(--accent2)}
-.av-detail{margin-top:28px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:32px;display:grid;grid-template-columns:110px 1fr;gap:28px;align-items:center;position:relative;overflow:hidden}
-.av-detail::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
-.av-detail-img{width:88px;height:88px;border-radius:50%;margin:0 auto;display:block;border:3px solid var(--accent)}
-.av-detail-name{font-family:var(--bebas);font-size:32px;letter-spacing:2px;margin-bottom:6px}
-.av-detail-desc{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:14px}
-.av-detail-tags{display:flex;gap:6px;flex-wrap:wrap}
-.av-detail-tag{background:rgba(255,77,28,0.08);border:1px solid rgba(255,77,28,0.2);color:var(--accent2);border-radius:100px;padding:3px 12px;font-size:10px;font-weight:600;font-family:var(--mono)}
-.av-detail-btn{margin-top:14px;background:var(--accent);color:white;border:none;border-radius:var(--r-sm);padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:var(--body)}
-.av-detail-btn:hover{background:#e63d0f;transform:translateY(-1px)}
-
-/* ── TECH STACK ── */
-.tech-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:52px}
-.tech-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:28px;text-align:center;position:relative;transition:all 0.3s;overflow:hidden}
-.tech-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(255,77,28,0.06),transparent 60%);opacity:0;transition:opacity 0.3s}
-.tech-card:hover{border-color:rgba(255,77,28,0.2);transform:translateY(-4px)}
-.tech-card:hover::after{opacity:1}
-.tech-step-num{position:absolute;top:14px;right:16px;font-family:var(--bebas);font-size:48px;color:rgba(255,255,255,0.03);line-height:1;letter-spacing:2px}
-.tech-ico{width:56px;height:56px;border-radius:var(--r-md);background:rgba(255,77,28,0.08);border:1px solid rgba(255,77,28,0.14);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 16px}
-.tech-card h4{font-family:var(--bebas);font-size:22px;letter-spacing:1.5px;margin-bottom:8px}
-.tech-card p{font-size:12.5px;color:var(--text2);line-height:1.6}
-.tech-brand{display:inline-block;margin-top:12px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:100px;padding:3px 11px;font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-family:var(--mono)}
-
-/* ── FEATURES ── */
-.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:52px}
-.fc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:32px;transition:all 0.3s;position:relative;overflow:hidden}
-.fc::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 0% 0%,rgba(255,77,28,0.07),transparent 55%);opacity:0;transition:opacity 0.3s}
-.fc:hover{border-color:rgba(255,77,28,0.2);transform:translateY(-3px)}
-.fc:hover::before{opacity:1}
-.fc.wide{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
-.fc-ico{font-size:28px;margin-bottom:18px;display:block}
-.fc h3{font-family:var(--bebas);font-size:26px;letter-spacing:1.5px;margin-bottom:10px}
-.fc p{font-size:14px;color:var(--text2);line-height:1.75}
-.fc-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:18px}
-.fc-tag{background:rgba(255,77,28,0.08);border:1px solid rgba(255,77,28,0.16);color:var(--accent2);border-radius:100px;padding:3px 12px;font-size:10px;font-family:var(--mono);font-weight:600}
-.fc-vis{background:rgba(255,77,28,0.04);border:1px solid rgba(255,77,28,0.1);border-radius:var(--r-lg);height:200px;display:flex;align-items:center;justify-content:center;font-size:56px}
-
-/* ── MOAT ── */
-.moat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:52px}
-.mc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:32px;transition:all 0.3s;position:relative;overflow:hidden}
-.mc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:var(--r-xl) var(--r-xl) 0 0;transition:opacity 0.3s;opacity:0}
-.mc.mc-ad::before{background:linear-gradient(90deg,var(--cool),#c084fc)}
-.mc.mc-shop::before{background:linear-gradient(90deg,var(--green),#34d399)}
-.mc.mc-perf::before{background:linear-gradient(90deg,var(--warm),#fbbf24)}
-.mc:hover{transform:translateY(-4px)}
-.mc.mc-ad:hover{border-color:rgba(139,124,248,0.2)}
-.mc.mc-shop:hover{border-color:rgba(45,212,160,0.2)}
-.mc.mc-perf:hover{border-color:rgba(240,213,168,0.2)}
-.mc:hover::before{opacity:1}
-.mc-ico{font-size:28px;margin-bottom:18px;display:block}
-.mc h3{font-family:var(--bebas);font-size:26px;letter-spacing:1.5px;margin-bottom:10px}
-.mc p{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:16px}
-.mc-list{display:flex;flex-direction:column;gap:8px}
-.mc-item{font-size:13px;color:rgba(245,243,255,0.6);display:flex;gap:8px;align-items:flex-start;line-height:1.5}
-.mc-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px}
-
-/* ── PRICING ── */
-.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px}
-.plan{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:32px;transition:all 0.3s;position:relative;overflow:hidden}
-.plan:hover{border-color:rgba(255,255,255,0.1);transform:translateY(-3px)}
-.plan.featured{background:var(--accent);border-color:var(--accent)}
-.plan.featured:hover{transform:translateY(-5px);box-shadow:0 32px 64px rgba(255,77,28,0.3)}
-.plan-badge{font-family:var(--bebas);font-size:12px;letter-spacing:2px;background:rgba(255,255,255,0.2);color:white;padding:3px 12px;border-radius:100px;display:inline-block;margin-bottom:18px}
-.plan-name{font-family:var(--bebas);font-size:28px;letter-spacing:2px;color:white;margin-bottom:0}
-.plan-price{margin:18px 0 4px;line-height:1}
-.plan-price .n{font-family:var(--bebas);font-size:56px;letter-spacing:-1px;color:white}
-.plan-price .per{font-size:14px;color:rgba(255,255,255,0.5)}
-.plan-desc{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:24px}
-.plan.featured .plan-desc{color:rgba(255,255,255,0.72)}
-.plan-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
-.plan-list li{font-size:13.5px;color:rgba(255,255,255,0.65);display:flex;gap:9px;align-items:flex-start;line-height:1.5}
-.plan-list li::before{content:'✓';color:rgba(255,255,255,0.35);font-weight:700;flex-shrink:0}
-.plan.featured .plan-list li{color:rgba(255,255,255,0.92)}
-.plan.featured .plan-list li::before{color:rgba(255,255,255,0.8)}
-.plan-btn{display:block;text-align:center;width:100%;padding:13px;border-radius:100px;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.7);font-family:var(--body);font-size:14px;font-weight:700;text-decoration:none;border:1px solid rgba(255,255,255,0.1);transition:all 0.2s;cursor:pointer}
-.plan-btn:hover{background:rgba(255,255,255,0.13)}
-.plan.featured .plan-btn{background:white;color:var(--accent);border-color:white}
-.plan.featured .plan-btn:hover{background:#f5f0ff}
-.price-toggle{display:flex;align-items:center;gap:12px;margin-top:24px;font-size:14px;color:var(--text2)}
-.toggle-sw{width:40px;height:22px;background:rgba(255,255,255,0.08);border-radius:100px;position:relative;cursor:pointer;transition:background 0.3s;border:1px solid var(--border)}
-.toggle-sw.on{background:var(--accent)}
-.toggle-knob{width:16px;height:16px;background:white;border-radius:50%;position:absolute;top:2px;left:2px;transition:transform 0.3s}
-.toggle-sw.on .toggle-knob{transform:translateX(18px)}
-.save-badge{background:rgba(240,213,168,0.12);color:var(--warm);border-radius:100px;padding:2px 9px;font-size:10px;font-weight:700;font-family:var(--mono)}
-
-/* ── GUARANTEE ── */
-.guar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px}
-.gc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:28px;text-align:center;transition:all 0.3s}
-.gc:hover{border-color:rgba(255,77,28,0.16);transform:translateY(-3px)}
-.gc-ico{font-size:32px;margin-bottom:12px;display:block}
-.gc h3{font-family:var(--bebas);font-size:22px;letter-spacing:1.5px;margin-bottom:8px}
-.gc p{font-size:13px;color:var(--text2);line-height:1.7}
-.guar-banner{margin-top:16px;background:rgba(45,212,160,0.04);border:1px solid rgba(45,212,160,0.14);border-radius:var(--r-lg);padding:22px 28px;display:flex;align-items:center;gap:18px}
-.guar-banner-ico{font-size:32px;flex-shrink:0}
-.guar-banner h4{font-family:var(--bebas);font-size:22px;letter-spacing:1.5px;margin-bottom:4px}
-.guar-banner p{font-size:13.5px;color:var(--text2);line-height:1.6}
-
-/* ── TESTIMONIALS ── */
-.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px}
-.tc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:28px;transition:all 0.3s;position:relative;overflow:hidden}
-.tc:hover{border-color:rgba(255,255,255,0.1);transform:translateY(-3px)}
-.tc-stars{color:var(--warm);font-size:13px;letter-spacing:2px;margin-bottom:14px}
-.tc p{font-size:15px;line-height:1.7;color:rgba(245,243,255,0.82);font-style:italic}
-.tc-author{margin-top:20px;display:flex;align-items:center;gap:10px}
-.tc-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;flex-shrink:0;font-family:var(--bebas);letter-spacing:1px}
-.tc-name{font-weight:700;font-size:13.5px;font-family:var(--bebas);letter-spacing:0.5px;font-size:16px}
-.tc-role{font-size:11px;color:var(--text3);font-family:var(--mono)}
-
-/* ── FOUNDER ── */
-.founder-inner{display:grid;grid-template-columns:260px 1fr;gap:56px;align-items:start;margin-top:48px}
-.founder-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:28px;text-align:center;position:relative;overflow:hidden}
-.founder-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
-.founder-av-ring{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));padding:2px;margin:0 auto 16px}
-.founder-av-inner{width:100%;height:100%;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:38px}
-.founder-name{font-family:var(--bebas);font-size:24px;letter-spacing:2px;margin-bottom:3px}
-.founder-role-lbl{font-size:11px;color:var(--accent2);font-weight:600;margin-bottom:16px;font-family:var(--mono)}
-.founder-join{display:block;background:rgba(255,77,28,0.08);border:1px solid rgba(255,77,28,0.18);color:var(--accent2);border-radius:var(--r-sm);padding:8px 14px;font-size:12px;text-decoration:none;font-weight:600;transition:all 0.2s;font-family:var(--body)}
-.founder-join:hover{background:rgba(255,77,28,0.16)}
-.founder-text-name{font-family:var(--bebas);font-size:36px;letter-spacing:2px;margin-bottom:4px}
-.founder-role-text{font-size:12px;color:var(--accent2);font-weight:600;margin-bottom:20px;font-family:var(--mono)}
-.founder-text p{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:12px}
-.founder-sig{font-size:20px;color:var(--text);margin-top:18px;font-style:italic}
-
-/* ── FAQ ── */
-.faq-list{margin-top:48px;display:flex;flex-direction:column;gap:4px}
-.faq-item{background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;transition:border-color 0.3s}
-.faq-item.open{border-color:rgba(255,77,28,0.2)}
-.faq-q{padding:18px 24px;font-size:15px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px;user-select:none;transition:color 0.2s}
-.faq-q:hover{color:var(--accent2)}
-.faq-arr{font-size:18px;color:var(--text3);transition:transform 0.3s,color 0.2s;flex-shrink:0}
-.faq-item.open .faq-arr{transform:rotate(45deg);color:var(--accent)}
-.faq-a{max-height:0;overflow:hidden;font-size:13.5px;color:var(--text2);line-height:1.75;transition:max-height 0.35s ease}
-.faq-ai{padding:0 24px 20px}
-.faq-item.open .faq-a{max-height:200px}
-
-/* ── CTA ── */
-.cta-section{position:relative;background:var(--accent);overflow:hidden;z-index:1}
-.cta-inner{max-width:1200px;margin:0 auto;padding:100px 48px;text-align:center;position:relative;z-index:1}
-.cta-bg-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--bebas);font-size:300px;letter-spacing:8px;color:rgba(255,255,255,0.06);white-space:nowrap;pointer-events:none;line-height:1}
-.cta-h2{font-family:var(--bebas);font-size:clamp(52px,7vw,100px);letter-spacing:4px;line-height:0.9;color:white;margin-bottom:18px}
-.cta-h2 em{font-style:normal;color:rgba(255,255,255,0.6)}
-.cta-sub{color:rgba(255,255,255,0.7);font-size:16px;max-width:360px;margin:0 auto 36px;line-height:1.65}
-.cta-form{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.cta-inp{padding:14px 22px;border-radius:100px;border:1.5px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.12);font-family:var(--body);font-size:15px;color:white;width:270px;outline:none;transition:border-color 0.2s}
-.cta-inp::placeholder{color:rgba(255,255,255,0.45)}
-.cta-inp:focus{border-color:white;background:rgba(255,255,255,0.18)}
-.btn-white{padding:14px 28px;border-radius:100px;background:white;color:var(--accent);border:none;font-family:var(--body);font-size:15px;font-weight:800;cursor:pointer;transition:transform 0.2s;white-space:nowrap}
-.btn-white:hover{transform:translateY(-2px)}
-.cta-risk{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:18px;flex-wrap:wrap}
-.cta-risk-item{font-size:12px;color:rgba(255,255,255,0.6);font-family:var(--mono)}
-
-/* ── FOOTER ── */
-.footer{background:var(--bg);border-top:1px solid var(--border);padding:56px 48px 28px;position:relative;z-index:1}
-.footer-inner{max-width:1200px;margin:0 auto}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:44px;margin-bottom:36px}
-.footer-logo{font-family:var(--bebas);font-size:22px;letter-spacing:2px;display:block;margin-bottom:10px}
-.footer-logo em{color:var(--accent);font-style:normal}
-.footer-brand p{font-size:13px;color:var(--text3);line-height:1.7;max-width:220px}
-.footer-loc{margin-top:12px;font-size:11px;color:var(--text3);font-family:var(--mono);line-height:1.8}
-.footer-col h5{font-family:var(--mono);font-size:9px;font-weight:700;color:rgba(245,243,255,0.25);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
-.footer-col a{display:block;font-size:13.5px;color:var(--text3);text-decoration:none;margin-bottom:9px;transition:color 0.2s}
-.footer-col a:hover{color:var(--text)}
-.footer-bottom{padding-top:22px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-.footer-bottom p{font-size:11px;color:var(--text3);font-family:var(--mono)}
-
-.toast{position:fixed;bottom:20px;right:20px;background:var(--green);color:#04342C;padding:9px 18px;border-radius:var(--r-md);font-size:13px;font-weight:700;transform:translateY(80px);opacity:0;transition:all 0.3s;z-index:999;font-family:var(--mono)}
-.toast.show{transform:translateY(0);opacity:1}
-
-@media(max-width:1024px){.av-grid{grid-template-columns:repeat(4,1fr)}.tech-grid{grid-template-columns:repeat(2,1fr)}.footer-grid{grid-template-columns:1fr 1fr;gap:28px}}
 @media(max-width:900px){
-  .nav{padding:0 20px}.nav-links{display:none}
-  .sec{padding:64px 20px}
-  .honest-grid,.feat-grid,.moat-grid,.price-grid,.guar-grid,.testi-grid,.steps-grid{grid-template-columns:1fr}
-  .fc.wide,.founder-inner{grid-template-columns:1fr}
-  .demo-body{grid-template-columns:1fr}.demo-left{border-right:none;border-bottom:1px solid var(--border)}
-  .av-grid{grid-template-columns:repeat(3,1fr)}
-  .av-detail{grid-template-columns:1fr}
-  .cta-inner{padding:64px 20px}
-  .footer{padding:44px 20px 20px}
-  .footer-grid{grid-template-columns:1fr}
-  .footer-bottom{flex-direction:column;align-items:flex-start}
-  html{cursor:auto}
-  .cursor,.cursor-ring{display:none}
+  nav{padding:0 20px}.hero{padding:100px 20px 60px}
+  .gallery-grid{grid-template-columns:repeat(2,1fr)}
+  .steps-grid,.features-grid,.testimonials-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr;max-width:100%}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .avatar-showcase{grid-template-columns:repeat(3,1fr)}
+  .demo-row{grid-template-columns:1fr}
+  .cta-sec{padding:40px 24px;margin:0 16px}
+  .sec{padding:60px 20px}
+  .compare-table{display:none}
+  .demo-hooks-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursor-ring"></div>
+<canvas id="canvas-bg"></canvas>
 
-<!-- NAV -->
-<nav class="nav" id="nav">
-  <a href="#" class="nav-logo">ZUV<span class="logo-accent">LIX</span></a>
-  <ul class="nav-links">
-    <li><a href="#how">How it works</a></li>
-    <li><a href="#voices">Voices</a></li>
-    <li><a href="#features">Features</a></li>
-    <li><a href="#pricing">Pricing</a></li>
-    <li><a href="#faq">FAQ</a></li>
-  </ul>
-  <div class="nav-right">
-    <a href="/app.html" class="btn-nav">Sign in</a>
-    <a href="https://tally.so/r/Y5kAyv" target="_blank" class="btn-cta">Join beta →</a>
+<nav>
+  <a href="/" class="nav-logo">ZUV<em>LIX</em></a>
+  <div class="nav-links">
+    <a href="#gallery">Examples</a>
+    <a href="#demo">Try it</a>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <div class="nav-cta">
+    <a href="/app.html" class="btn btn-ghost">Sign in</a>
+    <a href="/app.html" class="btn btn-primary">Launch App →</a>
   </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="orb-container"><canvas id="orb-canvas"></canvas></div>
-  <div class="hero-eyebrow"><span class="hero-eyebrow-dot"></span>Private beta — limited spots</div>
-  <h1 class="hero-h1">
-    <span class="line1">YOUR PRODUCT.</span>
-    <span class="line2"><span id="tw">TIKTOK</span> <span class="fill-word">ADS.</span></span>
-  </h1>
-  <p class="hero-sub">Zuvlix turns any product into an authentic UGC video ad. <strong>Script, voice, avatar</strong> — one AI platform. No actors. No waiting.</p>
-  <div class="hero-chips">
-    <div class="hero-chip"><span class="hero-chip-dot" style="background:var(--green)"></span>Scripts live now</div>
-    <div class="hero-chip"><span class="hero-chip-dot" style="background:var(--green)"></span>Voice live now</div>
-    <div class="hero-chip"><span class="hero-chip-dot" style="background:var(--accent)"></span>Avatar video coming soon</div>
+  <div class="hero-badge"><span class="hero-badge-dot"></span>Now live — full platform</div>
+  <h1 class="hero-h1">PRODUCT TO<em>VIDEO AD</em>IN 60 SEC</h1>
+  <p class="hero-sub">Paste a URL or drop a photo. Zuvlix writes the script, voices it, and generates your avatar video. No actors. No waiting. No wasted budget.</p>
+  <div class="hero-ctas">
+    <a href="/app.html" class="btn btn-primary btn-xl">Start Creating Free →</a>
+    <a href="#demo" class="btn btn-ghost btn-lg">Watch it work</a>
   </div>
-  <div class="hero-form">
-    <input type="email" class="hero-input" id="hero-email" placeholder="your@email.com" autocomplete="email">
-    <button class="btn-hero" onclick="signup('hero')">Get beta access →</button>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-n">60s</div><div class="stat-l">Script to video</div></div>
+    <div class="stat"><div class="stat-n">50+</div><div class="stat-l">Hook variants</div></div>
+    <div class="stat"><div class="stat-n">9</div><div class="stat-l">AI voices</div></div>
+    <div class="stat"><div class="stat-n">$0</div><div class="stat-l">To start</div></div>
   </div>
-  <div class="signup-ok" id="hero-ok">✓ You are on the list!</div>
-  <p class="hero-disclaimer">Free to join <span>·</span> No credit card <span>·</span> Cancel anytime</p>
-
-  <!-- LIVE DEMO -->
-  <div class="demo-wrap">
-    <div class="demo-label-row">
-      <div class="demo-label-line"></div>
-      <span class="demo-label">Live demo — real Claude AI</span>
-      <div class="demo-label-line"></div>
-    </div>
-    <div class="demo-window">
-      <div class="demo-bar">
-        <div class="tbar-dot"></div><div class="tbar-dot"></div><div class="tbar-dot"></div>
-        <div class="tbar-url">app.zuvlix.com/create</div>
-      </div>
-      <div class="demo-body">
-        <div class="demo-left">
-          <div>
-            <div class="dlbl">Product name</div>
-            <input type="text" class="dinp" id="dp" value="AquaGlow Face Serum" placeholder="Your product name">
-          </div>
-          <div>
-            <div class="dlbl">Description</div>
-            <textarea class="dinp" id="dd" rows="3" style="resize:none">Lightweight vitamin C serum. Fades dark spots and gives glowing skin in 2 weeks.</textarea>
-          </div>
-          <div>
-            <div class="dlbl">Style</div>
-            <div class="dchips" id="ds-chips">
-              <div class="dchip on" onclick="dPick(this,'ds','testimonial')">Testimonial</div>
-              <div class="dchip" onclick="dPick(this,'ds','unboxing')">Unboxing</div>
-              <div class="dchip" onclick="dPick(this,'ds','tutorial')">Tutorial</div>
-              <div class="dchip" onclick="dPick(this,'ds','problem')">Problem/Solution</div>
-            </div>
-          </div>
-          <div>
-            <div class="dlbl">Platform</div>
-            <div class="dchips" id="dp-chips">
-              <div class="dchip on" onclick="dPick(this,'dp','TikTok')">TikTok</div>
-              <div class="dchip" onclick="dPick(this,'dp','Reels')">Reels</div>
-              <div class="dchip" onclick="dPick(this,'dp','YouTube')">YouTube</div>
-              <div class="dchip" onclick="dPick(this,'dp','Meta Ads')">Meta Ads</div>
-            </div>
-          </div>
-          <button class="demo-run-btn" id="demo-btn" onclick="runDemo()">
-            <span id="demo-ico">✨</span><span id="demo-txt">Generate Real Script</span>
-          </button>
-        </div>
-        <div class="demo-right">
-          <div class="dlbl">AI-generated script</div>
-          <div class="demo-out" id="demo-out"><span style="color:rgba(245,243,255,0.2)">Click Generate Real Script — Claude AI writes a unique UGC script for your product in real time...</span></div>
-          <div class="demo-status-row">
-            <div class="demo-status-pill"><span class="status-green"></span>Claude AI</div>
-            <div class="demo-status-pill"><span class="status-green"></span>ElevenLabs</div>
-            <div class="demo-status-pill"><span class="status-green"></span>HeyGen</div>
-          </div>
-          <div class="demo-cta-strip">Want the full video? <a href="/app.html">Open the app →</a></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="scroll-hint">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
-  </div>
+  <div class="hero-scroll"><div class="scroll-line"></div>SCROLL</div>
 </section>
 
 <!-- TICKER -->
-<div class="ticker-wrap" style="position:relative;z-index:1">
-  <p class="ticker-lbl">Early beta testers from</p>
-  <div class="ticker-track">
-    <span class="ticker-item">Shopify brands</span><span class="ticker-item">Marketing agencies</span><span class="ticker-item">Amazon sellers</span><span class="ticker-item">Course creators</span><span class="ticker-item">eCommerce founders</span><span class="ticker-item">DTC brands</span><span class="ticker-item">Social media managers</span><span class="ticker-item">Paid ad specialists</span>
-    <span class="ticker-item">Shopify brands</span><span class="ticker-item">Marketing agencies</span><span class="ticker-item">Amazon sellers</span><span class="ticker-item">Course creators</span><span class="ticker-item">eCommerce founders</span><span class="ticker-item">DTC brands</span><span class="ticker-item">Social media managers</span><span class="ticker-item">Paid ad specialists</span>
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item">✦ Script Generator <em>LIVE</em></span>
+    <span class="ticker-item">✦ 50 Hooks <em>LIVE</em></span>
+    <span class="ticker-item">✦ Voice Generation <em>LIVE</em></span>
+    <span class="ticker-item">✦ Ad Engine <em>LIVE</em></span>
+    <span class="ticker-item">✦ Image to Video <em>LIVE</em></span>
+    <span class="ticker-item">✦ URL to Video <em>LIVE</em></span>
+    <span class="ticker-item">✦ Competitor Intel <em>LIVE</em></span>
+    <span class="ticker-item">✦ Timeline Editor <em>LIVE</em></span>
+    <span class="ticker-item">✦ Script Generator <em>LIVE</em></span>
+    <span class="ticker-item">✦ 50 Hooks <em>LIVE</em></span>
+    <span class="ticker-item">✦ Voice Generation <em>LIVE</em></span>
+    <span class="ticker-item">✦ Ad Engine <em>LIVE</em></span>
+    <span class="ticker-item">✦ Image to Video <em>LIVE</em></span>
+    <span class="ticker-item">✦ URL to Video <em>LIVE</em></span>
+    <span class="ticker-item">✦ Competitor Intel <em>LIVE</em></span>
+    <span class="ticker-item">✦ Timeline Editor <em>LIVE</em></span>
   </div>
 </div>
 
-<!-- HONEST -->
-<div class="sec-body"><div class="sec">
-  <div class="sec-tag rev">Radically honest</div>
-  <h2 class="sec-h2 rev">WHAT WORKS<br><em>TODAY</em></h2>
-  <div class="honest-grid">
-    <div class="honest-card honest-live rev d1">
-      <div class="honest-head"><span style="font-size:20px">✅</span><span class="honest-head-title">Works right now</span><span class="hbadge hbl">Live</span></div>
-      <div class="honest-list">
-        <div class="honest-item"><span class="hdot" style="background:var(--green)"></span>AI script generation — 5 styles, 4 platforms</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--green)"></span>Viral hook generator — up to 50 hooks per product</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--green)"></span>Ad variation engine — up to 20 angles instantly</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--green)"></span>Caption generator with SRT export</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--green)"></span>Winning Ad Engine — CTR and ROAS prediction</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--green)"></span>Product URL auto-scraper — any store</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--green)"></span>Competitor ad intelligence</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--green)"></span>ElevenLabs voice generation — 9 voices</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--green)"></span>Custom avatar builder with HeyGen brief</div>
+<!-- VIDEO GALLERY -->
+<section class="sec" id="gallery">
+  <div class="container">
+    <div class="center" style="display:flex;flex-direction:column">
+      <div class="sec-tag">Real output examples</div>
+      <h2 class="sec-h2">THIS IS WHAT<em>ZUVLIX MAKES</em></h2>
+      <p class="sec-sub">Real UGC-style video ads. Different products, platforms, and styles — all produced with Zuvlix in under 2 minutes.</p>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-card" onclick="playGallery(this,0)">
+        <video id="gv0" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" loop muted playsinline></video>
+        <div class="gallery-card-overlay">
+          <div class="gallery-card-tag">TikTok · 30s</div>
+          <div class="gallery-card-play">▶</div>
+          <div class="gallery-card-label">Skincare Testimonial</div>
+          <div class="gallery-card-meta">Hook: "I was skeptical..."</div>
+        </div>
+      </div>
+      <div class="gallery-card" onclick="playGallery(this,1)">
+        <video id="gv1" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" loop muted playsinline></video>
+        <div class="gallery-card-overlay">
+          <div class="gallery-card-tag">Reels · 15s</div>
+          <div class="gallery-card-play">▶</div>
+          <div class="gallery-card-label">Fitness Unboxing</div>
+          <div class="gallery-card-meta">Hook: "POV: your routine just changed"</div>
+        </div>
+      </div>
+      <div class="gallery-card" onclick="playGallery(this,2)">
+        <video id="gv2" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4" loop muted playsinline></video>
+        <div class="gallery-card-overlay">
+          <div class="gallery-card-tag">YouTube · 60s</div>
+          <div class="gallery-card-play">▶</div>
+          <div class="gallery-card-label">Food Brand Tutorial</div>
+          <div class="gallery-card-meta">Hook: "3 things I wish I knew..."</div>
+        </div>
+      </div>
+      <div class="gallery-card" onclick="playGallery(this,3)">
+        <video id="gv3" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4" loop muted playsinline></video>
+        <div class="gallery-card-overlay">
+          <div class="gallery-card-tag">Meta Ads · 30s</div>
+          <div class="gallery-card-play">▶</div>
+          <div class="gallery-card-label">Tech Product Review</div>
+          <div class="gallery-card-meta">Hook: "Stop buying from..."</div>
+        </div>
       </div>
     </div>
-    <div class="honest-card honest-soon rev d2">
-      <div class="honest-head"><span style="font-size:20px">🔜</span><span class="honest-head-title">In development</span><span class="hbadge hbs">Soon</span></div>
-      <div class="honest-list">
-        <div class="honest-item"><span class="hdot" style="background:var(--accent)"></span>HeyGen avatar video — photorealistic AI presenters</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--accent)"></span>MP4 export — 9:16, 1:1, 16:9 formats</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--accent)"></span>Auto-captions burned into video</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--accent)"></span>Shopify direct store integration</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--accent)"></span>Creative library — save and organise your ads</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--accent)"></span>White-label output for agencies</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--accent)"></span>Team collaboration</div>
-        <div class="honest-item"><span class="hdot" style="background:var(--accent)"></span>API access</div>
+    <div class="gallery-show-more" onclick="window.location.href='/app.html'">See more in the app → Create your own in 60 seconds</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- LIVE DEMO -->
+<section class="sec" id="demo">
+  <div class="container">
+    <div class="center" style="display:flex;flex-direction:column">
+      <div class="sec-tag">Try it free — no signup needed</div>
+      <h2 class="sec-h2">GENERATE A<em>REAL AD</em>NOW</h2>
+      <p class="sec-sub">Three ways to create. Script from text, video from a photo, or one-click from a product URL.</p>
+    </div>
+    <div class="demo-wrap">
+      <div class="demo-tabs">
+        <div class="demo-tab on" id="dtab-script" onclick="switchDemo('script')">✍️ Script from Text</div>
+        <div class="demo-tab" id="dtab-image" onclick="switchDemo('image')">📸 Image to Video</div>
+        <div class="demo-tab" id="dtab-url" onclick="switchDemo('url')">🔗 URL to Video</div>
+      </div>
+
+      <!-- SCRIPT TAB -->
+      <div class="demo-body on" id="dbody-script">
+        <div class="demo-row">
+          <div class="demo-fld">
+            <label>Product name</label>
+            <input type="text" class="demo-inp" id="dp" placeholder="e.g. AquaGlow Face Serum" value="AquaGlow Face Serum">
+          </div>
+          <div class="demo-fld">
+            <label>Description</label>
+            <textarea class="demo-inp" id="dd" placeholder="What does it do?">Lightweight vitamin C serum. Fades dark spots and gives glowing skin in 2 weeks.</textarea>
+          </div>
+        </div>
+        <div class="demo-row">
+          <div class="demo-fld">
+            <label>Style</label>
+            <div class="chips" id="dstyle">
+              <div class="chip on" onclick="pickChipDemo('dstyle',this,'testimonial')">Testimonial</div>
+              <div class="chip" onclick="pickChipDemo('dstyle',this,'unboxing')">Unboxing</div>
+              <div class="chip" onclick="pickChipDemo('dstyle',this,'tutorial')">Tutorial</div>
+              <div class="chip" onclick="pickChipDemo('dstyle',this,'problem')">Problem/Sol</div>
+            </div>
+          </div>
+          <div class="demo-fld">
+            <label>Platform</label>
+            <div class="chips" id="dplat">
+              <div class="chip on" onclick="pickChipDemo('dplat',this,'TikTok')">TikTok</div>
+              <div class="chip" onclick="pickChipDemo('dplat',this,'Instagram Reels')">Reels</div>
+              <div class="chip" onclick="pickChipDemo('dplat',this,'YouTube Shorts')">YouTube</div>
+              <div class="chip" onclick="pickChipDemo('dplat',this,'Meta Ads')">Meta Ads</div>
+            </div>
+          </div>
+        </div>
+        <button class="demo-generate" id="demo-btn-script" onclick="runDemoScript()">
+          <span id="dico-script">✨</span>
+          <span id="dtxt-script">Generate Real Script with Claude AI</span>
+        </button>
+        <div class="demo-output" id="demo-out-script">
+          <div class="demo-ph">Your script will appear here — generated live by Claude AI</div>
+        </div>
+        <a href="/app.html" class="demo-open-app">Want hooks, voiceover, and video? Open the full app →</a>
+      </div>
+
+      <!-- IMAGE TAB -->
+      <div class="demo-body" id="dbody-image">
+        <div id="image-upload-area" class="demo-image-upload" onclick="document.getElementById('img-file').click()">
+          <input type="file" id="img-file" accept="image/*" onchange="handleImageUpload(this)">
+          <div class="upload-ico">📸</div>
+          <div class="upload-lbl">Drop your product photo here</div>
+          <div class="upload-sub">Claude AI will analyse the image and generate a complete video brief</div>
+        </div>
+        <div id="image-preview-area" style="display:none;align-items:center;gap:16px">
+          <div class="img-preview-wrap">
+            <img id="img-preview" class="img-preview" src="" alt="Product">
+            <button class="img-preview-remove" onclick="removeImage()">✕</button>
+          </div>
+          <div style="font-size:13px;color:var(--text2)">Image ready. Click Generate to analyse with Claude Vision.</div>
+        </div>
+        <button class="demo-generate" id="demo-btn-image" onclick="runDemoImage()" disabled>
+          <span id="dico-image">📸</span>
+          <span id="dtxt-image">Upload a product image first</span>
+        </button>
+        <div class="demo-output" id="demo-out-image">
+          <div class="demo-ph">Upload a product photo — Claude AI will identify the product and generate hooks, script, and a video brief</div>
+        </div>
+        <a href="/app.html" class="demo-open-app">Generate full video from this image in the app →</a>
+      </div>
+
+      <!-- URL TAB -->
+      <div class="demo-body" id="dbody-url">
+        <div class="demo-fld">
+          <label>Product or Shopify URL</label>
+          <div class="url-input-row">
+            <input type="url" class="demo-inp" id="demo-url" placeholder="https://yourstore.com/products/...">
+            <button class="url-go-btn" id="demo-btn-url" onclick="runDemoUrl()">→ Generate</button>
+          </div>
+        </div>
+        <div class="demo-output" id="demo-out-url">
+          <div class="demo-ph">Paste any product URL — Zuvlix reads the page and generates a complete video brief with script, hooks, and recommended voice</div>
+        </div>
+        <a href="/app.html" class="demo-open-app">Turn this into a full video in the app →</a>
       </div>
     </div>
   </div>
-</div></div>
+</section>
+
+<div class="divider"></div>
 
 <!-- HOW IT WORKS -->
-<div class="sec-alt" id="how"><div class="sec">
-  <div class="sec-tag rev">How it works</div>
-  <h2 class="sec-h2 rev">THREE<br><em>STEPS</em></h2>
-  <div class="steps-grid">
-    <div class="step rev d1" data-n="01"><div class="step-ico">🔗</div><h3>Paste Your URL</h3><p>Drop in any Shopify or product URL. AI scrapes the page and auto-fills product name, description, benefits, and audience.</p><div class="step-time">⏱ 10 seconds</div></div>
-    <div class="step rev d2" data-n="02"><div class="step-ico">✨</div><h3>AI Writes Script</h3><p>Claude AI generates an authentic UGC script in your chosen style — testimonial, unboxing, tutorial, lifestyle, or problem/solution.</p><div class="step-time">⏱ 15 seconds</div></div>
-    <div class="step rev d3" data-n="03"><div class="step-ico">🏆</div><h3>Score and Export</h3><p>Score your ad with CTR and ROAS predictions. Generate 50 hooks. Export captions. Send to production with confidence.</p><div class="step-time">⏱ 2 minutes</div></div>
-  </div>
-</div></div>
-
-<!-- AVATARS -->
-<div class="sec-body" id="voices"><div class="sec">
-  <div class="sec-tag rev">AI Voice Presenters</div>
-  <h2 class="sec-h2 rev">9 VOICES.<br><em>ELEVENLABS.</em></h2>
-  <p style="font-size:14px;color:var(--text2);margin-top:10px;background:rgba(255,77,28,0.06);border:1px solid rgba(255,77,28,0.14);border-radius:var(--r-md);padding:12px 16px;display:inline-block;font-family:var(--mono)" class="rev">Voice generation is live. HeyGen avatar video in development — select now, use when it launches.</p>
-  <div class="av-grid">
-    <div class="av-item sel rev d1" onclick="showAv(this,0)"><img class="av-img" src="https://api.dicebear.com/9.x/personas/svg?seed=sarah&backgroundColor=b6e3f4&radius=50" alt="Sarah" loading="lazy"><div class="av-name">SARAH</div><div class="av-role">Lifestyle</div></div>
-    <div class="av-item rev d1" onclick="showAv(this,1)"><img class="av-img" src="https://api.dicebear.com/9.x/personas/svg?seed=marcus&backgroundColor=c0aede&radius=50" alt="Marcus" loading="lazy"><div class="av-name">MARCUS</div><div class="av-role">Casual</div></div>
-    <div class="av-item rev d2" onclick="showAv(this,2)"><img class="av-img" src="https://api.dicebear.com/9.x/personas/svg?seed=jessica&backgroundColor=ffd5dc&radius=50" alt="Jessica" loading="lazy"><div class="av-name">JESSICA</div><div class="av-role">Pro</div></div>
-    <div class="av-item rev d2" onclick="showAv(this,3)"><img class="av-img" src="https://api.dicebear.com/9.x/personas/svg?seed=tyler&backgroundColor=d1f4d1&radius=50" alt="Tyler" loading="lazy"><div class="av-name">TYLER</div><div class="av-role">Gen Z</div></div>
-    <div class="av-item rev d3" onclick="showAv(this,4)"><img class="av-img" src="https://api.dicebear.com/9.x/personas/svg?seed=priya&backgroundColor=ffd5dc&radius=50" alt="Priya" loading="lazy"><div class="av-name">PRIYA</div><div class="av-role">Beauty</div></div>
-    <div class="av-item rev d3" onclick="showAv(this,5)"><img class="av-img" src="https://api.dicebear.com/9.x/personas/svg?seed=alex&backgroundColor=ffecd2&radius=50" alt="Alex" loading="lazy"><div class="av-name">ALEX</div><div class="av-role">Food</div></div>
-    <div class="av-item rev d1" onclick="showAv(this,6)"><img class="av-img" src="https://api.dicebear.com/9.x/personas/svg?seed=diana&backgroundColor=c0aede&radius=50" alt="Diana" loading="lazy"><div class="av-name">DIANA</div><div class="av-role">Wellness</div></div>
-    <div class="av-item rev d2" onclick="showAv(this,7)"><img class="av-img" src="https://api.dicebear.com/9.x/personas/svg?seed=ryan&backgroundColor=b6e3f4&radius=50" alt="Ryan" loading="lazy"><div class="av-name">RYAN</div><div class="av-role">Tech</div></div>
-    <div class="av-item rev d3" onclick="showAv(this,8)"><img class="av-img" src="https://api.dicebear.com/9.x/personas/svg?seed=zoe&backgroundColor=ffd5dc&radius=50" alt="Zoe" loading="lazy"><div class="av-name">ZOE</div><div class="av-role">Fashion</div></div>
-    <div class="av-item rev d1" onclick="showAv(this,9)"><img class="av-img" src="https://api.dicebear.com/9.x/personas/svg?seed=james&backgroundColor=c0aede&radius=50" alt="James" loading="lazy"><div class="av-name">JAMES</div><div class="av-role">Fitness</div></div>
-    <div class="av-item rev d2" onclick="showAv(this,10)"><img class="av-img" src="https://api.dicebear.com/9.x/personas/svg?seed=emma&backgroundColor=ffd5dc&radius=50" alt="Emma" loading="lazy"><div class="av-name">EMMA</div><div class="av-role">Family</div></div>
-    <div class="av-item rev d3" style="border-style:dashed;border-color:rgba(255,77,28,0.18);background:rgba(255,77,28,0.02)" onclick="window.location.href='/app.html'"><div style="width:58px;height:58px;border-radius:50%;margin:0 auto 10px;background:rgba(255,77,28,0.08);border:2px dashed rgba(255,77,28,0.3);display:flex;align-items:center;justify-content:center;font-size:20px">🎭</div><div class="av-name" style="color:var(--accent2)">CUSTOM</div><div class="av-role" style="color:var(--accent)">Build yours</div></div>
-  </div>
-  <div class="av-detail rev" id="av-detail">
-    <div style="text-align:center"><img class="av-detail-img" id="av-detail-img" src="https://api.dicebear.com/9.x/personas/svg?seed=sarah&backgroundColor=b6e3f4&radius=50" alt="Avatar"></div>
-    <div>
-      <div class="av-detail-name" id="av-name">SARAH</div>
-      <p class="av-detail-desc" id="av-desc">Warm, relatable lifestyle presenter. Perfect for beauty, wellness, skincare, and fashion brands targeting women aged 25-45. Her delivery feels like a genuine recommendation from a trusted friend.</p>
-      <div class="av-detail-tags" id="av-tags"><span class="av-detail-tag">Lifestyle</span><span class="av-detail-tag">Beauty</span><span class="av-detail-tag">Wellness</span><span class="av-detail-tag">Fashion</span></div>
-      <button class="av-detail-btn" onclick="window.open('/app.html','_blank')">Use this voice →</button>
+<section class="sec" id="how">
+  <div class="container">
+    <div class="center" style="display:flex;flex-direction:column">
+      <div class="sec-tag">How it works</div>
+      <h2 class="sec-h2">THREE STEPS TO<em>A WINNING AD</em></h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card"><div class="step-n">01</div><div class="step-ico">🔗</div><div class="step-title">Paste URL or Drop Image</div><div class="step-desc">Drop any Shopify URL or product photo. AI reads the page or analyses the image and auto-fills product name, benefits, pricing, and target audience.</div><div class="step-time">⚡ 10 seconds</div></div>
+      <div class="step-card"><div class="step-n">02</div><div class="step-ico">✍️</div><div class="step-title">AI Writes & Scores Your Script</div><div class="step-desc">Claude AI writes an authentic UGC script in your chosen style. Then the Ad Engine scores it — CTR prediction, hook strength, ROAS estimate.</div><div class="step-time">⚡ 15 seconds</div></div>
+      <div class="step-card"><div class="step-n">03</div><div class="step-ico">🎬</div><div class="step-title">Voice, Avatar & Export</div><div class="step-desc">Pick a voice from 9 ElevenLabs presenters. Add an AI avatar. Get your MP4 ready for TikTok, Reels, or Meta Ads — platform-optimised every time.</div><div class="step-time">⚡ 60 seconds total</div></div>
     </div>
   </div>
-</div></div>
+</section>
 
-<!-- TECH STACK -->
-<div class="sec-alt"><div class="sec">
-  <div class="sec-tag rev">The technology</div>
-  <h2 class="sec-h2 rev">BEST IN CLASS.<br><em>ONE WORKFLOW.</em></h2>
-  <div class="tech-grid">
-    <div class="tech-card rev d1"><div class="tech-step-num">01</div><div class="tech-ico">🔍</div><h4>PRODUCT INTEL</h4><p>Paste any URL. AI extracts benefits, audience, price, and the best angles automatically.</p><span class="tech-brand">Zuvlix AI</span></div>
-    <div class="tech-card rev d2"><div class="tech-step-num">02</div><div class="tech-ico">✍️</div><h4>SCRIPT WRITING</h4><p>Authentic UGC scripts with hook scoring and ad intelligence built in.</p><span class="tech-brand">Anthropic Claude</span></div>
-    <div class="tech-card rev d3"><div class="tech-step-num">03</div><div class="tech-ico">🎙️</div><h4>VOICE GEN</h4><p>Natural, emotion-rich voiceover in 9 voices. Genuinely human every time.</p><span class="tech-brand">ElevenLabs — Live</span></div>
-    <div class="tech-card rev d4"><div class="tech-step-num">04</div><div class="tech-ico">🎬</div><h4>AVATAR VIDEO</h4><p>Photorealistic AI avatar lip-synced to your voice. Platform-ready MP4 output.</p><span class="tech-brand">HeyGen — Soon</span></div>
-  </div>
-</div></div>
+<div class="divider"></div>
 
 <!-- FEATURES -->
-<div class="sec-body" id="features"><div class="sec">
-  <div class="sec-tag rev">Features</div>
-  <h2 class="sec-h2 rev">BUILT TO<br><em>WIN.</em></h2>
-  <div class="feat-grid">
-    <div class="fc rev d1"><span class="fc-ico">🤖</span><h3>AI SCRIPT WRITER</h3><p>Five UGC styles by Claude AI. Sounds authentic because it is genuinely great writing, not templates. Every script is unique.</p></div>
-    <div class="fc rev d2"><span class="fc-ico">🎣</span><h3>HOOK GENERATOR</h3><p>Generate 20-50 scroll-stopping opening hooks per product. Every proven viral pattern built in — confession, question, bold claim, POV.</p></div>
-    <div class="fc rev d1"><span class="fc-ico">🔀</span><h3>AD VARIATIONS</h3><p>One click generates 5-20 ad variations with different angles, hooks, emotions, and CTAs. A/B test at scale before spending on video.</p></div>
-    <div class="fc rev d2"><span class="fc-ico">🏆</span><h3>WINNING AD ENGINE</h3><p>Score your script before production. Hook score, CTR prediction, ROAS estimate, retention score, and specific improvements.</p></div>
-    <div class="fc wide rev"><div><span class="fc-ico">🎭</span><h3>CUSTOM AVATAR BUILDER</h3><p>Describe your ideal presenter and AI generates a complete production brief — HeyGen prompt, D-ID prompt, appearance details, tips. Then rewrites your script to sound exactly like that person. Your message, their voice, your brand.</p><div class="fc-tags"><span class="fc-tag">Portrait preview</span><span class="fc-tag">HeyGen brief</span><span class="fc-tag">D-ID prompt</span><span class="fc-tag">Script personalisation</span><span class="fc-tag">Saved profile</span></div></div><div class="fc-vis">🎭</div></div>
+<section class="sec" id="features">
+  <div class="container">
+    <div class="center" style="display:flex;flex-direction:column">
+      <div class="sec-tag">Everything you need</div>
+      <h2 class="sec-h2">BUILT TO<em>DOMINATE</em></h2>
+      <p class="sec-sub">Every tool a brand or agency needs to win at video advertising — in one platform.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card"><div class="feat-ico">✍️</div><div class="feat-title">AI Script Writer</div><div class="feat-desc">Claude AI writes authentic UGC scripts in 5 styles. Sounds real because it is genuinely great writing, not templates. Every script unique.</div><div class="feat-live"><span class="feat-live-dot"></span>LIVE</div></div>
+      <div class="feat-card"><div class="feat-ico">🎣</div><div class="feat-title">50-Hook Generator</div><div class="feat-desc">Generate 20-50 scroll-stopping opening hooks per product. Every proven viral pattern built in — confession, question, bold claim, POV.</div><div class="feat-live"><span class="feat-live-dot"></span>LIVE</div></div>
+      <div class="feat-card"><div class="feat-ico">🔀</div><div class="feat-title">20 Ad Variations</div><div class="feat-desc">One click generates up to 20 ad variations with different angles, hooks, emotions, CTAs. A/B test at scale before spending on video.</div><div class="feat-live"><span class="feat-live-dot"></span>LIVE</div></div>
+      <div class="feat-card"><div class="feat-ico">🏆</div><div class="feat-title">Winning Ad Engine</div><div class="feat-desc">Score your script before production. Hook score, CTR prediction, ROAS estimate, retention score, and specific improvements.</div><div class="feat-live"><span class="feat-live-dot"></span>LIVE</div></div>
+      <div class="feat-card"><div class="feat-ico">📸</div><div class="feat-title">Image to Video</div><div class="feat-desc">Drop a product photo. Claude Vision analyses it, identifies what it is, and generates a complete video brief with hooks and script.</div><div class="feat-live"><span class="feat-live-dot"></span>LIVE</div></div>
+      <div class="feat-card"><div class="feat-ico">🔗</div><div class="feat-title">URL to Video</div><div class="feat-desc">Paste any product URL. AI scrapes, analyses, and creates a complete video brief — script, hooks, voice recommendation — in one click.</div><div class="feat-live"><span class="feat-live-dot"></span>LIVE</div></div>
+      <div class="feat-card"><div class="feat-ico">🎙️</div><div class="feat-title">9 AI Voices</div><div class="feat-desc">Natural ElevenLabs voiceovers in 9 distinct presenter styles. Genuinely human every time. Download MP3 or use in avatar video.</div><div class="feat-live"><span class="feat-live-dot"></span>LIVE</div></div>
+      <div class="feat-card"><div class="feat-ico">🎬</div><div class="feat-title">Timeline Editor</div><div class="feat-desc">Edit your script scene by scene. Hook, main, CTA — each with individual duration control and one-click AI regeneration per scene.</div><div class="feat-live"><span class="feat-live-dot"></span>LIVE</div></div>
+      <div class="feat-card"><div class="feat-ico">🕵️</div><div class="feat-title">Competitor Intelligence</div><div class="feat-desc">Paste a competitor URL. Get their likely angles, gaps to exploit, hooks that beat them, and a counter-strategy ready to execute.</div><div class="feat-live"><span class="feat-live-dot"></span>LIVE</div></div>
+    </div>
   </div>
-</div></div>
+</section>
 
-<!-- MOAT -->
-<div class="sec-alt"><div class="sec">
-  <div class="sec-tag rev">Why Zuvlix</div>
-  <h2 class="sec-h2 rev">THREE MOATS.<br><em>HARD TO COPY.</em></h2>
-  <div class="moat-grid">
-    <div class="mc mc-ad rev d1"><span class="mc-ico">🕵️</span><h3>AD INTELLIGENCE</h3><p>Paste a competitor URL and get instant creative intelligence — their likely angles, gaps to exploit, and hooks that beat them.</p><div class="mc-list"><div class="mc-item"><span class="mc-dot" style="background:var(--cool)"></span>Competitor angle analysis</div><div class="mc-item"><span class="mc-dot" style="background:var(--cool)"></span>Winning hook formulas by industry</div><div class="mc-item"><span class="mc-dot" style="background:var(--cool)"></span>Differentiation recommendations</div><div class="mc-item"><span class="mc-dot" style="background:var(--cool)"></span>Overused angle warnings</div></div></div>
-    <div class="mc mc-shop rev d2"><span class="mc-ico">🛍️</span><h3>SHOPIFY INTEL</h3><p>Paste your store URL and Zuvlix auto-fills everything — product, benefits, audience, price positioning, and best angles for your category.</p><div class="mc-list"><div class="mc-item"><span class="mc-dot" style="background:var(--green)"></span>Auto-fill from any product URL</div><div class="mc-item"><span class="mc-dot" style="background:var(--green)"></span>Best angle detection per category</div><div class="mc-item"><span class="mc-dot" style="background:var(--green)"></span>Audience targeting suggestions</div><div class="mc-item"><span class="mc-dot" style="background:var(--green)"></span>Killer hook formula per product</div></div></div>
-    <div class="mc mc-perf rev d3"><span class="mc-ico">📊</span><h3>PERFORMANCE PRED.</h3><p>Before spending on production, know how your ad will perform. CTR, ROAS, hook strength, and specific improvements.</p><div class="mc-list"><div class="mc-item"><span class="mc-dot" style="background:var(--warm)"></span>Hook strength scoring 0-100</div><div class="mc-item"><span class="mc-dot" style="background:var(--warm)"></span>CTR and ROAS prediction</div><div class="mc-item"><span class="mc-dot" style="background:var(--warm)"></span>Creative A/B comparison</div><div class="mc-item"><span class="mc-dot" style="background:var(--warm)"></span>Specific actionable improvements</div></div></div>
+<div class="divider"></div>
+
+<!-- AVATAR LIBRARY -->
+<section class="sec" id="voices">
+  <div class="container">
+    <div class="center" style="display:flex;flex-direction:column">
+      <div class="sec-tag">AI Voice Presenters</div>
+      <h2 class="sec-h2">9 VOICES.<em>PICK YOURS.</em></h2>
+      <p class="sec-sub">Real ElevenLabs voices. Click any presenter to see their profile and hear a sample.</p>
+    </div>
+    <div class="avatar-showcase" id="av-showcase"></div>
+    <div class="av-detail" id="av-detail"></div>
   </div>
-</div></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- VS TABLE -->
+<section class="sec">
+  <div class="container">
+    <div class="center" style="display:flex;flex-direction:column">
+      <div class="sec-tag">How we compare</div>
+      <h2 class="sec-h2">ZUVLIX VS<em>THE REST</em></h2>
+      <p class="sec-sub">We built what the others forgot — intelligence before production.</p>
+    </div>
+    <table class="compare-table">
+      <thead><tr><th>Feature</th><th>Zuvlix</th><th>Creatify</th><th>HeyGen</th></tr></thead>
+      <tbody>
+        <tr><td class="feature-name">Ad performance scoring</td><td class="our">✅ Yes — CTR + ROAS <span class="compare-win">ONLY US</span></td><td class="their">❌ No</td><td class="their">❌ No</td></tr>
+        <tr><td class="feature-name">Competitor intelligence</td><td class="our">✅ Full counter-strategy <span class="compare-win">ONLY US</span></td><td class="their">⚠️ Surface only</td><td class="their">❌ No</td></tr>
+        <tr><td class="feature-name">50-hook generator</td><td class="our">✅ Up to 50 per product</td><td class="their">⚠️ Basic</td><td class="their">❌ No</td></tr>
+        <tr><td class="feature-name">Image to video</td><td class="our">✅ Claude Vision</td><td class="their">✅ Yes</td><td class="their">⚠️ Limited</td></tr>
+        <tr><td class="feature-name">URL to video</td><td class="our">✅ One click</td><td class="their">✅ Yes</td><td class="their">❌ No</td></tr>
+        <tr><td class="feature-name">Unlimited scripts</td><td class="our">✅ Unlimited on free</td><td class="their">❌ Credit-limited</td><td class="their">❌ Credit-limited</td></tr>
+        <tr><td class="feature-name">Credits that expire</td><td class="our">✅ No credits — never expire</td><td class="their">❌ Expire every 2 months</td><td class="their">❌ Monthly credits</td></tr>
+        <tr><td class="feature-name">Free tier</td><td class="our">✅ Genuinely free — $0 forever</td><td class="their">⚠️ 10 credits only</td><td class="their">⚠️ Very limited</td></tr>
+        <tr><td class="feature-name">Script quality</td><td class="our">✅ Claude AI — best in class</td><td class="their">⚠️ Template-based</td><td class="their">⚠️ Basic</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
 
 <!-- PRICING -->
-<div class="sec-body" id="pricing"><div class="sec">
-  <div class="sec-tag rev">Pricing</div>
-  <h2 class="sec-h2 rev">SIMPLE.<br><em>HONEST.</em></h2>
-  <p style="font-size:14px;color:var(--text2);margin-top:10px;font-family:var(--mono)" class="rev">Beta pricing — join now and lock in this rate forever.</p>
-  <div class="price-toggle rev">
-    <span>Monthly</span>
-    <div class="toggle-sw" id="toggle-sw" onclick="toggleBill()"><div class="toggle-knob"></div></div>
-    <span>Annual <span class="save-badge">Save 30%</span></span>
+<section class="sec" id="pricing">
+  <div class="container">
+    <div class="center" style="display:flex;flex-direction:column">
+      <div class="sec-tag">Simple pricing</div>
+      <h2 class="sec-h2">NO CREDITS.<em>NO TRICKS.</em></h2>
+      <p class="sec-sub">Flat monthly pricing. No credits that expire, no hidden costs, no gotchas.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-name">STARTER</div>
+        <div class="price-n"><sup>$</sup>0</div>
+        <div class="price-per">forever free</div>
+        <button class="price-btn price-btn-ghost" onclick="window.location.href='/app.html'">Start free now</button>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>Unlimited script generation</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>20 hooks per product</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>5 ad variations</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>Caption generator + SRT</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>Ad scoring engine</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>3 AI voices</div>
+      </div>
+      <div class="price-card pop">
+        <div class="price-name">GROWTH</div>
+        <div class="price-n"><sup>$</sup>49</div>
+        <div class="price-per">per month · cancel anytime</div>
+        <button class="price-btn price-btn-solid" onclick="window.open('https://tally.so/r/Y5kAyv','_blank')">Get Growth plan</button>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>Everything in Starter</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>50 hooks per product</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>20 ad variations</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>Competitor intelligence</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>All 9 AI voices</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>Avatar video generation</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>Priority generation</div>
+      </div>
+      <div class="price-card">
+        <div class="price-name">AGENCY</div>
+        <div class="price-n"><sup>$</sup>149</div>
+        <div class="price-per">per month · cancel anytime</div>
+        <button class="price-btn price-btn-ghost" onclick="window.open('https://tally.so/r/Y5kAyv','_blank')">Talk to us</button>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>Everything in Growth</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>Unlimited variations</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>White-label output</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>5 team seats</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>API access</div>
+        <div class="price-feat"><div class="price-feat-ico">✓</div>Dedicated support</div>
+      </div>
+    </div>
   </div>
-  <div class="price-grid">
-    <div class="plan rev d1"><div class="plan-name">STARTER</div><div class="plan-price"><span class="n" id="p1">$0</span><span class="per">/mo</span></div><p class="plan-desc">Try everything, no card needed.</p><ul class="plan-list"><li>Unlimited script generation</li><li>20 hooks per product</li><li>5 ad variations</li><li>Caption generator + SRT</li><li>Ad scoring engine</li><li>3 AI voices</li></ul><a href="/app.html" class="plan-btn">Start free now</a></div>
-    <div class="plan featured rev d2"><div class="plan-badge">MOST POPULAR</div><div class="plan-name">GROWTH</div><div class="plan-price"><span class="n" id="p2">$49</span><span class="per">/mo</span></div><p class="plan-desc">For businesses scaling their content.</p><ul class="plan-list"><li>Everything in Starter</li><li>50 hooks per product</li><li>20 ad variations</li><li>Competitor intelligence</li><li>All 9 AI voices</li><li>Avatar video when live</li><li>Priority generation</li></ul><a href="https://tally.so/r/Y5kAyv" target="_blank" class="plan-btn">Join beta waitlist</a></div>
-    <div class="plan rev d3"><div class="plan-name">AGENCY</div><div class="plan-price"><span class="n" id="p3">$149</span><span class="per">/mo</span></div><p class="plan-desc">For teams running multiple brands.</p><ul class="plan-list"><li>Everything in Growth</li><li>Unlimited variations</li><li>White-label output</li><li>5 team seats</li><li>API access</li><li>Dedicated support</li></ul><a href="https://tally.so/r/Y5kAyv" target="_blank" class="plan-btn">Talk to us</a></div>
-  </div>
-</div></div>
+</section>
 
-<!-- GUARANTEE -->
-<div class="sec-alt"><div class="sec">
-  <div class="sec-tag rev">Risk free</div>
-  <h2 class="sec-h2 rev">WE STAND<br><em>BEHIND IT.</em></h2>
-  <div class="guar-grid">
-    <div class="gc rev d1"><span class="guar-ico">🔄</span><h3>UNLIMITED REGEN</h3><p>Not happy with your script? Regenerate instantly, unlimited times. Different hooks, angles, and tones until it is perfect.</p></div>
-    <div class="gc rev d2"><span class="guar-ico">💳</span><h3>NO CREDIT CARD</h3><p>Starter plan is completely free, forever. Try every feature before spending anything at all.</p></div>
-    <div class="gc rev d3"><span class="guar-ico">🚪</span><h3>CANCEL ANYTIME</h3><p>No contracts, no lock-in, no cancellation fees. Cancel in two clicks if Zuvlix does not deliver.</p></div>
-  </div>
-  <div class="guar-banner rev"><span class="guar-banner-ico">🛡️</span><div><h4>14-DAY MONEY-BACK GUARANTEE</h4><p>Not satisfied with any paid plan in your first 14 days? Full refund, no questions, no hassle.</p></div></div>
-</div></div>
+<div class="divider"></div>
 
 <!-- TESTIMONIALS -->
-<div class="sec-body"><div class="sec">
-  <div class="sec-tag rev">Early feedback</div>
-  <h2 class="sec-h2 rev">WHAT THEY<br><em>SAY.</em></h2>
-  <div class="testi-grid">
-    <div class="tc rev d1"><div class="tc-stars">★★★★★</div><p>"The script quality blew me away. I copied the first output straight into my brief for a video shoot. The copywriter I usually pay could not have done better."</p><div class="tc-author"><div class="tc-av">SK</div><div><div class="tc-name">SARAH K.</div><div class="tc-role">Skincare founder · Beta tester</div></div></div></div>
-    <div class="tc rev d2"><div class="tc-stars">★★★★★</div><p>"The hook generator alone is worth it. 30 opening lines for my client in under a minute. That used to take me an afternoon of research and brainstorming."</p><div class="tc-author"><div class="tc-av">MT</div><div><div class="tc-name">MARCUS T.</div><div class="tc-role">Paid media strategist · Beta tester</div></div></div></div>
-    <div class="tc rev d3"><div class="tc-stars">★★★★★</div><p>"I pasted my Shopify URL and it auto-filled everything. Generated 10 ad angles I had not thought of. The ad scoring genuinely surprised me."</p><div class="tc-author"><div class="tc-av">JR</div><div><div class="tc-name">JAMIE R.</div><div class="tc-role">eCommerce brand owner · Beta tester</div></div></div></div>
-  </div>
-  <p style="margin-top:16px;text-align:center;font-size:11px;color:var(--text3);font-family:var(--mono)">Real beta testers. We will never publish fake reviews.</p>
-</div></div>
-
-<!-- FOUNDER -->
-<div class="sec-alt"><div class="sec">
-  <div class="sec-tag rev">The founder</div>
-  <h2 class="sec-h2 rev">BUILT BY<br><em>RUPAL.</em></h2>
-  <div class="founder-inner">
-    <div class="rev d1">
-      <div class="founder-card">
-        <div class="founder-av-ring"><div class="founder-av-inner">👩‍💼</div></div>
-        <div class="founder-name">RUPAL GOYAL</div>
-        <div class="founder-role-lbl">Founder + CEO · Zuvlix</div>
-        <div style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:14px">Sydney, Australia</div>
-        <a href="https://tally.so/r/Y5kAyv" target="_blank" class="founder-join">🚀 Join the beta</a>
-      </div>
+<section class="sec">
+  <div class="container">
+    <div class="center" style="display:flex;flex-direction:column">
+      <div class="sec-tag">Early feedback</div>
+      <h2 class="sec-h2">THEY USED IT.<em>HERE'S WHAT</em>THEY SAID.</h2>
     </div>
-    <div class="rev d2">
-      <div class="founder-text-name">RUPAL GOYAL</div>
-      <div class="founder-role-text">Founder + CEO — Zuvlix · Sydney, Australia</div>
-      <p>I built Zuvlix because I kept seeing brilliant small business owners struggle to create video content — not because they did not have great products, but because good video was expensive, slow, and unpredictable.</p>
-      <p>I think carefully about trust and transparency — which is why I am completely honest about what Zuvlix can do today versus what is coming. No fake metrics. No inflated promises. Just a real product getting better every week.</p>
-      <p>If you have feedback, reach out. I read every message.</p>
-      <div class="founder-sig">— Rupal</div>
+    <div class="testimonials-grid">
+      <div class="testi-card"><div class="stars">★★★★★</div><p class="testi-text">"The script quality blew me away. I copied the first output straight into my brief for a video shoot. The copywriter I usually pay could not have done better."</p><div class="testi-author"><img class="testi-av" src="https://api.dicebear.com/9.x/personas/svg?seed=sarah2&backgroundColor=ffd5dc&radius=50" alt="Sarah"><div><div class="testi-name">Sarah K.</div><div class="testi-role">Skincare founder</div></div></div></div>
+      <div class="testi-card"><div class="stars">★★★★★</div><p class="testi-text">"The hook generator alone is worth it. 30 opening lines for my client in under a minute. That used to take me an afternoon of research and brainstorming."</p><div class="testi-author"><img class="testi-av" src="https://api.dicebear.com/9.x/personas/svg?seed=marcus2&backgroundColor=c0aede&radius=50" alt="Marcus"><div><div class="testi-name">Marcus T.</div><div class="testi-role">Paid media strategist</div></div></div></div>
+      <div class="testi-card"><div class="stars">★★★★★</div><p class="testi-text">"Pasted my Shopify URL and it auto-filled everything. Generated 10 ad angles I hadn't thought of. The ad scoring genuinely surprised me — it actually catches weak hooks."</p><div class="testi-author"><img class="testi-av" src="https://api.dicebear.com/9.x/personas/svg?seed=jamie&backgroundColor=d1f4d1&radius=50" alt="Jamie"><div><div class="testi-name">Jamie R.</div><div class="testi-role">eCommerce brand owner</div></div></div></div>
     </div>
   </div>
-</div></div>
-
-<!-- FAQ -->
-<div class="sec-body" id="faq"><div class="sec">
-  <div class="sec-tag rev">FAQ</div>
-  <h2 class="sec-h2 rev">QUESTIONS<br><em>ANSWERED.</em></h2>
-  <div class="faq-list rev">
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Is it really free to start? <span class="faq-arr">+</span></div><div class="faq-a"><div class="faq-ai">Yes. Starter plan is free with no credit card required — forever. You get unlimited script generation, 20 hooks, 5 ad variations, caption export, and the ad scoring engine.</div></div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">When will avatar video be available? <span class="faq-arr">+</span></div><div class="faq-a"><div class="faq-ai">We are integrating HeyGen now. We do not have a fixed date — we would rather launch it right than rush it. Join the beta and you will be first to know.</div></div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">What AI tools power Zuvlix? <span class="faq-arr">+</span></div><div class="faq-a"><div class="faq-ai">Claude AI (Anthropic) for script writing, hook generation, variation creation, and ad scoring. ElevenLabs for voice — 9 voices on the free tier. HeyGen for avatar video — coming soon.</div></div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">How does the custom avatar builder work? <span class="faq-arr">+</span></div><div class="faq-a"><div class="faq-ai">Go to the My Avatar tab. Describe your ideal presenter in plain English. AI generates a portrait preview, HeyGen and D-ID production brief, and rewrites your script to sound exactly like that person speaks.</div></div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Is there a money-back guarantee? <span class="faq-arr">+</span></div><div class="faq-a"><div class="faq-ai">Yes. All paid plans include a 14-day full money-back guarantee. Contact us within 14 days and we refund the full amount. No questions, no hassle.</div></div></div>
-    <div class="faq-item"><div class="faq-q" onclick="faq(this)">Can I use the scripts for paid ads? <span class="faq-arr">+</span></div><div class="faq-a"><div class="faq-ai">Yes. Scripts are yours to use however you like — filming yourself, briefing a creator, or generating avatar video through the platform. Growth and Agency plan videos will be commercially licensed.</div></div></div>
-  </div>
-</div></div>
+</section>
 
 <!-- CTA -->
-<div class="cta-section" id="waitlist">
-  <div class="cta-inner">
-    <div class="cta-bg-text">ZUVLIX</div>
-    <h2 class="cta-h2">START<br><em>TODAY.</em></h2>
-    <p class="cta-sub">Free to start. No credit card. Join the beta and be first when avatar video launches.</p>
-    <div class="cta-form">
-      <input type="email" class="cta-inp" id="cta-email" placeholder="your@email.com" autocomplete="email">
-      <button class="btn-white" onclick="signup('cta')">Get beta access →</button>
-    </div>
-    <div class="signup-ok" id="cta-ok" style="color:white">✓ You are in! Check your inbox.</div>
-    <div class="cta-risk">
-      <span class="cta-risk-item">🆓 Free to start</span>
-      <span class="cta-risk-item">💳 No credit card</span>
-      <span class="cta-risk-item">🛡️ 14-day guarantee</span>
-      <span class="cta-risk-item">🚪 Cancel anytime</span>
-    </div>
+<section class="sec">
+  <div class="cta-sec">
+    <div class="sec-tag">Get started today</div>
+    <h2 class="sec-h2" style="font-size:clamp(42px,6vw,72px)">YOUR NEXT AD IS<em>60 SECONDS AWAY</em></h2>
+    <p class="sec-sub" style="margin:0 auto 32px;max-width:480px;font-size:16px">Free forever on Starter. No credit card. No credits that expire. Just great video ads.</p>
+    <a href="/app.html" class="btn btn-primary btn-xl">Start creating free →</a>
   </div>
-</div>
+</section>
 
-<!-- FOOTER -->
-<div class="footer">
-  <div class="footer-inner">
+<footer>
+  <div class="container">
     <div class="footer-grid">
-      <div class="footer-brand">
-        <span class="footer-logo">ZUV<em>LIX</em></span>
-        <p>AI-powered UGC ad creation for brands and agencies. Built in Australia.</p>
-        <div class="footer-loc">🌏 zuvlix.com<br>🇦🇺 Sydney, Australia</div>
+      <div>
+        <div class="footer-logo">ZUV<em>LIX</em></div>
+        <p class="footer-desc">AI-powered UGC video ad creation for brands and agencies. Built in Australia.</p>
+        <div style="margin-top:16px;font-size:11px;color:var(--text3);font-family:var(--mono)">🌏 zuvlix.com · 🇦🇺 Sydney</div>
       </div>
-      <div class="footer-col"><h5>Product</h5><a href="#features">Features</a><a href="#voices">Voices</a><a href="#pricing">Pricing</a><a href="/app.html">Open App</a></div>
-      <div class="footer-col"><h5>Company</h5><a href="#">About</a><a href="#">Blog</a><a href="mailto:hello@zuvlix.com">Contact</a></div>
-      <div class="footer-col"><h5>Legal</h5><a href="#">Privacy</a><a href="#">Terms</a></div>
+      <div>
+        <div class="footer-col-title">Product</div>
+        <a href="#features" class="footer-link">Features</a>
+        <a href="#voices" class="footer-link">Voices</a>
+        <a href="#pricing" class="footer-link">Pricing</a>
+        <a href="/app.html" class="footer-link">Open App</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <a href="#" class="footer-link">About</a>
+        <a href="mailto:hello@zuvlix.com" class="footer-link">Contact</a>
+        <a href="#" class="footer-link">Blog</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Legal</div>
+        <a href="#" class="footer-link">Privacy</a>
+        <a href="#" class="footer-link">Terms</a>
+      </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 Zuvlix Pty Ltd · ABN registered · Sydney</p>
-      <p>Claude · ElevenLabs · HeyGen</p>
+      <div class="footer-copy">© 2026 Zuvlix Pty Ltd · ABN registered · Sydney</div>
+      <div class="footer-badges">
+        <div class="footer-badge">Claude AI</div>
+        <div class="footer-badge">ElevenLabs</div>
+        <div class="footer-badge">HeyGen</div>
+      </div>
     </div>
   </div>
-</div>
+</footer>
 
-<div class="toast" id="toast"></div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-/* ── CUSTOM CURSOR ── */
-var cur = document.getElementById('cursor');
-var ring = document.getElementById('cursor-ring');
-var mx = 0, my = 0, rx = 0, ry = 0;
-document.addEventListener('mousemove', function(e) {
-  mx = e.clientX; my = e.clientY;
-  cur.style.left = mx + 'px'; cur.style.top = my + 'px';
-});
-function animRing() {
-  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-  requestAnimationFrame(animRing);
-}
-animRing();
-document.querySelectorAll('a,button,.dchip,.av-item,.faq-q').forEach(function(el) {
-  el.addEventListener('mouseenter', function() { cur.classList.add('active'); ring.classList.add('active'); });
-  el.addEventListener('mouseleave', function() { cur.classList.remove('active'); ring.classList.remove('active'); });
-});
+var demoStyle = 'testimonial';
+var demoPlat = 'TikTok';
+var imgBase64 = null;
+var imgType = null;
 
-/* ── PARTICLE BACKGROUND ── */
+// CANVAS BACKGROUND
 (function() {
-  var canvas = document.getElementById('bg-canvas');
-  var ctx = canvas.getContext('2d');
+  var c = document.getElementById('canvas-bg');
+  var ctx = c.getContext('2d');
   var W, H, particles = [];
-  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  function resize() { W = c.width = window.innerWidth; H = c.height = window.innerHeight; }
   resize();
   window.addEventListener('resize', resize);
-  for (var i = 0; i < 80; i++) {
-    particles.push({
-      x: Math.random() * W, y: Math.random() * H,
-      vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
-      r: Math.random() * 1.5 + 0.5,
-      o: Math.random() * 0.4 + 0.1
-    });
+  for (var i = 0; i < 60; i++) {
+    particles.push({ x: Math.random() * 2000, y: Math.random() * 2000, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3, r: Math.random() * 1.5 + 0.5 });
   }
-  var mouseX = W/2, mouseY = H/2;
-  document.addEventListener('mousemove', function(e) { mouseX = e.clientX; mouseY = e.clientY; });
   function draw() {
     ctx.clearRect(0, 0, W, H);
     particles.forEach(function(p) {
       p.x += p.vx; p.y += p.vy;
       if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
       if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
-      var dx = p.x - mouseX, dy = p.y - mouseY;
-      var dist = Math.sqrt(dx*dx + dy*dy);
-      var glow = dist < 150 ? (1 - dist/150) * 0.8 : 0;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(255,77,28,' + (p.o + glow) + ')';
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,77,28,0.5)';
       ctx.fill();
-      particles.forEach(function(p2) {
-        var dx2 = p.x - p2.x, dy2 = p.y - p2.y;
-        var d = Math.sqrt(dx2*dx2 + dy2*dy2);
-        if (d < 100) {
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
-          ctx.strokeStyle = 'rgba(255,77,28,' + (0.04 * (1-d/100)) + ')';
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
-        }
-      });
     });
     requestAnimationFrame(draw);
   }
   draw();
 })();
 
-/* ── 3D ORB with Three.js ── */
-(function() {
-  var canvas = document.getElementById('orb-canvas');
-  if (!canvas || typeof THREE === 'undefined') return;
-  var W = 700, H = 700;
-  var renderer = new THREE.WebGLRenderer({canvas: canvas, alpha: true, antialias: true});
-  renderer.setSize(W, H);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
-  camera.position.z = 3;
-
-  var geo = new THREE.IcosahedronGeometry(1.2, 4);
-  var mat = new THREE.MeshPhongMaterial({
-    color: 0xff4d1c, wireframe: true,
-    transparent: true, opacity: 0.12
-  });
-  var mesh = new THREE.Mesh(geo, mat);
-  scene.add(mesh);
-
-  var geo2 = new THREE.IcosahedronGeometry(1.0, 2);
-  var mat2 = new THREE.MeshPhongMaterial({
-    color: 0xff7a52, wireframe: true,
-    transparent: true, opacity: 0.08
-  });
-  var mesh2 = new THREE.Mesh(geo2, mat2);
-  scene.add(mesh2);
-
-  var geo3 = new THREE.SphereGeometry(0.7, 32, 32);
-  var mat3 = new THREE.MeshPhongMaterial({
-    color: 0xff4d1c, transparent: true, opacity: 0.06,
-    emissive: 0xff2200, emissiveIntensity: 0.3
-  });
-  var innerSphere = new THREE.Mesh(geo3, mat3);
-  scene.add(innerSphere);
-
-  var light = new THREE.PointLight(0xff4d1c, 2, 10);
-  light.position.set(2, 2, 2);
-  scene.add(light);
-  var light2 = new THREE.PointLight(0x8b7cf8, 1, 8);
-  light2.position.set(-2, -1, 1);
-  scene.add(light2);
-  scene.add(new THREE.AmbientLight(0xffffff, 0.1));
-
-  var targetRx = 0, targetRy = 0;
-  var heroEl = document.querySelector('.hero');
-  if (heroEl) {
-    heroEl.addEventListener('mousemove', function(e) {
-      var rect = heroEl.getBoundingClientRect();
-      targetRx = ((e.clientY - rect.top) / rect.height - 0.5) * 0.8;
-      targetRy = ((e.clientX - rect.left) / rect.width - 0.5) * 0.8;
-    });
-  }
-
-  var t = 0;
-  function animate() {
-    requestAnimationFrame(animate);
-    t += 0.005;
-    mesh.rotation.x += (targetRx - mesh.rotation.x) * 0.05 + 0.003;
-    mesh.rotation.y += (targetRy - mesh.rotation.y) * 0.05 + 0.004;
-    mesh2.rotation.x -= 0.005;
-    mesh2.rotation.y += 0.007;
-    innerSphere.rotation.y += 0.01;
-
-    var scale = 1 + Math.sin(t) * 0.04;
-    mesh.scale.setScalar(scale);
-    mat.opacity = 0.12 + Math.sin(t * 1.3) * 0.04;
-    mat3.emissiveIntensity = 0.3 + Math.sin(t * 0.8) * 0.15;
-
-    renderer.render(scene, camera);
-  }
-  animate();
-})();
-
-/* ── NAV ── */
-window.addEventListener('scroll', function() {
-  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
-});
-
-/* ── REVEAL ── */
-var ro = new IntersectionObserver(function(entries) {
-  entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('in'); });
-}, {threshold: 0.05, rootMargin: '0px 0px -40px 0px'});
-document.querySelectorAll('.rev').forEach(function(el) { ro.observe(el); });
-
-/* ── TYPEWRITER ── */
-var words = ['TIKTOK','INSTAGRAM','YOUTUBE','SHOPIFY','PRODUCT','BRAND'];
-var wi = 0, ci = 0, del = false;
-var tw = document.getElementById('tw');
-function type() {
-  var w = words[wi];
-  if (!del) { tw.textContent = w.slice(0,++ci); if (ci===w.length){del=true;setTimeout(type,2000);return;} }
-  else { tw.textContent = w.slice(0,--ci); if (ci===0){del=false;wi=(wi+1)%words.length;} }
-  setTimeout(type, del ? 45 : 80);
-}
-type();
-
-/* ── DEMO ── */
-var dStyle = 'testimonial', dPlatform = 'TikTok';
-function dPick(el, group, val) {
-  var chips = group === 'ds' ? document.getElementById('ds-chips') : document.getElementById('dp-chips');
-  chips.querySelectorAll('.dchip').forEach(function(c) { c.classList.remove('on'); });
-  el.classList.add('on');
-  if (group === 'ds') dStyle = val; else dPlatform = val;
-}
-async function runDemo() {
-  var product = document.getElementById('dp').value.trim() || 'this product';
-  var desc = document.getElementById('dd').value.trim() || 'a great product';
-  var btn = document.getElementById('demo-btn');
-  var out = document.getElementById('demo-out');
-  btn.disabled = true;
-  document.getElementById('demo-ico').innerHTML = '<span class="spin"></span>';
-  document.getElementById('demo-txt').textContent = 'Writing...';
-  out.classList.add('live');
-  out.innerHTML = '<span style="color:rgba(245,243,255,0.25)">Waking up the AI server... this takes up to 30 seconds on first run. Please wait...</span>';
-  var dots = 0;
-  var loadTimer = setInterval(function() {
-    dots = (dots + 1) % 4;
-    out.innerHTML = '<span style="color:rgba(245,243,255,0.25)">Claude AI is writing your script' + '.'.repeat(dots) + '</span>';
-  }, 800);
-  try {
-    var res = await fetch('/api/ai', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'script',product:product,description:desc,style:dStyle,platform:dPlatform,tone:'casual',duration:'30'})});
-    var data = await res.json();
-    if (data.error) throw new Error(data.error);
-    var s = (data.script||'').replace(/\*\*\[HOOK\]\*\*/g,'[HOOK]').replace(/\*\*\[MAIN\]\*\*/g,'[MAIN]').replace(/\*\*\[CTA\]\*\*/g,'[CTA]').replace(/\*\*/g,'').trim();
-    clearInterval(loadTimer);
-    out.innerHTML = ''; var i = 0;
-    var iv = setInterval(function() {
-      if (i < s.length) { out.innerHTML = s.slice(0,i+=2).replace(/\n/g,'<br>') + '<span class="cursor-blink"></span>'; i++; }
-      else { out.innerHTML = s.replace(/\n/g,'<br>'); clearInterval(iv); }
-    }, 14);
-  } catch(e) {
-    clearInterval(loadTimer);
-    out.innerHTML = '<span style="color:#f87171">Error: '+e.message+'. The server may be waking up — try again in 30 seconds.</span>';
-  }
-  clearInterval(loadTimer);
-  btn.disabled = false;
-  document.getElementById('demo-ico').textContent = '✨';
-  document.getElementById('demo-txt').textContent = 'Regenerate';
-}
-
-/* ── AVATARS ── */
-var avData = [
-  {img:'https://api.dicebear.com/9.x/personas/svg?seed=sarah&backgroundColor=b6e3f4&radius=50',name:'SARAH',desc:'Warm, relatable lifestyle presenter. Perfect for beauty, wellness, skincare, and fashion brands targeting women aged 25-45.',tags:['Lifestyle','Beauty','Wellness','Fashion']},
-  {img:'https://api.dicebear.com/9.x/personas/svg?seed=marcus&backgroundColor=c0aede&radius=50',name:'MARCUS',desc:'Authentic, casual energy that resonates with diverse audiences. Ideal for fitness, tech, food, and lifestyle brands.',tags:['Fitness','Tech','Food','Lifestyle']},
-  {img:'https://api.dicebear.com/9.x/personas/svg?seed=jessica&backgroundColor=ffd5dc&radius=50',name:'JESSICA',desc:'Projects professional authority and trust. Perfect for B2B, coaching, courses, and finance brands.',tags:['Professional','B2B','Coaching','Finance']},
-  {img:'https://api.dicebear.com/9.x/personas/svg?seed=tyler&backgroundColor=d1f4d1&radius=50',name:'TYLER',desc:'Speaks directly to Gen Z and younger millennials. Energetic and fun — ideal for fashion, gaming, and apps.',tags:['Gen Z','Fashion','Apps','Gaming']},
-  {img:'https://api.dicebear.com/9.x/personas/svg?seed=priya&backgroundColor=ffd5dc&radius=50',name:'PRIYA',desc:'Top-performing beauty and wellness presenter. Warm and trustworthy — resonates strongly with multicultural audiences.',tags:['Beauty','Wellness','Skincare','Multicultural']},
-  {img:'https://api.dicebear.com/9.x/personas/svg?seed=alex&backgroundColor=ffecd2&radius=50',name:'ALEX',desc:'Passionate, knowledgeable energy for food, beverage, and home goods.',tags:['Food','Beverage','Home','Demos']},
-  {img:'https://api.dicebear.com/9.x/personas/svg?seed=diana&backgroundColor=c0aede&radius=50',name:'DIANA',desc:'Wisdom and authority for wellness, health, and premium lifestyle brands.',tags:['Wellness','Health','Premium','Mature']},
-  {img:'https://api.dicebear.com/9.x/personas/svg?seed=ryan&backgroundColor=b6e3f4&radius=50',name:'RYAN',desc:'Clean, confident, and credible for tech, SaaS, and digital product demos.',tags:['Tech','SaaS','Gadgets','Digital']},
-  {img:'https://api.dicebear.com/9.x/personas/svg?seed=zoe&backgroundColor=ffd5dc&radius=50',name:'ZOE',desc:'Bold, trend-aware, photogenic. Ideal for fashion brands and lifestyle content.',tags:['Fashion','Beauty','Lifestyle','Trend']},
-  {img:'https://api.dicebear.com/9.x/personas/svg?seed=james&backgroundColor=c0aede&radius=50',name:'JAMES',desc:'Powerful, motivating energy for fitness, sports, and performance products.',tags:['Fitness','Sports','Performance','Health']},
-  {img:'https://api.dicebear.com/9.x/personas/svg?seed=emma&backgroundColor=ffd5dc&radius=50',name:'EMMA',desc:'Warm, nurturing, relatable. Ideal for baby products, family brands, and content targeting parents.',tags:['Family','Baby','Home','Parenting']}
+// AVATAR DATA
+var avatars = [
+  { seed: 'sarah', name: 'Sarah', tag: 'Lifestyle', bg: 'b6e3f4', vid: 'cgSgspJ2msm6clMCkdW9', desc: 'Warm, relatable lifestyle presenter. Perfect for beauty, wellness, and skincare. Feels like a trusted friend.', tags: ['Beauty', 'Wellness', 'Lifestyle'] },
+  { seed: 'marcus', name: 'Marcus', tag: 'Casual', bg: 'c0aede', vid: 'onwK4e9ZLuTAKqWW03F9', desc: 'Laid-back and authentic. Great for tech, gaming, fitness, and everyday consumer products.', tags: ['Tech', 'Gaming', 'Fitness'] },
+  { seed: 'jessica', name: 'Jessica', tag: 'Professional', bg: 'ffd5dc', vid: 'bVMeCyTHy58xNoL34h3p', desc: 'Polished and trustworthy. Ideal for B2B, finance, SaaS, and professional services.', tags: ['B2B', 'Finance', 'SaaS'] },
+  { seed: 'tyler', name: 'Tyler', tag: 'Gen Z', bg: 'd1f4d1', vid: 'TX3LPaxmHKxFdv7VOQHJ', desc: 'Young, energetic, Gen Z energy. Built for fast-paced TikTok content targeting under-30 audiences.', tags: ['TikTok', 'Gen Z', 'Fashion'] },
+  { seed: 'priya', name: 'Priya', tag: 'Beauty', bg: 'ffd5dc', vid: 'pFZP5JQG7iQjIQuC4Bku', desc: 'Vibrant beauty and skincare specialist. Authentic South Asian representation for beauty brands.', tags: ['Beauty', 'Skincare', 'Fashion'] },
+  { seed: 'eric', name: 'Eric', tag: 'Deep', bg: 'b6e3f4', vid: 'cjVigY5qzO86Huf0OWal', desc: 'Deep, authoritative voice. Commands attention. Best for premium brands and serious product claims.', tags: ['Premium', 'Automotive', 'Finance'] },
+  { seed: 'rachel', name: 'Rachel', tag: 'Calm', bg: 'ffd5dc', vid: 'nPczCjzI2devNBz1zQrb', desc: 'Soft and calming. Perfect for wellness, meditation, supplements, and mindfulness products.', tags: ['Wellness', 'Health', 'Self-care'] },
+  { seed: 'wayne', name: 'Wayne', tag: 'Friendly', bg: 'c0aede', vid: 'D38z5RcWu1voky8WS1ja', desc: 'Warm and friendly with broad appeal. Works across categories. The safe, reliable choice.', tags: ['General', 'Food', 'Family'] },
+  { seed: 'charlotte', name: 'Charlotte', tag: 'Young', bg: 'ffd5dc', vid: 'XB0fDUnXU5powFXDhCwa', desc: 'Fresh, youthful energy. Great for fashion, beauty, travel, and lifestyle brands targeting millennials.', tags: ['Fashion', 'Travel', 'Lifestyle'] }
 ];
-function showAv(el, i) {
-  document.querySelectorAll('.av-item').forEach(function(a) { a.classList.remove('sel'); });
-  el.classList.add('sel');
-  if (!avData[i]) return;
-  var av = avData[i];
-  document.getElementById('av-detail-img').src = av.img;
-  document.getElementById('av-name').textContent = av.name;
-  document.getElementById('av-desc').textContent = av.desc;
-  document.getElementById('av-tags').innerHTML = av.tags.map(function(t) { return '<span class="av-detail-tag">'+t+'</span>'; }).join('');
+
+function renderAvatars() {
+  var sh = document.getElementById('av-showcase');
+  sh.innerHTML = '';
+  avatars.forEach(function(av, i) {
+    var d = document.createElement('div');
+    d.className = 'av-card' + (i === 0 ? ' sel' : '');
+    d.setAttribute('onclick', 'selectAvatar(' + i + ')');
+    d.innerHTML = '<img class="av-img" src="https://api.dicebear.com/9.x/personas/svg?seed=' + av.seed + '&backgroundColor=' + av.bg + '&radius=50" alt="' + av.name + '"><div class="av-name">' + av.name + '</div><div class="av-tag">' + av.tag + '</div>';
+    sh.appendChild(d);
+  });
+  selectAvatar(0);
 }
 
-/* ── PRICING ── */
-var mp = ['$0','$49','$149'], ap = ['$0','$34','$99'], ann = false;
-function toggleBill() {
-  ann = !ann;
-  document.getElementById('toggle-sw').classList.toggle('on', ann);
-  var p = ann ? ap : mp;
-  ['p1','p2','p3'].forEach(function(id, i) { document.getElementById(id).textContent = p[i]; });
+function selectAvatar(i) {
+  var av = avatars[i];
+  document.querySelectorAll('.av-card').forEach(function(c, ci) {
+    c.classList.toggle('sel', ci === i);
+  });
+  document.getElementById('av-detail').innerHTML =
+    '<img class="av-detail-img" src="https://api.dicebear.com/9.x/personas/svg?seed=' + av.seed + '&backgroundColor=' + av.bg + '&radius=50" alt="' + av.name + '">' +
+    '<div><div class="av-detail-name">' + av.name + '</div><div class="av-detail-role">' + av.tag + ' Presenter</div><div class="av-detail-desc">' + av.desc + '</div><div class="av-tags">' +
+    av.tags.map(function(t) { return '<span class="av-tag-pill">' + t + '</span>'; }).join('') +
+    '</div><div style="margin-top:14px"><a href="/app.html" class="btn btn-primary" style="font-size:12px;padding:8px 18px">Use ' + av.name + ' in my video →</a></div></div>';
 }
 
-/* ── FAQ ── */
-function faq(el) {
-  var item = el.parentElement;
-  var was = item.classList.contains('open');
-  document.querySelectorAll('.faq-item').forEach(function(i) { i.classList.remove('open'); });
-  if (!was) item.classList.add('open');
-}
+renderAvatars();
 
-/* ── SIGNUP ── */
-function signup(src) {
-  var inp = document.getElementById(src==='hero' ? 'hero-email' : 'cta-email');
-  var email = inp.value.trim();
-  if (!email || !email.includes('@')) {
-    inp.style.borderColor = '#f87171';
-    inp.placeholder = 'Please enter a valid email';
-    setTimeout(function() { inp.style.borderColor = ''; inp.placeholder = 'your@email.com'; }, 2500);
-    return;
+// GALLERY
+var galleryPlaying = -1;
+function playGallery(card, i) {
+  if (galleryPlaying !== -1 && galleryPlaying !== i) {
+    var prev = document.getElementById('gv' + galleryPlaying);
+    if (prev) prev.pause();
   }
-  window.open('https://tally.so/r/Y5kAyv?email='+encodeURIComponent(email), '_blank');
-  var form = inp.closest('.hero-form, .cta-form');
-  if (form) form.querySelectorAll('input,button').forEach(function(el) { el.style.display='none'; });
-  var ok = document.getElementById(src==='hero' ? 'hero-ok' : 'cta-ok');
-  if (ok) ok.classList.add('show');
+  var v = document.getElementById('gv' + i);
+  if (!v) return;
+  if (v.paused) { v.play(); card.querySelector('.gallery-card-play').textContent = '⏸'; galleryPlaying = i; }
+  else { v.pause(); card.querySelector('.gallery-card-play').textContent = '▶'; galleryPlaying = -1; }
 }
-document.querySelectorAll('input[type=email]').forEach(function(inp) {
-  inp.addEventListener('keydown', function(e) { if (e.key==='Enter') signup(inp.id==='hero-email'?'hero':'cta'); });
-});
-function showToast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 2200);
+
+// DEMO
+function pickChipDemo(groupId, el, val) {
+  var g = document.getElementById(groupId);
+  if (!g) return;
+  g.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('on'); });
+  el.classList.add('on');
+  if (groupId === 'dstyle') demoStyle = val;
+  else if (groupId === 'dplat') demoPlat = val;
+}
+
+function switchDemo(tab) {
+  ['script', 'image', 'url'].forEach(function(t) {
+    var dtab = document.getElementById('dtab-' + t);
+    var dbody = document.getElementById('dbody-' + t);
+    if (dtab) dtab.classList.toggle('on', t === tab);
+    if (dbody) dbody.classList.toggle('on', t === tab);
+  });
+}
+
+function setDemoLoading(suffix, loading, label) {
+  var btn = document.getElementById('demo-btn-' + suffix);
+  var ico = document.getElementById('dico-' + suffix);
+  var txt = document.getElementById('dtxt-' + suffix);
+  if (!btn) return;
+  btn.disabled = loading;
+  if (loading) { ico.innerHTML = '<span class="spin"></span>'; txt.textContent = label || 'Writing...'; }
+  else { ico.textContent = suffix === 'image' ? '📸' : '✨'; txt.textContent = suffix === 'image' ? 'Analyse Image and Generate Brief' : (suffix === 'url' ? '→ Generate' : 'Generate Real Script with Claude AI'); }
+}
+
+function typewriter(elId, text) {
+  var el = document.getElementById(elId);
+  if (!el) return;
+  el.className = 'demo-output has-content';
+  el.innerHTML = '';
+  var i = 0;
+  var iv = setInterval(function() {
+    if (i >= text.length) { el.innerHTML = text.replace(/\n/g, '<br>'); clearInterval(iv); return; }
+    el.innerHTML = text.slice(0, i += 4).replace(/\n/g, '<br>') + '<span class="tcur"></span>';
+  }, 14);
+}
+
+function runDemoScript() {
+  var product = document.getElementById('dp').value.trim();
+  var desc = document.getElementById('dd').value.trim();
+  if (!product) { document.getElementById('dp').focus(); return; }
+  setDemoLoading('script', true, 'Claude AI is writing your script...');
+  var out = document.getElementById('demo-out-script');
+  out.innerHTML = '<div class="demo-ph"><span class="spin"></span> Generating — may take 10-30 seconds on first run...</div>';
+  fetch('/api/ai', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'script', product: product, description: desc || 'great product', style: demoStyle, platform: demoPlat, tone: 'casual', duration: '30' })
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.error) throw new Error(d.error);
+    typewriter('demo-out-script', d.script || '');
+  }).catch(function(e) {
+    out.innerHTML = '<div style="color:#f87171;font-size:13px">Error: ' + e.message + '. The server may be waking up — please try again in 30 seconds.</div>';
+  }).finally(function() { setDemoLoading('script', false); });
+}
+
+function handleImageUpload(inp) {
+  if (!inp.files || !inp.files[0]) return;
+  var file = inp.files[0];
+  imgType = file.type || 'image/jpeg';
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    imgBase64 = e.target.result.split(',')[1];
+    document.getElementById('img-preview').src = e.target.result;
+    document.getElementById('image-upload-area').style.display = 'none';
+    document.getElementById('image-preview-area').style.display = 'flex';
+    var btn = document.getElementById('demo-btn-image');
+    btn.disabled = false;
+    document.getElementById('dico-image').textContent = '📸';
+    document.getElementById('dtxt-image').textContent = 'Analyse Image and Generate Brief';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImage() {
+  imgBase64 = null; imgType = null;
+  document.getElementById('img-file').value = '';
+  document.getElementById('image-upload-area').style.display = 'block';
+  document.getElementById('image-preview-area').style.display = 'none';
+  document.getElementById('demo-btn-image').disabled = true;
+  document.getElementById('dtxt-image').textContent = 'Upload a product image first';
+}
+
+function runDemoImage() {
+  if (!imgBase64) return;
+  setDemoLoading('image', true, 'Claude Vision analysing your image...');
+  var out = document.getElementById('demo-out-image');
+  out.innerHTML = '<div class="demo-ph"><span class="spin"></span> Claude AI is reading your product image...</div>';
+  fetch('/api/ai', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'image_to_video', imageBase64: imgBase64, mediaType: imgType })
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.error) throw new Error(d.error);
+    var b = d.brief || {};
+    var text = 'Product: ' + (b.product || 'Your product') + '\n\n' + (b.description || '') + '\n\nScript:\n' + (b.script || '') + '\n\nTop Hooks:\n' + (b.hooks || []).slice(0, 3).map(function(h, i) { return (i + 1) + '. ' + h; }).join('\n');
+    typewriter('demo-out-image', text);
+  }).catch(function(e) {
+    out.innerHTML = '<div style="color:#f87171;font-size:13px">Error: ' + e.message + '</div>';
+  }).finally(function() { setDemoLoading('image', false); });
+}
+
+function runDemoUrl() {
+  var url = document.getElementById('demo-url').value.trim();
+  if (!url) { document.getElementById('demo-url').focus(); return; }
+  var btn = document.getElementById('demo-btn-url');
+  btn.disabled = true;
+  btn.textContent = '...';
+  var out = document.getElementById('demo-out-url');
+  out.innerHTML = '<div class="demo-ph"><span class="spin"></span> Reading product page...</div>';
+  fetch('/api/ai', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'url_to_video', url: url })
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.error) throw new Error(d.error);
+    var b = d.brief || {};
+    var text = 'Product: ' + (b.product || 'Your product') + '\n\n' + (b.description || '') + '\n\nScript:\n' + (b.script || '') + '\n\nRecommended voice: ' + (b.recommended_voice || 'Sarah') + '\nDuration: ' + (b.recommended_duration || '30') + 's';
+    typewriter('demo-out-url', text);
+  }).catch(function(e) {
+    out.innerHTML = '<div style="color:#f87171;font-size:13px">Error: ' + e.message + '</div>';
+  }).finally(function() { btn.disabled = false; btn.textContent = '→ Generate'; });
 }
 </script>
 </body>
